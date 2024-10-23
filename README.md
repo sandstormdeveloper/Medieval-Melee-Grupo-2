@@ -58,7 +58,7 @@ En Medieval Melee podremos utilizar distintos personajes en combate con habilida
 - Personaje base: Al comienzo de la partida, el jugador tendrá un personaje sin armas que solo podrá asestar débiles golpes al contrincante usando sus puños. Para transformarse, deberá coger un arma del escenario  
 - Cuerpo a cuerpo: Se caracterizan por utilizar distintas armas como mazas, martillos y espadas. Su rango de ataque es cercano y tiene más potencia que el personaje base. Dependiendo del arma, el personaje tendrá distintas características:
   - Caballero (Espada): Rango menor, potencia menor, velocidad de ataque alta.
-  - !(/assets/personaje1.png)
+  - ![ola](/assets/personaje1.png)
   - Rey (Maza): Rango medio, potencia media, velocidad de ataque media
   - Paladín (Martillo): Rango medio, potencia alta, velocidad de ataque baja. 
   - Mago: Utiliza un bastón y magia a distancia para atacar en una línea recta. 
