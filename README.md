@@ -3,5 +3,5 @@
 ## Integrantes
 ### Daniel de la Fuente Díaz, d.delafuente.2022@alumnos.urjc.es, dondanic27
 ### Pablo García García, p.garciag.2022@alumnos.urjc.es, sandstormdeveloper
-### Guillermo Hauschild Arencibia, g.hauschild.2022@alumnos.urjc.es, 
+### Guillermo Hauschild Arencibia, g.hauschild.2022@alumnos.urjc.es, ghauschild
 ### Hugo Orejas Peláez, h.orejas.2022@alumnos.urjc.es, kelele26
