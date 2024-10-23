@@ -26,7 +26,9 @@ Medieval Melee es un juego de acción y lucha competitiva ambientado en un entor
 - Subgénero de lucha: Medieval Melee se enmarca dentro del subgénero de los videojuegos de lucha, inspirado en videojuegos como Super Smash Bros, Brawlhalla y Multiversus. En este tipo de juegos, para derrotar a tu oponente debes sacarlo del escenario. A diferencia de los sistemas tradicionales, no hay indicadores de vida, sino que cada jugador tiene un porcentaje de daño recibido que, cuanto más alto sea, más lejos será enviado el jugador al ser golpeado. 
 #### -Estilo visual
 El videojuego se presenta con un estilo visual en pixel art en 2D, lo que le da un toque retro al juego que rememora los juegos clásicos del pasado. Los personajes se verán con un aspecto detallado, pese a la simplicidad del estilo pixelado.
+
 El estilo se inspira en juegos icónicos como Shovel Knight y The Legend of Zelda, donde los entornos son muy coloridos y los personajes están claramente definidos, lo que facilita la identificación de las características principales del personaje. 
+
 La paleta de colores está compuesta por colores vibrantes que permiten distinguir los cascos, las armaduras y las armas. Además, los héroes cuentan con detalles en colores saturados que resaltan su presencia y centran la atención del jugador en ellos. 
 #### -Plataformas
 ### Mecánicas
