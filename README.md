@@ -70,14 +70,18 @@ En Medieval Melee podremos utilizar distintos personajes en combate con habilida
 ### Escenarios
 Los escenarios en Medieval Melee están diseñados para fomentar combates rápidos, intensos y estratégicos en entornos cerrados bidimensionales. Cada mapa está compuesto por varias plataformas de diferentes alturas, formas y tamaños, fomentando la movilidad vertical y los ataques desde distintos ángulos. Los mapas reflejan una ambientación medieval única que ofrece distintas oportunidades tácticas que influencian a la jugabilidad. A continuación se detallan los principales escenarios del juego:
 - Castillo en ruinas: Un escenario con plataformas irregulares formadas por las ruinas de un castillo. Las plataformas son pedazos de muros colapsados y torres derrumbadas.
-- ![Figura 6](/assets/escenario1.png)
+  
+  ![Figura 6](/assets/escenario1.png)
 - Mercado medieval: Un mercado medieval con plataformas en forma de carretas, techos de puestos o casas y barriles amontonados.
-- ![Figura 7](/assets/escenario2.png)
+  
+  ![Figura 7](/assets/escenario2.png)
 - Puerto de la ciudadela: Las plataformas están formadas por un puerto con plataformas a distintas alturas que fomentan el movimiento vertical de este escenario.
-- ![Figura 8](/assets/escenario3.png)
+  
+  ![Figura 8](/assets/escenario3.png)
 ### Interfaz
 #### -Diagrama de flujo
 A continuación se muestra un diagrama de flujo sencillo que refleja la transición entre pantallas.
+
 ![Figura 9](/assets/diagrama.png)
 #### -Menú principal
 Esta es la primera pantalla que se verá al iniciar el juego. Desde este menú se podrá acceder a las siguientes opciones:
@@ -86,18 +90,23 @@ Esta es la primera pantalla que se verá al iniciar el juego. Desde este menú s
 - Ajustes: En la pantalla de ajustes se podrán modificar ciertos aspectos básicos del juego, como el volúmen o el modo de pantalla (ventana/completa).
 - Créditos: Aquí se podrán visualizar los créditos del juego, incluidas las tareas realizadas y su reparto.
 - Salir: Al pulsar este botón simplemente se cerrará la aplicación.
+
 ![Figura 10](/assets/interfaz1.png)
 #### -Menú de ajustes
 En este menú de ajustes bastante básico, se podrá modificar el volumen del juego (de los efectos y de la música por separado) y cambiar el modo de pantalla. Además, se podrá volver al menú principal.
+
 ![Figura 11](/assets/interfaz2.png)
 #### -Interfaz de juego
 En partida, la interfaz consta de un icono de cada jugador en la parte inferior central de la pantalla junto a su porcentaje de daño, cuanto mayor sea este porcentaje, mayor será el impulso que reciba al ser golpeado.
+
 ![Figura 12](/assets/interfaz3.png)
 #### -Interfaz de fin de juego
 Al acabar la partida, el juego sacará una pantalla de victoria para el jugador vencedor con una pequeña frase. Ej.: “PLAYER 1 WINS!”.
+
 ![Figura 13](/assets/interfaz4.png)
 #### -Créditos
 En la pantalla de créditos se mostrarán las tareas realizadas para llevar a cabo la realización del proyecto, así como su reparto. Se tratará de una pantalla de créditos clásica, sin complicaciones.
+
 ![Figura 14](/assets/interfaz5.png)
 ### Audio
 #### -Efectos
