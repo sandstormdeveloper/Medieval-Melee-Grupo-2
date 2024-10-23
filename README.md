@@ -1,5 +1,6 @@
 # Medieval Melee
 ### Medieval Melee es un juego que se centra en el combate entre personajes, con una temática medieval
+
 ## Integrantes
 ### Daniel de la Fuente Díaz, d.delafuente.2022@alumnos.urjc.es, dondanic27
 ### Pablo García García, p.garciag.2022@alumnos.urjc.es, sandstormdeveloper
@@ -9,29 +10,36 @@
 ## Game Design Document (GDD Fase 1)
 ### Introducción
 Este es el documento de diseño de Medieval Melee. Es un videojuego en 2D para PC que se centra en el combate entre personajes. Su objetivo es detallar todos los elementos que conformarán el videojuego, sirviendo como una guía inicial para que los futuros colaboradores conozcan las características del proyecto.
+
 #### -Inspiraciones
 Este videojuego está inspirado en juegos de lucha casuales como Super Smash Bros y Brawlhalla, donde el objetivo es derrotar al oponente expulsandolo del escenario mediante golpes en vez de tener que disminuir su barra de vida.
+
 #### -Concepto del juego
 Medieval Melee es un videojuego de lucha en el que los jugadores controlan pequeños personajes que deben sobrevivir en un duelo a muerte contra otro jugador, que tendrá el mismo objetivo. Los personajes no sólo lucharán por conseguir la victoria, sino también por obtener el honor que conlleva triunfar en la justa.
+
 #### -Características principales
 Entre las características principales de Medieval Melee destacan las siguientes:
 - Combate dinámico: es un aspecto central, fomentando enfrentamientos constantes entre los personajes, donde los jugadores deberán emplear  diferentes estrategias para derrotar a su oponente y sacarlo del escenario. 
 - Partidas rápidas: las partidas tienen una duración máxima de 5 minutos, de esta forma se refuerza la dinámica del juego, centrando la atención en combates intensos y continuos. La partida termina cuando a un jugador no le quedan más vidas. 
 - Mapas cerrados: están diseñados para promover dichos encuentros rápidos, obligando a los jugadores a enfrentarse y quitándoles la posibilidad de huir.
 - Tácticas: el modelo de juego permite una amplia variedad de tácticas, tanto ofensivas como defensivas, brindando a los jugadores la libertad de utilizar su estrategia para alcanzar la victoria.
+
 #### -Género
 Medieval Melee es un juego de acción y lucha competitiva ambientado en un entorno medieval. El videojuego se enfoca en los enfrentamientos cuerpo a cuerpo entre los personajes. A continuación, se desglosan los subgéneros más importantes del juego.
 - Arena Multiplayer: se desarrolla en mapas definidos donde los jugadores se enfrentan con armas medievales. En Medieval Melee, la narrativa tiene un papel secundario, los mapas cerrados están diseñados para fomentar los combates rápidos y estratégicos.
 - Combate cuerpo a cuerpo: el combate cuerpo a cuerpo es el pilar central de Medieval Melee. Los jugadores se enfrentarán con armas medievales, tales como  espadas, hachas, dagas, lanzas y escudos, ofreciendo variedad de estilos de lucha. 
 - Subgénero de lucha: Medieval Melee se enmarca dentro del subgénero de los videojuegos de lucha, inspirado en videojuegos como Super Smash Bros, Brawlhalla y Multiversus. En este tipo de juegos, para derrotar a tu oponente debes sacarlo del escenario. A diferencia de los sistemas tradicionales, no hay indicadores de vida, sino que cada jugador tiene un porcentaje de daño recibido que, cuanto más alto sea, más lejos será enviado el jugador al ser golpeado. 
+
 #### -Estilo visual
 El videojuego se presenta con un estilo visual en pixel art en 2D, lo que le da un toque retro al juego que rememora los juegos clásicos del pasado. Los personajes se verán con un aspecto detallado, pese a la simplicidad del estilo pixelado.
 
 El estilo se inspira en juegos icónicos como Shovel Knight y The Legend of Zelda, donde los entornos son muy coloridos y los personajes están claramente definidos, lo que facilita la identificación de las características principales del personaje. 
 
 La paleta de colores está compuesta por colores vibrantes que permiten distinguir los cascos, las armaduras y las armas. Además, los héroes cuentan con detalles en colores saturados que resaltan su presencia y centran la atención del jugador en ellos. 
+
 #### -Plataformas
 Medieval Melee se lanzará para PC, ofreciendo una experiencia de juego adaptada a los controles y características de este formato. La elección de PC se basa en la simplicidad de controles que otorga el teclado de un ordenador.
+
 ### Mecánicas
 #### -Jugabilidad
 Los jugadores participan en partidas rápidas de 1 contra 1, puede ser tanto en modo local como en línea. Cada jugador controla un caballero medieval que empieza sin armamento, teniendo que coger un arma para poder hacer un mayor daño al enemigo. 
@@ -53,6 +61,7 @@ Los controles de Medieval Melee son  sencillos e intuitivos, diseñados para que
 - Acciones:
   - Jugador 1: S [ataque]
   - Jugador 2: ↓ [ataque]
+
 ### Personajes
 En Medieval Melee podremos utilizar distintos personajes en combate con habilidades variadas dependiendo del arma que obtengamos durante la partida. Estos son: 
 - Personaje base: Al comienzo de la partida, el jugador tendrá un personaje sin armas que solo podrá asestar débiles golpes al contrincante usando sus puños. Para transformarse, deberá coger un arma del escenario  
@@ -72,6 +81,7 @@ En Medieval Melee podremos utilizar distintos personajes en combate con habilida
 - Arquero: Utiliza un arco y flechas para atacar a distancia. Su ataque es más lento pero más potente que el del     mago.
 
   ![Figura 5](/assets/personaje5.png)
+
 ### Escenarios
 Los escenarios en Medieval Melee están diseñados para fomentar combates rápidos, intensos y estratégicos en entornos cerrados bidimensionales. Cada mapa está compuesto por varias plataformas de diferentes alturas, formas y tamaños, fomentando la movilidad vertical y los ataques desde distintos ángulos. Los mapas reflejan una ambientación medieval única que ofrece distintas oportunidades tácticas que influencian a la jugabilidad. A continuación se detallan los principales escenarios del juego:
 - Castillo en ruinas: Un escenario con plataformas irregulares formadas por las ruinas de un castillo. Las plataformas son pedazos de muros colapsados y torres derrumbadas.
@@ -83,11 +93,13 @@ Los escenarios en Medieval Melee están diseñados para fomentar combates rápid
 - Puerto de la ciudadela: Las plataformas están formadas por un puerto con plataformas a distintas alturas que fomentan el movimiento vertical de este escenario.
   
   ![Figura 8](/assets/escenario3.png)
+
 ### Interfaz
 #### -Diagrama de flujo
 A continuación se muestra un diagrama de flujo sencillo que refleja la transición entre pantallas.
 
 ![Figura 9](/assets/diagrama.png)
+
 #### -Menú principal
 Esta es la primera pantalla que se verá al iniciar el juego. Desde este menú se podrá acceder a las siguientes opciones:
 - Juego local: A través de este botón se accederá a una partida en local, en la que ambos jugadores jugaran en el mismo ordenador y usarán el mismo teclado.
@@ -97,25 +109,31 @@ Esta es la primera pantalla que se verá al iniciar el juego. Desde este menú s
 - Salir: Al pulsar este botón simplemente se cerrará la aplicación.
 
 ![Figura 10](/assets/interfaz1.png)
+
 #### -Menú de ajustes
 En este menú de ajustes bastante básico, se podrá modificar el volumen del juego (de los efectos y de la música por separado) y cambiar el modo de pantalla. Además, se podrá volver al menú principal.
 
 ![Figura 11](/assets/interfaz2.png)
+
 #### -Interfaz de juego
 En partida, la interfaz consta de un icono de cada jugador en la parte inferior central de la pantalla junto a su porcentaje de daño, cuanto mayor sea este porcentaje, mayor será el impulso que reciba al ser golpeado.
 
 ![Figura 12](/assets/interfaz3.png)
+
 #### -Interfaz de fin de juego
 Al acabar la partida, el juego sacará una pantalla de victoria para el jugador vencedor con una pequeña frase. Ej.: “PLAYER 1 WINS!”.
 
 ![Figura 13](/assets/interfaz4.png)
+
 #### -Créditos
 En la pantalla de créditos se mostrarán las tareas realizadas para llevar a cabo la realización del proyecto, así como su reparto. Se tratará de una pantalla de créditos clásica, sin complicaciones.
 
 ![Figura 14](/assets/interfaz5.png)
+
 ### Audio
 #### -Efectos
 En el juego se incluirán efectos de sonidos para aumentar la inmersión del jugador en la temática medieval y de lucha del juego. Los sonidos ayudarán a darle más vida al juego. A parte de ser incluidos en la propia partida, también estarán presentes en las interfaces del menú principal.
+
 #### -Música
 Menú principal: la música del menú principal está en sintonía con la  ambientación medieval del videojuego, pero es relajada y suave, para no generar tensión en el jugador antes de la partida.
 
