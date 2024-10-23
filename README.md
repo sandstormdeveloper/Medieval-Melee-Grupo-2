@@ -31,8 +31,20 @@ El estilo se inspira en juegos icónicos como Shovel Knight y The Legend of Zeld
 
 La paleta de colores está compuesta por colores vibrantes que permiten distinguir los cascos, las armaduras y las armas. Además, los héroes cuentan con detalles en colores saturados que resaltan su presencia y centran la atención del jugador en ellos. 
 #### -Plataformas
+Medieval Melee se lanzará para PC, ofreciendo una experiencia de juego adaptada a los controles y características de este formato. La elección de PC se basa en la simplicidad de controles que otorga el teclado de un ordenador.
 ### Mecánicas
 #### -Jugabilidad
+Los jugadores participan en partidas rápidas de 1 contra 1, puede ser tanto en modo local como en línea. Cada jugador controla un caballero medieval que empieza sin armamento, teniendo que coger un arma para poder hacer un mayor daño al enemigo. 
+- Movilidad: en cuanto a la movilidad de los jugadores, estos tendrán completa libertad de moverse por el mapa en dos dimensiones, lo que les permitirá tanto evadirse del oponente como acercarse y atacar.
+- Recolección de Armas: los jugadores comienzan sin armas, obligándolos a moverse por el mapa para recoger armamento como espadas, mazos, o arcos. Cada arma otorga diferentes habilidades y estilos de ataque, la elección del arma afecta el estilo de juego, permitiendo una mayor personalización estratégica:
+  - Espada: Ataques rápidos y rango corto.
+  - Martillo: Ataques más lentos pero con mayor daño.
+  - Arco: Ataques a distancia, ideales para mantener a raya al oponente.
+  - Mazo: Ataques medios y con rango medio.
+  - Bastón: Ataques rápidos y con potencia media.
+- Recompensas y mejoras: los jugadores recibirán mejoras en forma de armas durante la partida para que sientan que hay un progreso. Empezarán sin armamento y a medida que avanza la partida el armamento cambiará hacia uno mejor tras recoger un arma.
+- Obstáculos y plataformas: en los diferentes mapas están diseñados con obstáculos que permitirán a los jugadores ocultarse  y protegerse de los ataques del adversario como de plataformas, que permiten que los jugadores se suban a ellas para darle algo más de profundidad al combate.
+- Tiempo por partida: el tiempo de partida dependerá del tiempo que un jugador pierde todas sus vidas. Cada partida tiene una duración aproximada de entre 3 y 5 minutos, favoreciendo un ritmo de partida ágil y dinámico. 
 #### -Controles
 ### Personajes
 ### Escenarios
