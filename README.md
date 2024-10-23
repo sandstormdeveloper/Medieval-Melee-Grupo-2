@@ -20,7 +20,14 @@ Entre las características principales de Medieval Melee destacan las siguientes
 - Mapas cerrados: están diseñados para promover dichos encuentros rápidos, obligando a los jugadores a enfrentarse y quitándoles la posibilidad de huir.
 - Tácticas: el modelo de juego permite una amplia variedad de tácticas, tanto ofensivas como defensivas, brindando a los jugadores la libertad de utilizar su estrategia para alcanzar la victoria.
 #### -Género
+Medieval Melee es un juego de acción y lucha competitiva ambientado en un entorno medieval. El videojuego se enfoca en los enfrentamientos cuerpo a cuerpo entre los personajes. A continuación, se desglosan los subgéneros más importantes del juego.
+- Arena Multiplayer: se desarrolla en mapas definidos donde los jugadores se enfrentan con armas medievales. En Medieval Melee, la narrativa tiene un papel secundario, los mapas cerrados están diseñados para fomentar los combates rápidos y estratégicos.
+- Combate cuerpo a cuerpo: el combate cuerpo a cuerpo es el pilar central de Medieval Melee. Los jugadores se enfrentarán con armas medievales, tales como  espadas, hachas, dagas, lanzas y escudos, ofreciendo variedad de estilos de lucha. 
+- Subgénero de lucha: Medieval Melee se enmarca dentro del subgénero de los videojuegos de lucha, inspirado en videojuegos como Super Smash Bros, Brawlhalla y Multiversus. En este tipo de juegos, para derrotar a tu oponente debes sacarlo del escenario. A diferencia de los sistemas tradicionales, no hay indicadores de vida, sino que cada jugador tiene un porcentaje de daño recibido que, cuanto más alto sea, más lejos será enviado el jugador al ser golpeado. 
 #### -Estilo visual
+El videojuego se presenta con un estilo visual en pixel art en 2D, lo que le da un toque retro al juego que rememora los juegos clásicos del pasado. Los personajes se verán con un aspecto detallado, pese a la simplicidad del estilo pixelado.
+El estilo se inspira en juegos icónicos como Shovel Knight y The Legend of Zelda, donde los entornos son muy coloridos y los personajes están claramente definidos, lo que facilita la identificación de las características principales del personaje. 
+La paleta de colores está compuesta por colores vibrantes que permiten distinguir los cascos, las armaduras y las armas. Además, los héroes cuentan con detalles en colores saturados que resaltan su presencia y centran la atención del jugador en ellos. 
 #### -Plataformas
 ### Mecánicas
 #### -Jugabilidad
