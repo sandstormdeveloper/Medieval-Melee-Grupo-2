@@ -53,6 +53,7 @@ Los jugadores participan en partidas rápidas de 1 contra 1, puede ser tanto en 
 - Recompensas y mejoras: los jugadores recibirán mejoras en forma de armas durante la partida para que sientan que hay un progreso. Empezarán sin armamento y a medida que avanza la partida el armamento cambiará hacia uno mejor tras recoger un arma.
 - Obstáculos y plataformas: en los diferentes mapas están diseñados con obstáculos que permitirán a los jugadores ocultarse  y protegerse de los ataques del adversario como de plataformas, que permiten que los jugadores se suban a ellas para darle algo más de profundidad al combate.
 - Tiempo por partida: el tiempo de partida dependerá del tiempo que un jugador pierde todas sus vidas. Cada partida tiene una duración aproximada de entre 3 y 5 minutos, favoreciendo un ritmo de partida ágil y dinámico. 
+
 #### -Controles
 Los controles de Medieval Melee son  sencillos e intuitivos, diseñados para que los jugadores puedan aprender rápidamente las mecánicas de combate.  En el modo local, el segundo jugador utilizará los controles asignados al jugador 2, mientras que en el modo en red, ambos jugadores emplearán los controles del jugador 1. A continuación, se detallan los controles correspondientes:
 - Movimiento:
