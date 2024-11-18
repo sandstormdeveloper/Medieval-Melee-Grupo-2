@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="js/phaser.js"></script> 
+    <script src="js/main_menu.js"></script>
+    <script src="js/game.js"></script>
+</head>
+<body>
+    <script>
+
+        const config = {
+            type: Phaser.AUTO,
+            width: window.innerWidth - 20,
+            height: window.innerHeight - 20,
+            parent: 'game-canvas',
+            backgroundColor: '#000000',
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    debug: true,
+                    gravity: {y: 300}
+                }
+            },
+
+            scene: [MainMenuScene, GameScene]
+        };
+
+        const game = new Phaser.Game(config);
+        game.scene.start('GameScene');
+        
+    </script>
+</body>
+</html>
