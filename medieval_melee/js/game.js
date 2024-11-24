@@ -11,6 +11,8 @@ var jumpHeight, moveSpeed; // Configuraciones de movimiento
 var spawnItemTimer; // Tiempo inicial para generar ítems
 var spawnItemInterval; // Intervalo para generar ítems después del inicial
 var isFirstSpawn; // Indicador para saber si es la primera vez que se genera un ítem
+var percentage1, percentage2;//Valores a mostrar en pantalla de la vida de cada jugador
+
 
 // Clase principal del juego
 class GameScene extends Phaser.Scene {
@@ -34,6 +36,7 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('caballero2_run', 'assets/p2_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero2_idle', 'assets/p2_caballero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero2_attack', 'assets/p2_caballero/attack.png', { frameWidth: 192, frameHeight: 128 });
+
     }
 
     // Método para inicializar los elementos de la escena
@@ -44,6 +47,8 @@ class GameScene extends Phaser.Scene {
         attackRange = 80; // Rango de ataque
         isKnockedBack1 = isKnockedBack2 = false; // Estado inicial sin retroceso
         percent1 = percent2 = 1; // Daño inicial
+        percentage1=percent1-1;//Valor a mostrar al jugador  NO AFECTA A LA LÓGICA INTERNA
+        percentage2=percent2-1;
         jumpHeight = 600; // Altura del salto
         moveSpeed = 250; // Velocidad de movimiento
         spawnItemTimer = 5000; // Tiempo inicial para generar ítems
@@ -164,6 +169,16 @@ class GameScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('caballero2_idle', { start: 0, end: 14 }),
             frameRate: 12,
             repeat: -1,
+        });
+
+        //Contador en pantalla para mostrar el porcentaje de cada jugador
+        this.screenPercentage1 = this.add.text(16, 16, 'Player 1 ' + percentage1 + '%', {
+            fontSize: '32px',
+            fill: '#fff'
+        });
+        this.screenPercentage2 = this.add.text(16, 160, 'Player 2 ' + percentage2 + '%', {
+            fontSize: '32px',
+            fill: '#fff'
         });
     }
 
@@ -298,6 +313,7 @@ class GameScene extends Phaser.Scene {
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
                 });
+                console.log(percent2);
             }
             // Ataque hacia la izquierda
             else if (player1.flipX && distance < attackRange && player1.x + 8 > player2.x) {
@@ -309,6 +325,7 @@ class GameScene extends Phaser.Scene {
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
                 });
+                console.log(percent2);
             }
         }
     
@@ -324,6 +341,7 @@ class GameScene extends Phaser.Scene {
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
                 });
+                console.log(percent1);
             }
             // Ataque hacia la izquierda
             else if (player2.flipX && distance < attackRange && player2.x + 8 > player1.x) {
@@ -335,8 +353,15 @@ class GameScene extends Phaser.Scene {
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
                 });
+                console.log(percent1);
             }
         }
+
+        //Actualiza el porcentaje de cada jugador en pantalla
+        percentage1= Math.round((percent1-1)*100);
+        percentage2= Math.round((percent2-1)*100);
+        this.screenPercentage1.setText('Player 1 ' + percentage1 + '%'); 
+        this.screenPercentage2.setText('Player 2 ' + percentage2 + '%'); 
     }
 
     // Genera un objeto (item) en una posición aleatoria
