@@ -41,7 +41,7 @@ class GameScene extends Phaser.Scene {
         // Inicialización de variables
         attackTimer1 = attackTimer2 = 0; // Temporizadores de ataque
         attackCooldown = 1; // Enfriamiento entre ataques (en segundos)
-        attackRange = 80; // Rango de ataque
+        attackRange = 96; // Rango de ataque
         isKnockedBack1 = isKnockedBack2 = false; // Estado inicial sin retroceso
         percent1 = percent2 = 1; // Daño inicial
         jumpHeight = 600; // Altura del salto
@@ -293,7 +293,7 @@ class GameScene extends Phaser.Scene {
                 player2.setVelocityX(knockbackForce * percent2); // Aplica fuerza hacia la derecha
                 player2.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
                 isKnockedBack2 = true;                          // Marca al jugador 2 como en retroceso
-                percent2 += Math.random() * (0.1 - 0.01) + 0.01; // Incrementa el daño del jugador 2
+                percent2 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
                 this.time.addEvent({
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
@@ -304,7 +304,7 @@ class GameScene extends Phaser.Scene {
                 player2.setVelocityX(-knockbackForce * percent2); // Aplica fuerza hacia la izquierda
                 player2.setVelocityY(-verticalKnockback);         // Aplica fuerza hacia arriba
                 isKnockedBack2 = true;                           // Marca al jugador 2 como en retroceso
-                percent2 += Math.random() * (0.1 - 0.01) + 0.01; // Incrementa el daño del jugador 2
+                percent2 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
                 this.time.addEvent({
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
@@ -319,7 +319,7 @@ class GameScene extends Phaser.Scene {
                 player1.setVelocityX(knockbackForce * percent1); // Aplica fuerza hacia la derecha
                 player1.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
                 isKnockedBack1 = true;                          // Marca al jugador 1 como en retroceso
-                percent1 += Math.random() * (0.1 - 0.01) + 0.01; // Incrementa el daño del jugador 1
+                percent1 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 1
                 this.time.addEvent({
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
@@ -330,7 +330,7 @@ class GameScene extends Phaser.Scene {
                 player1.setVelocityX(-knockbackForce * percent1); // Aplica fuerza hacia la izquierda
                 player1.setVelocityY(-verticalKnockback);         // Aplica fuerza hacia arriba
                 isKnockedBack1 = true;                           // Marca al jugador 1 como en retroceso
-                percent1 += Math.random() * (0.1 - 0.01) + 0.01; // Incrementa el daño del jugador 1
+                percent1 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 1
                 this.time.addEvent({
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
