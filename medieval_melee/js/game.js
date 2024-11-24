@@ -1,10 +1,13 @@
 var platforms;
+var espada;
 var player1, player2;
 var cursors;
 var keyA, keyS, keyD, keyW;
 var attackTimer1, attackTimer2, attackCooldown;
 var jumpHeight, moveSpeed;
-
+var spawnItemTimer;
+var spawnItemInterval;
+var isFirstSpawn;
 class GameScene extends Phaser.Scene 
 {
     constructor() 
@@ -17,6 +20,8 @@ class GameScene extends Phaser.Scene
         this.load.image('fondo', 'assets/fondo.png');
         this.load.image('escenario', 'assets/escenario.png')
         this.load.image('plataforma', 'assets/plataforma.png');
+        this.load.image('espada', 'assets/swordItem.png');
+
 
         this.load.spritesheet('caballero1_run', 'assets/p1_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero1_idle', 'assets/p1_caballero/idle.png', { frameWidth: 192, frameHeight: 128 });
@@ -34,6 +39,9 @@ class GameScene extends Phaser.Scene
 
         jumpHeight = 600;
         moveSpeed = 250;
+        spawnItemTimer=5000;
+        spawnItemInterval = 20000;
+        isFirstSpawn = true;
 
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -44,6 +52,9 @@ class GameScene extends Phaser.Scene
 
         platforms = this.physics.add.staticGroup();
 
+        espada = this.physics.add.group();
+        this.physics.add.collider(espada, platforms);
+        
         platforms.create(640, 500, 'escenario');
         platforms.create(640, 250, 'plataforma');
         platforms.create(440, 350, 'plataforma');
@@ -57,6 +68,10 @@ class GameScene extends Phaser.Scene
         player2.setBodySize(32, 64);
         player2.flipX = true;
         this.physics.add.collider(player2, platforms);
+
+    //COLLIDER PARA COGER ITEMS
+        this.physics.add.overlap(player1, espada, this.collectItem1, null, this);
+        this.physics.add.overlap(player2, espada, this.collectItem2, null, this);
 
         this.anims.create
         ({
@@ -120,6 +135,23 @@ class GameScene extends Phaser.Scene
             }
         });
 
+        //Si es el primer spawn, tarda solo 5s. Si no es el primer spawn, tarda 20s. 
+            this.time.addEvent({    
+                delay: spawnItemTimer, 
+                callback: this.spawnItems, 
+                callbackScope: this,
+                loop: false,
+                
+            });
+            
+
+            this.time.addEvent({
+                delay: spawnItemInterval, 
+                callback: this.spawnItems,
+                callbackScope: this,
+                loop: true, 
+            });
+            
         cursors = this.input.keyboard.createCursorKeys();
     }
 
@@ -228,5 +260,33 @@ class GameScene extends Phaser.Scene
         {
             console.log("Player 2 attacked");
         }
+    }
+
+    spawnItems()
+    {
+        for (let i = 0; i < 2; i++) // Crean dos objetos
+        {
+            const x = Phaser.Math.Between(400, 800); 
+            const y = Phaser.Math.Between(50, 200); 
+
+            espada.create(x, y, 'espada'); 
+            
+        }
+        
+        console.log("Items spawned");
+        
+        
+    }
+    collectItem1(player, espada)
+    {
+        espada.destroy(); 
+        
+        console.log("Item picked");  
+    }
+    collectItem2(player, espada)
+    {
+        espada.destroy(); 
+        
+        console.log("Item picked");
     }
 }
