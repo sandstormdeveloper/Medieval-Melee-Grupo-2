@@ -151,7 +151,7 @@ class GameScene extends Phaser.Scene
                 callbackScope: this,
                 loop: true, 
             });
-            
+
         cursors = this.input.keyboard.createCursorKeys();
     }
 
@@ -269,7 +269,14 @@ class GameScene extends Phaser.Scene
             const x = Phaser.Math.Between(400, 800); 
             const y = Phaser.Math.Between(50, 200); 
 
-            espada.create(x, y, 'espada'); 
+            const item =espada.create(x, y, 'espada'); 
+
+            setTimeout(() => {
+                if (item) {
+                    item.destroy(); // Destruye el objeto
+                    console.log("Item despawned");
+                }
+            }, 10000);
             
         }
         
