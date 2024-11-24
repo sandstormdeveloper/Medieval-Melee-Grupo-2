@@ -1,292 +1,368 @@
-var platforms;
-var espada;
-var player1, player2;
-var cursors;
-var keyA, keyS, keyD, keyW;
-var attackTimer1, attackTimer2, attackCooldown;
-var jumpHeight, moveSpeed;
-var spawnItemTimer;
-var spawnItemInterval;
-var isFirstSpawn;
-class GameScene extends Phaser.Scene 
-{
-    constructor() 
-    {
-        super({key: 'GameScene'});
+// Declaración de variables globales
+var platforms; // Plataformas estáticas del juego
+var sword; // Grupo de objetos (espadas) coleccionables
+var player1, player2; // Jugadores 1 y 2
+var cursors; // Controles del teclado para el jugador 2
+var keyA, keyS, keyD, keyW; // Controles del teclado para el jugador 1
+var attackTimer1, attackTimer2, attackCooldown, attackRange; // Variables para manejar ataques
+var isKnockedBack1, isKnockedBack2; // Indicadores de retroceso para los jugadores
+var percent1, percent2; // Porcentajes de daño para cada jugador
+var jumpHeight, moveSpeed; // Configuraciones de movimiento
+var spawnItemTimer; // Tiempo inicial para generar ítems
+var spawnItemInterval; // Intervalo para generar ítems después del inicial
+var isFirstSpawn; // Indicador para saber si es la primera vez que se genera un ítem
+
+// Clase principal del juego
+class GameScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'GameScene' }); // Asigna una clave para identificar la escena
     }
 
-    preload() 
-    {
-        this.load.image('fondo', 'assets/fondo.png');
-        this.load.image('escenario', 'assets/escenario.png')
-        this.load.image('plataforma', 'assets/plataforma.png');
-        this.load.image('espada', 'assets/swordItem.png');
+    // Método para cargar los recursos del juego
+    preload() {
+        this.load.image('fondo', 'assets/fondo.png'); // Fondo del escenario
+        this.load.image('escenario', 'assets/escenario.png'); // Escenario principal
+        this.load.image('plataforma', 'assets/plataforma.png'); // Plataformas
+        this.load.image('item', 'assets/item.png'); // Ítem coleccionable
 
-
+        // Animaciones para el jugador 1
         this.load.spritesheet('caballero1_run', 'assets/p1_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero1_idle', 'assets/p1_caballero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero1_attack', 'assets/p1_caballero/attack.png', { frameWidth: 192, frameHeight: 128 });
 
+        // Animaciones para el jugador 2
         this.load.spritesheet('caballero2_run', 'assets/p2_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero2_idle', 'assets/p2_caballero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero2_attack', 'assets/p2_caballero/attack.png', { frameWidth: 192, frameHeight: 128 });
     }
-    
-    create() 
-    {
-        attackTimer1 = attackTimer2 = 0;
-        attackCooldown = 1;
 
-        jumpHeight = 600;
-        moveSpeed = 250;
-        spawnItemTimer=5000;
-        spawnItemInterval = 20000;
-        isFirstSpawn = true;
+    // Método para inicializar los elementos de la escena
+    create() {
+        // Inicialización de variables
+        attackTimer1 = attackTimer2 = 0; // Temporizadores de ataque
+        attackCooldown = 1; // Enfriamiento entre ataques (en segundos)
+        attackRange = 80; // Rango de ataque
+        isKnockedBack1 = isKnockedBack2 = false; // Estado inicial sin retroceso
+        percent1 = percent2 = 1; // Daño inicial
+        jumpHeight = 600; // Altura del salto
+        moveSpeed = 250; // Velocidad de movimiento
+        spawnItemTimer = 5000; // Tiempo inicial para generar ítems
+        spawnItemInterval = 20000; // Intervalo entre generación de ítems
+        isFirstSpawn = true; // Primera generación de ítems
 
+        // Configuración de controles del jugador 1
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
 
+        // Agrega el fondo del escenario
         this.add.image(640, 360, 'fondo');
 
+        // Creación de grupos de plataformas y espadas
         platforms = this.physics.add.staticGroup();
+        sword = this.physics.add.group();
 
-        espada = this.physics.add.group();
-        this.physics.add.collider(espada, platforms);
-        
-        platforms.create(640, 500, 'escenario');
-        platforms.create(640, 250, 'plataforma');
-        platforms.create(440, 350, 'plataforma');
-        platforms.create(840, 350, 'plataforma');
+        // Colisión entre las espadas y las plataformas
+        this.physics.add.collider(sword, platforms);
 
+        // Creación del escenario y las plataformas
+        platforms.create(640, 500, 'escenario'); // Escenario principal
+        platforms.create(640, 250, 'plataforma'); // Plataforma superior central
+        platforms.create(440, 350, 'plataforma'); // Plataforma izquierda
+        platforms.create(840, 350, 'plataforma'); // Plataforma derecha
+
+        // Configuración del jugador 1
         player1 = this.physics.add.sprite(440, 300, 'caballero1_idle');
-        player1.setBodySize(32, 64);
-        this.physics.add.collider(player1, platforms);
+        player1.setBodySize(32, 64); // Tamaño del cuerpo físico
+        this.physics.add.collider(player1, platforms); // Colisión con plataformas
 
+        // Configuración del jugador 2
         player2 = this.physics.add.sprite(840, 300, 'caballero2_idle');
-        player2.setBodySize(32, 64);
-        player2.flipX = true;
-        this.physics.add.collider(player2, platforms);
+        player2.setBodySize(32, 64); // Tamaño del cuerpo físico
+        player2.flipX = true; // Invierte la dirección de la imagen
+        this.physics.add.collider(player2, platforms); // Colisión con plataformas
 
-    //COLLIDER PARA COGER ITEMS
-        this.physics.add.overlap(player1, espada, this.collectItem1, null, this);
-        this.physics.add.overlap(player2, espada, this.collectItem2, null, this);
+        // Detección de superposición con ítems (espadas)
+        this.physics.add.overlap(player1, sword, this.collectItem1, null, this);
+        this.physics.add.overlap(player2, sword, this.collectItem2, null, this);
 
-        this.anims.create
-        ({
+        // Creación de animaciones para ambos jugadores
+        this.createAnimations();
+
+        // Eventos de ataque en animaciones
+        player1.on('animationupdate', (animation, frame) => {
+            if (animation.key === 'caballero1_attack' && frame.index === 4) {
+                this.attack(1); // Ejecuta ataque del jugador 1
+            }
+        });
+
+        player2.on('animationupdate', (animation, frame) => {
+            if (animation.key === 'caballero2_attack' && frame.index === 4) {
+                this.attack(2); // Ejecuta ataque del jugador 2
+            }
+        });
+
+        // Temporizador para generación de ítems
+        this.time.addEvent({
+            delay: spawnItemTimer,
+            callback: this.spawnItem,
+            callbackScope: this,
+            loop: false, // Sólo una vez
+        });
+
+        this.time.addEvent({
+            delay: spawnItemInterval,
+            callback: this.spawnItem,
+            callbackScope: this,
+            loop: true, // Repetición continua
+        });
+
+        // Configuración de controles del jugador 2
+        cursors = this.input.keyboard.createCursorKeys();
+    }
+
+    // Método para crear animaciones
+    createAnimations() {
+        // Animaciones del jugador 1
+        this.anims.create({
             key: 'caballero1_run',
             frames: this.anims.generateFrameNumbers('caballero1_run', { start: 0, end: 6 }),
             frameRate: 12,
-            repeat: -1
+            repeat: -1, // Repetición infinita
         });
 
-        this.anims.create
-        ({
+        this.anims.create({
             key: 'caballero1_attack',
             frames: this.anims.generateFrameNumbers('caballero1_attack', { start: 0, end: 5 }),
             frameRate: 12,
         });
 
-        this.anims.create
-        ({
+        this.anims.create({
             key: 'caballero1_idle',
             frames: this.anims.generateFrameNumbers('caballero1_idle', { start: 0, end: 10 }),
             frameRate: 6,
-            repeat: -1
+            repeat: -1,
         });
 
-        this.anims.create
-        ({
+        // Animaciones del jugador 2
+        this.anims.create({
             key: 'caballero2_run',
             frames: this.anims.generateFrameNumbers('caballero2_run', { start: 0, end: 7 }),
             frameRate: 12,
-            repeat: -1
+            repeat: -1,
         });
 
-        this.anims.create
-        ({
+        this.anims.create({
             key: 'caballero2_attack',
             frames: this.anims.generateFrameNumbers('caballero2_attack', { start: 0, end: 5 }),
             frameRate: 12,
         });
 
-        this.anims.create
-        ({
+        this.anims.create({
             key: 'caballero2_idle',
             frames: this.anims.generateFrameNumbers('caballero2_idle', { start: 0, end: 14 }),
             frameRate: 12,
-            repeat: -1
+            repeat: -1,
         });
-
-        player1.on('animationcomplete', (animation) => 
-        {
-            if (animation.key === 'caballero1_attack') 
-            {
-                this.attack(1)
-            }
-        });
-    
-        player2.on('animationcomplete', (animation) => 
-        {
-            if (animation.key === 'caballero2_attack') 
-            {
-                this.attack(2)
-            }
-        });
-
-        //Si es el primer spawn, tarda solo 5s. Si no es el primer spawn, tarda 20s. 
-            this.time.addEvent({    
-                delay: spawnItemTimer, 
-                callback: this.spawnItems, 
-                callbackScope: this,
-                loop: false,
-                
-            });
-            
-
-            this.time.addEvent({
-                delay: spawnItemInterval, 
-                callback: this.spawnItems,
-                callbackScope: this,
-                loop: true, 
-            });
-            
-        cursors = this.input.keyboard.createCursorKeys();
     }
 
-    update(time, delta) 
-    {
-        if (cursors.left.isDown)
-        {
-            player1.setVelocityX(-moveSpeed);
-
-            if(attackTimer1 <= attackCooldown - 0.5) 
-            {
+    // Se ejecuta en cada frame del juego para actualizar los estados y comportamientos de los jugadores
+    update(time, delta) {
+        // ** Control del Jugador 1 **
+        if (cursors.left.isDown && !isKnockedBack1) {
+            // Movimiento hacia la izquierda
+            player1.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
+    
+            // Reproduce la animación de correr si no está atacando
+            if (attackTimer1 <= attackCooldown - 0.5) {
                 player1.anims.play('caballero1_run', true);
-            } 
+            }
+    
+            // Invierte el sprite para mirar a la izquierda
             player1.flipX = true;
-        }
-        else if (cursors.right.isDown)
-        {
-            player1.setVelocityX(moveSpeed);
-
-            if(attackTimer1 <= attackCooldown - 0.5) 
-            {
+    
+        } else if (cursors.right.isDown && !isKnockedBack1) {
+            // Movimiento hacia la derecha
+            player1.setVelocityX(moveSpeed); // Velocidad positiva para ir a la derecha
+    
+            // Reproduce la animación de correr si no está atacando
+            if (attackTimer1 <= attackCooldown - 0.5) {
                 player1.anims.play('caballero1_run', true);
-            } 
+            }
+    
+            // Orienta el sprite hacia la derecha
             player1.flipX = false;
-        }
-        else
-        {
+    
+        } else if (!isKnockedBack1) {
+            // Si no se mueve y no está retrocediendo, se detiene
             player1.setVelocityX(0);
-
-            if(attackTimer1 <= attackCooldown - 0.5) 
-            {
+    
+            // Reproduce la animación de estar quieto
+            if (attackTimer1 <= attackCooldown - 0.5) {
                 player1.anims.play('caballero1_idle', true);
-            }   
+            }
         }
-
-        if (cursors.up.isDown && player1.body.touching.down)
-        {
-            player1.setVelocityY(-jumpHeight);
+    
+        // Salto del Jugador 1
+        if (cursors.up.isDown && player1.body.touching.down && !isKnockedBack1) {
+            player1.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
-
-        if (attackTimer1 > 0)
-        {
-            attackTimer1 -= delta / 1000;
+    
+        // Reducción del temporizador de ataque para el Jugador 1
+        if (attackTimer1 > 0) {
+            attackTimer1 -= delta / 1000; // Disminuye según el tiempo transcurrido
         }
-
-        if (cursors.down.isDown)
-        {
-            if (attackTimer1 <= 0)
-            {
+    
+        // Ataque del Jugador 1
+        if (cursors.down.isDown && !isKnockedBack1) {
+            if (attackTimer1 <= 0) {
+                // Reproduce la animación de ataque y reinicia el temporizador
                 player1.anims.play('caballero1_attack');
                 attackTimer1 = attackCooldown;
             }
         }
-
-        if (keyA.isDown)
-        {
-            player2.setVelocityX(-moveSpeed);
     
-            player2.anims.play('caballero2_run', true);
+        // ** Control del Jugador 2 **
+        if (keyA.isDown && !isKnockedBack2) {
+            // Movimiento hacia la izquierda
+            player2.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
+    
+            // Reproduce la animación de correr si no está atacando
+            if (attackTimer2 <= attackCooldown - 0.5) {
+                player2.anims.play('caballero2_run', true);
+            }
+    
+            // Invierte el sprite para mirar a la izquierda
             player2.flipX = true;
-        }
-        else if (keyD.isDown)
-        {
-            player2.setVelocityX(moveSpeed);
     
-            player2.anims.play('caballero2_run', true);
+        } else if (keyD.isDown && !isKnockedBack2) {
+            // Movimiento hacia la derecha
+            player2.setVelocityX(moveSpeed); // Velocidad positiva para ir a la derecha
+    
+            // Reproduce la animación de correr si no está atacando
+            if (attackTimer2 <= attackCooldown - 0.5) {
+                player2.anims.play('caballero2_run', true);
+            }
+    
+            // Orienta el sprite hacia la derecha
             player2.flipX = false;
-        }
-        else
-        {
+    
+        } else if (!isKnockedBack2) {
+            // Si no se mueve y no está retrocediendo, se detiene
             player2.setVelocityX(0);
-
-            if(attackTimer2 <= attackCooldown - 0.5) 
-            {
+    
+            // Reproduce la animación de estar quieto
+            if (attackTimer2 <= attackCooldown - 0.5) {
                 player2.anims.play('caballero2_idle', true);
             }
         }
     
-        if (keyW.isDown && player2.body.touching.down)
-        {
-            player2.setVelocityY(-jumpHeight);
-        }       
-
-        if (attackTimer2 > 0)
-        {
-            attackTimer2 -= delta / 1000;
+        // Salto del Jugador 2
+        if (keyW.isDown && player2.body.touching.down && !isKnockedBack2) {
+            player2.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
-
-        if (keyS.isDown)
-        {
-            if (attackTimer2 <= 0)
-            {
+    
+        // Reducción del temporizador de ataque para el Jugador 2
+        if (attackTimer2 > 0) {
+            attackTimer2 -= delta / 1000; // Disminuye según el tiempo transcurrido
+        }
+    
+        // Ataque del Jugador 2
+        if (keyS.isDown && !isKnockedBack2) {
+            if (attackTimer2 <= 0) {
+                // Reproduce la animación de ataque y reinicia el temporizador
                 player2.anims.play('caballero2_attack');
                 attackTimer2 = attackCooldown;
             }
         }
+    }    
+    
+    // Ejecuta un ataque entre los jugadores, aplicando retroceso y actualizando porcentajes de daño
+    attack(player) {
+        // Calcula la distancia entre los dos jugadores
+        var distance = Phaser.Math.Distance.Between(player1.x, player1.y, player2.x, player2.y);
+        var knockbackForce = 750;          // Fuerza de retroceso horizontal
+        var knockbackDuration = 100;      // Duración del estado de retroceso (en ms)
+        var verticalKnockback = 300;      // Fuerza de retroceso vertical
+    
+        // Lógica de ataque para el Jugador 1
+        if (player == 1) {
+            // Ataque hacia la derecha
+            if (!player1.flipX && distance < attackRange && player1.x - 8 < player2.x) {
+                player2.setVelocityX(knockbackForce * percent2); // Aplica fuerza hacia la derecha
+                player2.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
+                isKnockedBack2 = true;                          // Marca al jugador 2 como en retroceso
+                percent2 += Math.random() * (0.1 - 0.01) + 0.01; // Incrementa el daño del jugador 2
+                this.time.addEvent({
+                    delay: knockbackDuration,
+                    callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
+                });
+            }
+            // Ataque hacia la izquierda
+            else if (player1.flipX && distance < attackRange && player1.x + 8 > player2.x) {
+                player2.setVelocityX(-knockbackForce * percent2); // Aplica fuerza hacia la izquierda
+                player2.setVelocityY(-verticalKnockback);         // Aplica fuerza hacia arriba
+                isKnockedBack2 = true;                           // Marca al jugador 2 como en retroceso
+                percent2 += Math.random() * (0.1 - 0.01) + 0.01; // Incrementa el daño del jugador 2
+                this.time.addEvent({
+                    delay: knockbackDuration,
+                    callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
+                });
+            }
+        }
+    
+        // Lógica de ataque para el Jugador 2
+        else if (player == 2) {
+            // Ataque hacia la derecha
+            if (!player2.flipX && distance < attackRange && player2.x - 8 < player1.x) {
+                player1.setVelocityX(knockbackForce * percent1); // Aplica fuerza hacia la derecha
+                player1.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
+                isKnockedBack1 = true;                          // Marca al jugador 1 como en retroceso
+                percent1 += Math.random() * (0.1 - 0.01) + 0.01; // Incrementa el daño del jugador 1
+                this.time.addEvent({
+                    delay: knockbackDuration,
+                    callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
+                });
+            }
+            // Ataque hacia la izquierda
+            else if (player2.flipX && distance < attackRange && player2.x + 8 > player1.x) {
+                player1.setVelocityX(-knockbackForce * percent1); // Aplica fuerza hacia la izquierda
+                player1.setVelocityY(-verticalKnockback);         // Aplica fuerza hacia arriba
+                isKnockedBack1 = true;                           // Marca al jugador 1 como en retroceso
+                percent1 += Math.random() * (0.1 - 0.01) + 0.01; // Incrementa el daño del jugador 1
+                this.time.addEvent({
+                    delay: knockbackDuration,
+                    callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
+                });
+            }
+        }
     }
 
-    attack(playerAttacking)
-    {
-        if (playerAttacking == 1)
-        {
-            console.log("Player 1 attacked");
-        }
-        else
-        {
-            console.log("Player 2 attacked");
-        }
+    // Genera un objeto (item) en una posición aleatoria
+    spawnItem() {
+        // Genera coordenadas aleatorias para la posición del item dentro del rango especificado
+        var x = Math.floor(Math.random() * (930 - 350 + 1)) + 350; // Rango horizontal: 350 a 930
+        var y = Math.floor(Math.random() * (400 - 150 + 1)) + 150; // Rango vertical: 150 a 400
+    
+        // Crea el item en las coordenadas generadas
+        var item = sword.create(x, y, 'item');
+    
+        // Programa la destrucción del item después de 10 segundos si no se recoge
+        setTimeout(() => {
+            if (item) {
+                item.destroy();
+            }
+        }, 10000);
     }
-
-    spawnItems()
-    {
-        for (let i = 0; i < 2; i++) // Crean dos objetos
-        {
-            const x = Phaser.Math.Between(400, 800); 
-            const y = Phaser.Math.Between(50, 200); 
-
-            espada.create(x, y, 'espada'); 
-            
-        }
-        
-        console.log("Items spawned");
-        
-        
+    
+    // Recoge el item cuando es tocado por el jugador 1
+    collectItem1(player, sword) {
+        sword.destroy(); // Destruye el item al ser recogido por el jugador 1
     }
-    collectItem1(player, espada)
-    {
-        espada.destroy(); 
-        
-        console.log("Item picked");  
-    }
-    collectItem2(player, espada)
-    {
-        espada.destroy(); 
-        
-        console.log("Item picked");
+    
+    // Recoge el item cuando es tocado por el jugador 2
+    collectItem2(player, sword) {
+        sword.destroy(); // Destruye el item al ser recogido por el jugador 2
     }
 }

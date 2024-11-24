@@ -1,31 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Carga la biblioteca Phaser -->
     <script src="js/phaser.js"></script> 
+
+    <!-- Carga el archivo que contiene el código para el menú principal -->
     <script src="js/main_menu.js"></script>
+
+    <!-- Carga el archivo que contiene el código para la escena principal del juego -->
     <script src="js/game.js"></script>
 </head>
 <body>
     <script>
-
+        // Configuración principal del juego
         const config = {
-            type: Phaser.AUTO,
-            width: 1280,
-            height: 720,
+            type: Phaser.AUTO, // Selecciona automáticamente el renderizador: WebGL o Canvas
+            width: 1280,      // Ancho de la ventana del juego
+            height: 720,      // Alto de la ventana del juego
+
             physics: {
-                default: 'arcade',
+                default: 'arcade', // Usa el motor físico Arcade
                 arcade: {
-                    debug: false,
-                    gravity: {y: 1500}
+                    debug: false,    // Desactiva el modo de depuración del motor físico
+                    gravity: { y: 1500 } // Establece la gravedad vertical
                 }
             },
 
-            scene: [MainMenuScene, GameScene]
+            scene: [MainMenuScene, GameScene] // Escenas del juego: Menú principal y juego
         };
 
+        // Crea una nueva instancia del juego con la configuración especificada
         const game = new Phaser.Game(config);
+
+        // Inicia directamente la escena del menú
         game.scene.start('GameScene');
-        
     </script>
 </body>
 </html>
