@@ -12,9 +12,7 @@ var jumpHeight, moveSpeed; // Configuraciones de movimiento
 var spawnItemTimer; // Tiempo inicial para generar ítems
 var spawnItemInterval; // Intervalo para generar ítems después del inicial
 var isFirstSpawn; // Indicador para saber si es la primera vez que se genera un ítem
-var percentage1, percentage2;//Valores a mostrar en pantalla de la vida de cada jugador
-var formCheck1; //Indica qué forma tiene el jugador1: 0 base, 1 archer
-var formCheck2;
+var formCheck1, formCheck2; // Indica qué forma tiene el jugador1: 0 base, 1 archer
 
 // Clase principal del juego
 class GameScene extends Phaser.Scene {
@@ -27,8 +25,11 @@ class GameScene extends Phaser.Scene {
         this.load.image('fondo', 'assets/fondo.png'); // Fondo del escenario
         this.load.image('escenario', 'assets/escenario.png'); // Escenario principal
         this.load.image('plataforma', 'assets/plataforma.png'); // Plataformas
-        this.load.image('item', 'assets/item.png'); // Ítem coleccionable
         this.load.image('bow', 'assets/bow.png'); // Ítem coleccionable
+
+        // Interfaz
+        this.load.image('interfaz1', 'assets/interfaz_p1.png');
+        this.load.image('interfaz2', 'assets/interfaz_p2.png');
 
         // Animaciones para el jugador 1
         this.load.spritesheet('caballero1_run', 'assets/p1_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
@@ -39,9 +40,8 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('caballero2_run', 'assets/p2_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero2_idle', 'assets/p2_caballero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero2_attack', 'assets/p2_caballero/attack.png', { frameWidth: 192, frameHeight: 128 });
-
-        this.load.spritesheet('archer_run', 'assets/arquero/run.png', { frameWidth: 192, frameHeight: 128 });
-        this.load.spritesheet('archer_idle', 'assets/arquero/idle.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('arquero2_run', 'assets/p2_arquero/run.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('arquero2_idle', 'assets/p2_arquero/idle.png', { frameWidth: 192, frameHeight: 128 });
 
     }
 
@@ -52,16 +52,14 @@ class GameScene extends Phaser.Scene {
         attackCooldown = 1; // Enfriamiento entre ataques (en segundos)
         attackRange = 96; // Rango de ataque
         isKnockedBack1 = isKnockedBack2 = false; // Estado inicial sin retroceso
-        percent1 = percent2 = 1; // Daño inicial
-        percentage1=percent1-1;//Valor a mostrar al jugador  NO AFECTA A LA LÓGICA INTERNA
-        percentage2=percent2-1;
+        percent1 = percent2 = 1; // Multiplicador de daño inicial
         jumpHeight = 600; // Altura del salto
         moveSpeed = 250; // Velocidad de movimiento
         spawnItemTimer = 5000; // Tiempo inicial para generar ítems
         spawnItemInterval = 20000; // Intervalo entre generación de ítems
         isFirstSpawn = true; // Primera generación de ítems
-        formCheck1= 0; //jugadores empiezan en su forma base
-        formCheck2= 0;
+        formCheck1 = 0; // Jugadores empiezan en su forma base
+        formCheck2 = 0;
         
         // Configuración de controles del jugador 1
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -74,11 +72,9 @@ class GameScene extends Phaser.Scene {
 
         // Creación de grupos de plataformas y espadas
         platforms = this.physics.add.staticGroup();
-        sword = this.physics.add.group();
         bow = this.physics.add.group();
 
-        // Colisión entre las espadas y las plataformas
-        this.physics.add.collider(sword, platforms);
+        // Colisión entre los objetos y las plataformas
         this.physics.add.collider(bow, platforms);
 
         // Creación del escenario y las plataformas
@@ -86,6 +82,10 @@ class GameScene extends Phaser.Scene {
         platforms.create(640, 250, 'plataforma'); // Plataforma superior central
         platforms.create(440, 350, 'plataforma'); // Plataforma izquierda
         platforms.create(840, 350, 'plataforma'); // Plataforma derecha
+
+        // Creación de interfaz
+        this.add.image(540, 640, 'interfaz1');
+        this.add.image(740, 640, 'interfaz2');
 
         // Configuración del jugador 1
         player1 = this.physics.add.sprite(440, 300, 'caballero1_idle');
@@ -135,6 +135,21 @@ class GameScene extends Phaser.Scene {
 
         // Configuración de controles del jugador 2
         cursors = this.input.keyboard.createCursorKeys();
+
+        //Contador en pantalla para mostrar el porcentaje de cada jugador
+        document.fonts.ready.then(() => {
+            this.screenPercentage1 = this.add.text(550, 615, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
+
+            this.screenPercentage2 = this.add.text(750, 615, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
+        });
     }
 
     // Método para crear animaciones
@@ -182,27 +197,17 @@ class GameScene extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'archer_run',
-            frames: this.anims.generateFrameNumbers('archer_run', { start: 0, end: 7 }),
+            key: 'arquero2_run',
+            frames: this.anims.generateFrameNumbers('arquero2_run', { start: 0, end: 7 }),
             frameRate: 12,
             repeat: -1,
         });
 
         this.anims.create({
-            key: 'archer_idle',
-            frames: this.anims.generateFrameNumbers('archer_idle', { start: 0, end: 7 }),
+            key: 'arquero2_idle',
+            frames: this.anims.generateFrameNumbers('arquero2_idle', { start: 0, end: 7 }),
             frameRate: 12,
             repeat: -1,
-        });
-
-        //Contador en pantalla para mostrar el porcentaje de cada jugador
-        this.screenPercentage1 = this.add.text(16, 16, 'Player 1 ' + percentage1 + '%', {
-            fontSize: '32px',
-            fill: '#fff'
-        });
-        this.screenPercentage2 = this.add.text(16, 160, 'Player 2 ' + percentage2 + '%', {
-            fontSize: '32px',
-            fill: '#fff'
         });
     }
 
@@ -212,22 +217,17 @@ class GameScene extends Phaser.Scene {
         if (cursors.left.isDown && !isKnockedBack1) {
             // Movimiento hacia la izquierda
             player1.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
-            
            
-                // Reproduce la animación de correr si no está atacando
-                if (attackTimer1 <= attackCooldown - 0.5) {
-                    if (formCheck1==0){
-                        player1.anims.play('caballero1_run', true);
-                    }
-                    else if (formCheck1==1){
-                        player1.anims.play('archer_run', true); 
-                    }
+            // Reproduce la animación de correr si no está atacando
+            if (attackTimer1 <= attackCooldown - 0.5) {
+                if (formCheck1 == 0){
+                    player1.anims.play('caballero1_run', true);
                 }
-            
+                else if (formCheck1 == 1){
+                    player1.anims.play('arquero2_run', true); 
+                }
+            }
 
-            
-            
-    
             // Invierte el sprite para mirar a la izquierda
             player1.flipX = true;
     
@@ -237,11 +237,11 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de correr si no está atacando
             if (attackTimer1 <= attackCooldown - 0.5) {
-                if (formCheck1==0){
+                if (formCheck1 == 0){
                     player1.anims.play('caballero1_run', true);
                 }
-                else if (formCheck1==1){
-                    player1.anims.play('archer_run', true); 
+                else if (formCheck1 == 1){
+                    player1.anims.play('arquero2_run', true); 
                 }
             }
     
@@ -254,11 +254,11 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de estar quieto
             if (attackTimer1 <= attackCooldown - 0.5) {
-                if (formCheck1==0){
+                if (formCheck1 == 0){
                     player1.anims.play('caballero1_idle', true);
                 }
-                else if (formCheck1==1){
-                    player1.anims.play('archer_idle', true); 
+                else if (formCheck1 == 1){
+                    player1.anims.play('arquero2_idle', true); 
                 }
             }
         }
@@ -289,11 +289,11 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de correr si no está atacando
             if (attackTimer2 <= attackCooldown - 0.5) {
-                if (formCheck2==0){
+                if (formCheck2 == 0){
                     player2.anims.play('caballero2_run', true);
                 }
-                else if (formCheck2==1){
-                    player2.anims.play('archer_run', true); 
+                else if (formCheck2 == 1){
+                    player2.anims.play('arquero2_run', true); 
                 }
             }
     
@@ -306,11 +306,11 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de correr si no está atacando
             if (attackTimer2 <= attackCooldown - 0.5) {
-                if (formCheck2==0){
+                if (formCheck2 == 0){
                     player2.anims.play('caballero2_run', true);
                 }
-                else if (formCheck2==1){
-                    player2.anims.play('archer_run', true); 
+                else if (formCheck2 == 1){
+                    player2.anims.play('arquero2_run', true); 
                 }
             }
     
@@ -323,11 +323,11 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de estar quieto
             if (attackTimer2 <= attackCooldown - 0.5) {
-                if (formCheck2==0){
+                if (formCheck2 == 0){
                     player2.anims.play('caballero2_idle', true);
                 }
-                else if (formCheck2==1){
-                    player2.anims.play('archer_idle', true); 
+                else if (formCheck2 == 1){
+                    player2.anims.play('arquero2_idle', true); 
                 }
             }
         }
@@ -368,6 +368,7 @@ class GameScene extends Phaser.Scene {
                 player2.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
                 isKnockedBack2 = true;                          // Marca al jugador 2 como en retroceso
                 percent2 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
+                this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
                 this.time.addEvent({
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
@@ -380,6 +381,7 @@ class GameScene extends Phaser.Scene {
                 player2.setVelocityY(-verticalKnockback);         // Aplica fuerza hacia arriba
                 isKnockedBack2 = true;                           // Marca al jugador 2 como en retroceso
                 percent2 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
+                this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
                 this.time.addEvent({
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
@@ -396,6 +398,7 @@ class GameScene extends Phaser.Scene {
                 player1.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
                 isKnockedBack1 = true;                          // Marca al jugador 1 como en retroceso
                 percent1 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 1
+                this.screenPercentage1.setText(Math.round((percent1 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
                 this.time.addEvent({
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
@@ -408,6 +411,7 @@ class GameScene extends Phaser.Scene {
                 player1.setVelocityY(-verticalKnockback);         // Aplica fuerza hacia arriba
                 isKnockedBack1 = true;                           // Marca al jugador 1 como en retroceso
                 percent1 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 1
+                this.screenPercentage1.setText(Math.round((percent1 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
                 this.time.addEvent({
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
@@ -415,12 +419,6 @@ class GameScene extends Phaser.Scene {
                 console.log(percent1);
             }
         }
-
-        //Actualiza el porcentaje de cada jugador en pantalla
-        percentage1= Math.round((percent1-1)*100);
-        percentage2= Math.round((percent2-1)*100);
-        this.screenPercentage1.setText('Player 1 ' + percentage1 + '%'); 
-        this.screenPercentage2.setText('Player 2 ' + percentage2 + '%'); 
     }
 
     // Genera un objeto (item) en una posición aleatoria
@@ -443,13 +441,13 @@ class GameScene extends Phaser.Scene {
     // Recoge el item cuando es tocado por el jugador 1
     collectItem1(player, bow) {
         bow.destroy(); // Destruye el item al ser recogido por el jugador 1
-        formCheck1= 1;  //transforma al jugador 2
+        formCheck1 = 1;  // Transforma al jugador 2
 
     }
     
     // Recoge el item cuando es tocado por el jugador 2
     collectItem2(player, bow) {
         bow.destroy(); // Destruye el item al ser recogido por el jugador 2
-        formCheck2= 1; //transforma al jugador 2
+        formCheck2 = 1; // Transforma al jugador 2
     }
 }
