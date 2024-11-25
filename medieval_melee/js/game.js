@@ -58,8 +58,7 @@ class GameScene extends Phaser.Scene {
         spawnItemTimer = 5000; // Tiempo inicial para generar ítems
         spawnItemInterval = 20000; // Intervalo entre generación de ítems
         isFirstSpawn = true; // Primera generación de ítems
-        formCheck1 = 0; // Jugadores empiezan en su forma base
-        formCheck2 = 0;
+        formCheck1 = formCheck2 = 0; // Jugadores empiezan en su forma base
         
         // Configuración de controles del jugador 1
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
