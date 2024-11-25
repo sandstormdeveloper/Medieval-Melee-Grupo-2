@@ -12,7 +12,7 @@ var jumpHeight, moveSpeed; // Configuraciones de movimiento
 var spawnItemTimer; // Tiempo inicial para generar ítems
 var spawnItemInterval; // Intervalo para generar ítems después del inicial
 var isFirstSpawn; // Indicador para saber si es la primera vez que se genera un ítem
-var formCheck1, formCheck2; // Indica qué forma tiene el jugador1: 0 base, 1 archer
+var formCheck1, formCheck2, formCooldown, formTimer1, formTimer2; // Indica qué forma tiene el jugador1: 0 base, 1 archer
 
 // Clase principal del juego
 class GameScene extends Phaser.Scene {
@@ -59,6 +59,8 @@ class GameScene extends Phaser.Scene {
         spawnItemInterval = 20000; // Intervalo entre generación de ítems
         isFirstSpawn = true; // Primera generación de ítems
         formCheck1 = formCheck2 = 0; // Jugadores empiezan en su forma base
+        formTimer1 = formTimer2 = 0 // Tiempo restante de la transformación
+        formCooldown = 10 // Tiempo que dura una transformación
         
         // Configuración de controles del jugador 1
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -359,6 +361,24 @@ class GameScene extends Phaser.Scene {
         if (attackTimer2 > 0) {
             attackTimer2 -= delta / 1000; // Disminuye según el tiempo transcurrido
         }
+
+        // Temporizador de transformación para el Jugador 1
+        if (formTimer1 > 0) {
+            formTimer1 -= delta / 1000; // Disminuye según el tiempo transcurrido
+        }
+
+        if(formTimer1 <= 0) {
+            formCheck1 = 0;
+        }
+        
+        // Temporizador de transformación para el Jugador 2
+        if (formTimer2 > 0) {
+            formTimer2 -= delta / 1000; // Disminuye según el tiempo transcurrido
+        }
+
+        if(formTimer2 <= 0) {
+            formCheck2 = 0;
+        }
     }
 
     // Si un jugador se sale de la pantalla, gana el otro
@@ -397,7 +417,6 @@ class GameScene extends Phaser.Scene {
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
                 });
-                console.log(percent2);
             }
             // Ataque hacia la izquierda
             else if (player1.flipX && distance < attackRange && player1.x + 8 > player2.x) {
@@ -410,7 +429,6 @@ class GameScene extends Phaser.Scene {
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
                 });
-                console.log(percent2);
             }
         }
     
@@ -427,7 +445,6 @@ class GameScene extends Phaser.Scene {
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
                 });
-                console.log(percent1);
             }
             // Ataque hacia la izquierda
             else if (player2.flipX && distance < attackRange && player2.x + 8 > player1.x) {
@@ -440,7 +457,6 @@ class GameScene extends Phaser.Scene {
                     delay: knockbackDuration,
                     callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
                 });
-                console.log(percent1);
             }
         }
     }
@@ -466,12 +482,13 @@ class GameScene extends Phaser.Scene {
     collectItem1(player, bow) {
         bow.destroy(); // Destruye el item al ser recogido por el jugador 1
         formCheck1 = 1;  // Transforma al jugador 2
-
+        formTimer1 = formCooldown;
     }
     
     // Recoge el item cuando es tocado por el jugador 2
     collectItem2(player, bow) {
         bow.destroy(); // Destruye el item al ser recogido por el jugador 2
         formCheck2 = 1; // Transforma al jugador 2
+        formTimer2 = formCooldown;
     }
 }
