@@ -273,7 +273,7 @@ class GameScene extends Phaser.Scene {
     // Maneja el input de los dos jugadores
     inputs() {
         // ** Control del Jugador 1 **
-        if (cursors.left.isDown && !isKnockedBack1) {
+        if (keyA.isDown && !isKnockedBack1) {
             // Movimiento hacia la izquierda
             player1.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
            
@@ -290,7 +290,7 @@ class GameScene extends Phaser.Scene {
             // Invierte el sprite para mirar a la izquierda
             player1.flipX = true;
     
-        } else if (cursors.right.isDown && !isKnockedBack1) {
+        } else if (keyD.isDown && !isKnockedBack1) {
             // Movimiento hacia la derecha
             player1.setVelocityX(moveSpeed); // Velocidad positiva para ir a la derecha
     
@@ -323,12 +323,12 @@ class GameScene extends Phaser.Scene {
         }
     
         // Salto del Jugador 1
-        if (cursors.up.isDown && player1.body.touching.down && !isKnockedBack1) {
+        if (keyW.isDown && player1.body.touching.down && !isKnockedBack1) {
             player1.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
 
         // Ataque del Jugador 1
-        if (cursors.down.isDown && !isKnockedBack1) {
+        if (keyS.isDown && !isKnockedBack1) {
             if (attackTimer1 <= 0) {
                 // Reproduce la animación de ataque y reinicia el temporizador
                 if(formCheck1 == 0) {
@@ -342,7 +342,7 @@ class GameScene extends Phaser.Scene {
         }
     
         // ** Control del Jugador 2 **
-        if (keyA.isDown && !isKnockedBack2) {
+        if (cursors.left.isDown && !isKnockedBack2) {
             // Movimiento hacia la izquierda
             player2.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
     
@@ -359,7 +359,7 @@ class GameScene extends Phaser.Scene {
             // Invierte el sprite para mirar a la izquierda
             player2.flipX = true;
     
-        } else if (keyD.isDown && !isKnockedBack2) {
+        } else if (cursors.right.isDown && !isKnockedBack2) {
             // Movimiento hacia la derecha
             player2.setVelocityX(moveSpeed); // Velocidad positiva para ir a la derecha
     
@@ -392,12 +392,12 @@ class GameScene extends Phaser.Scene {
         }
     
         // Salto del Jugador 2
-        if (keyW.isDown && player2.body.touching.down && !isKnockedBack2) {
+        if (cursors.up.isDown && player2.body.touching.down && !isKnockedBack2) {
             player2.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
 
         // Ataque del Jugador 2
-        if (keyS.isDown && !isKnockedBack2) {
+        if (cursors.down.isDown && !isKnockedBack2) {
             if (attackTimer2 <= 0) {
                 // Reproduce la animación de ataque y reinicia el temporizador
                 if(formCheck2 == 0) {
