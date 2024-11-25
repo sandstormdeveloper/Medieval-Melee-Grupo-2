@@ -21,7 +21,7 @@ class CreditsScene extends Phaser.Scene {
         this.add.image(640, 360, 'creditos');  // Imagen de fondo de los créditos
 
         // Botón de "Salir"
-        var exit_button = this.add.image(96, 64, 'exit')  // Coloca el botón en las coordenadas (96, 64)
+        var exit_button = this.add.image(104, 64, 'exit')  // Coloca el botón en las coordenadas (96, 64)
             .setInteractive() // Hace el botón interactivo
             .on('pointerover', () => {
                 // Cambia a la textura de hover cuando el mouse pasa sobre el botón
