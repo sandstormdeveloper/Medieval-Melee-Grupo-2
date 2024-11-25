@@ -1,7 +1,7 @@
 // Declaración de variables globales
 var platforms; // Plataformas estáticas del juego
-var sword; // Grupo de objetos (espadas) coleccionables
-var bow;
+var bow; // Ítem
+var arrow1, arrow2; // Flechas
 var player1, player2; // Jugadores 1 y 2
 var cursors; // Controles del teclado para el jugador 2
 var keyA, keyS, keyD, keyW; // Controles del teclado para el jugador 1
@@ -26,6 +26,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('escenario', 'assets/escenario.png'); // Escenario principal
         this.load.image('plataforma', 'assets/plataforma.png'); // Plataformas
         this.load.image('bow', 'assets/bow.png'); // Ítem coleccionable
+        this.load.image('arrow', 'assets/arrow.png'); // Flecha
 
         // Interfaz
         this.load.image('interfaz1', 'assets/interfaz_p1.png');
@@ -80,9 +81,13 @@ class GameScene extends Phaser.Scene {
         // Creación de grupos de plataformas y espadas
         platforms = this.physics.add.staticGroup();
         bow = this.physics.add.group();
+        arrow1 = this.physics.add.group({allowGravity: false});
+        arrow2 = this.physics.add.group({allowGravity: false});
 
         // Colisión entre los objetos y las plataformas
         this.physics.add.collider(bow, platforms);
+        this.physics.add.collider(arrow1, platforms);
+        this.physics.add.collider(arrow2, platforms);
 
         // Creación del escenario y las plataformas
         platforms.create(640, 500, 'escenario'); // Escenario principal
@@ -108,6 +113,8 @@ class GameScene extends Phaser.Scene {
         // Detección de superposición con ítems (espadas)
         this.physics.add.overlap(player1, bow, this.collectItem1, null, this);
         this.physics.add.overlap(player2, bow, this.collectItem2, null, this);
+        this.physics.add.overlap(player1, arrow2, this.hit1, null, this);
+        this.physics.add.overlap(player2, arrow1, this.hit2, null, this);
 
         // Creación de animaciones para ambos jugadores
         this.createAnimations();
@@ -122,6 +129,18 @@ class GameScene extends Phaser.Scene {
         player2.on('animationupdate', (animation, frame) => {
             if (animation.key === 'caballero2_attack' && frame.index === 4) {
                 this.attack(2); // Ejecuta ataque del jugador 2
+            }
+        });
+
+        player1.on('animationupdate', (animation, frame) => {
+            if (animation.key === 'arquero1_attack' && frame.index === 6) {
+                this.shoot(1); // Ejecuta disparo del jugador 1
+            }
+        });
+
+        player2.on('animationupdate', (animation, frame) => {
+            if (animation.key === 'arquero2_attack' && frame.index === 6) {
+                this.shoot(2); // Ejecuta disparo del jugador 2
             }
         });
 
@@ -438,43 +457,86 @@ class GameScene extends Phaser.Scene {
         }
     }
 
+    // Ejecuta el disparo del arquero
     shoot(player) {
+        var velocity = 1000;
 
+        if (player == 1) {
+            console.log("Player 1 shot an arrow")
+            var projectile = arrow1.create(player1.x, player1.y - 15, 'arrow');
+            projectile.setGravityY(0);
+    
+            // Programa la destrucción de la flecha después de 5 segundos si no colisiona
+            setTimeout(() => {
+                if (projectile) {
+                    projectile.destroy();
+                }
+            }, 3000);
+
+            if(!player1.flipX) {
+                projectile.setVelocityX(velocity);
+            } else {
+                projectile.setVelocityX(-velocity);
+                projectile.flipX = true;
+            }
+        }
+        else {
+            console.log("Player 2 shot an arrow")
+            var projectile = arrow2.create(player2.x, player2.y - 15, 'arrow');
+            projectile.setGravityY(0);
+    
+            // Programa la destrucción de la flecha después de 5 segundos si no colisiona
+            setTimeout(() => {
+                if (projectile) {
+                    projectile.destroy();
+                }
+            }, 3000);
+
+            if(!player2.flipX) {
+                projectile.setVelocityX(velocity);
+            } else {
+                projectile.setVelocityX(-velocity);
+                projectile.flipX = true;
+            }
+        }
+    }
+
+    // Colisión entre el jugador 1 y una flecha
+    hit1(player1, arrow2) {
+        if(arrow2.flipX) {
+            this.knockback(1, -1);
+        } else {
+            this.knockback(1, 1);
+        }
+
+        arrow2.destroy();
+    }
+
+    // Colisión entre el jugador 2 y una flecha
+    hit2(player2, arrow1) {
+        if(arrow1.flipX) {
+            this.knockback(2, -1);
+        } else {
+            this.knockback(2, 1);
+        }
+
+        arrow1.destroy();
     }
     
     // Ejecuta un ataque entre los jugadores, aplicando retroceso y actualizando porcentajes de daño
     attack(player) {
         // Calcula la distancia entre los dos jugadores
         var distance = Phaser.Math.Distance.Between(player1.x, player1.y, player2.x, player2.y);
-        var knockbackForce = 750;          // Fuerza de retroceso horizontal
-        var knockbackDuration = 100;      // Duración del estado de retroceso (en ms)
-        var verticalKnockback = 300;      // Fuerza de retroceso vertical
     
         // Lógica de ataque para el Jugador 1
         if (player == 1) {
             // Ataque hacia la derecha
             if (!player1.flipX && distance < attackRange && player1.x - 8 < player2.x) {
-                player2.setVelocityX(knockbackForce * percent2); // Aplica fuerza hacia la derecha
-                player2.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
-                isKnockedBack2 = true;                          // Marca al jugador 2 como en retroceso
-                percent2 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
-                this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
-                this.time.addEvent({
-                    delay: knockbackDuration,
-                    callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
-                });
+                this.knockback(2, 1);
             }
             // Ataque hacia la izquierda
             else if (player1.flipX && distance < attackRange && player1.x + 8 > player2.x) {
-                player2.setVelocityX(-knockbackForce * percent2); // Aplica fuerza hacia la izquierda
-                player2.setVelocityY(-verticalKnockback);         // Aplica fuerza hacia arriba
-                isKnockedBack2 = true;                           // Marca al jugador 2 como en retroceso
-                percent2 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
-                this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
-                this.time.addEvent({
-                    delay: knockbackDuration,
-                    callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
-                });
+                this.knockback(2, -1);
             }
         }
     
@@ -482,28 +544,41 @@ class GameScene extends Phaser.Scene {
         else if (player == 2) {
             // Ataque hacia la derecha
             if (!player2.flipX && distance < attackRange && player2.x - 8 < player1.x) {
-                player1.setVelocityX(knockbackForce * percent1); // Aplica fuerza hacia la derecha
-                player1.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
-                isKnockedBack1 = true;                          // Marca al jugador 1 como en retroceso
-                percent1 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 1
-                this.screenPercentage1.setText(Math.round((percent1 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
-                this.time.addEvent({
-                    delay: knockbackDuration,
-                    callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
-                });
+                this.knockback(1, 1);
             }
             // Ataque hacia la izquierda
             else if (player2.flipX && distance < attackRange && player2.x + 8 > player1.x) {
-                player1.setVelocityX(-knockbackForce * percent1); // Aplica fuerza hacia la izquierda
-                player1.setVelocityY(-verticalKnockback);         // Aplica fuerza hacia arriba
-                isKnockedBack1 = true;                           // Marca al jugador 1 como en retroceso
-                percent1 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 1
-                this.screenPercentage1.setText(Math.round((percent1 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
-                this.time.addEvent({
-                    delay: knockbackDuration,
-                    callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
-                });
+                this.knockback(1, -1);
             }
+        }
+    }
+
+    knockback(player, direction) {
+        var knockbackForce = 750;          // Fuerza de retroceso horizontal
+        var knockbackDuration = 100;      // Duración del estado de retroceso (en ms)
+        var verticalKnockback = 300;      // Fuerza de retroceso vertical
+
+        if (player == 1) {
+            player1.setVelocityX(knockbackForce * direction * percent2); // Aplica fuerza hacia la derecha
+            player1.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
+            isKnockedBack1 = true;                          // Marca al jugador 2 como en retroceso
+            percent1 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
+            this.screenPercentage1.setText(Math.round((percent1- 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
+            this.time.addEvent({
+                delay: knockbackDuration,
+                callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
+            });
+        } 
+        else {
+            player2.setVelocityX(knockbackForce * direction * percent2); // Aplica fuerza hacia la derecha
+            player2.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
+            isKnockedBack2 = true;                          // Marca al jugador 2 como en retroceso
+            percent2 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
+            this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
+            this.time.addEvent({
+                delay: knockbackDuration,
+                callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
+            });
         }
     }
 
@@ -525,14 +600,14 @@ class GameScene extends Phaser.Scene {
     }
     
     // Recoge el item cuando es tocado por el jugador 1
-    collectItem1(player, bow) {
+    collectItem1(player1, bow) {
         bow.destroy(); // Destruye el item al ser recogido por el jugador 1
         formCheck1 = 1;  // Transforma al jugador 2
         formTimer1 = formCooldown;
     }
     
     // Recoge el item cuando es tocado por el jugador 2
-    collectItem2(player, bow) {
+    collectItem2(player1, bow) {
         bow.destroy(); // Destruye el item al ser recogido por el jugador 2
         formCheck2 = 1; // Transforma al jugador 2
         formTimer2 = formCooldown;
