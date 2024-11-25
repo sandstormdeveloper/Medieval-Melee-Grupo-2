@@ -1,6 +1,7 @@
 // Declaración de variables globales
 var platforms; // Plataformas estáticas del juego
 var sword; // Grupo de objetos (espadas) coleccionables
+var bow;
 var player1, player2; // Jugadores 1 y 2
 var cursors; // Controles del teclado para el jugador 2
 var keyA, keyS, keyD, keyW; // Controles del teclado para el jugador 1
@@ -12,7 +13,8 @@ var spawnItemTimer; // Tiempo inicial para generar ítems
 var spawnItemInterval; // Intervalo para generar ítems después del inicial
 var isFirstSpawn; // Indicador para saber si es la primera vez que se genera un ítem
 var percentage1, percentage2;//Valores a mostrar en pantalla de la vida de cada jugador
-
+var formCheck1; //Indica qué forma tiene el jugador1: 0 base, 1 archer
+var formCheck2;
 
 // Clase principal del juego
 class GameScene extends Phaser.Scene {
@@ -26,6 +28,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('escenario', 'assets/escenario.png'); // Escenario principal
         this.load.image('plataforma', 'assets/plataforma.png'); // Plataformas
         this.load.image('item', 'assets/item.png'); // Ítem coleccionable
+        this.load.image('bow', 'assets/bow.png'); // Ítem coleccionable
 
         // Animaciones para el jugador 1
         this.load.spritesheet('caballero1_run', 'assets/p1_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
@@ -36,6 +39,9 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('caballero2_run', 'assets/p2_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero2_idle', 'assets/p2_caballero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero2_attack', 'assets/p2_caballero/attack.png', { frameWidth: 192, frameHeight: 128 });
+
+        this.load.spritesheet('archer_run', 'assets/arquero/run.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('archer_idle', 'assets/arquero/idle.png', { frameWidth: 192, frameHeight: 128 });
 
     }
 
@@ -54,7 +60,9 @@ class GameScene extends Phaser.Scene {
         spawnItemTimer = 5000; // Tiempo inicial para generar ítems
         spawnItemInterval = 20000; // Intervalo entre generación de ítems
         isFirstSpawn = true; // Primera generación de ítems
-
+        formCheck1= 0; //jugadores empiezan en su forma base
+        formCheck2= 0;
+        
         // Configuración de controles del jugador 1
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -67,9 +75,11 @@ class GameScene extends Phaser.Scene {
         // Creación de grupos de plataformas y espadas
         platforms = this.physics.add.staticGroup();
         sword = this.physics.add.group();
+        bow = this.physics.add.group();
 
         // Colisión entre las espadas y las plataformas
         this.physics.add.collider(sword, platforms);
+        this.physics.add.collider(bow, platforms);
 
         // Creación del escenario y las plataformas
         platforms.create(640, 500, 'escenario'); // Escenario principal
@@ -89,8 +99,8 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(player2, platforms); // Colisión con plataformas
 
         // Detección de superposición con ítems (espadas)
-        this.physics.add.overlap(player1, sword, this.collectItem1, null, this);
-        this.physics.add.overlap(player2, sword, this.collectItem2, null, this);
+        this.physics.add.overlap(player1, bow, this.collectItem1, null, this);
+        this.physics.add.overlap(player2, bow, this.collectItem2, null, this);
 
         // Creación de animaciones para ambos jugadores
         this.createAnimations();
@@ -171,6 +181,20 @@ class GameScene extends Phaser.Scene {
             repeat: -1,
         });
 
+        this.anims.create({
+            key: 'archer_run',
+            frames: this.anims.generateFrameNumbers('archer_run', { start: 0, end: 7 }),
+            frameRate: 12,
+            repeat: -1,
+        });
+
+        this.anims.create({
+            key: 'archer_idle',
+            frames: this.anims.generateFrameNumbers('archer_idle', { start: 0, end: 7 }),
+            frameRate: 12,
+            repeat: -1,
+        });
+
         //Contador en pantalla para mostrar el porcentaje de cada jugador
         this.screenPercentage1 = this.add.text(16, 16, 'Player 1 ' + percentage1 + '%', {
             fontSize: '32px',
@@ -188,11 +212,21 @@ class GameScene extends Phaser.Scene {
         if (cursors.left.isDown && !isKnockedBack1) {
             // Movimiento hacia la izquierda
             player1.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
-    
-            // Reproduce la animación de correr si no está atacando
-            if (attackTimer1 <= attackCooldown - 0.5) {
-                player1.anims.play('caballero1_run', true);
-            }
+            
+           
+                // Reproduce la animación de correr si no está atacando
+                if (attackTimer1 <= attackCooldown - 0.5) {
+                    if (formCheck1==0){
+                        player1.anims.play('caballero1_run', true);
+                    }
+                    else if (formCheck1==1){
+                        player1.anims.play('archer_run', true); 
+                    }
+                }
+            
+
+            
+            
     
             // Invierte el sprite para mirar a la izquierda
             player1.flipX = true;
@@ -203,7 +237,12 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de correr si no está atacando
             if (attackTimer1 <= attackCooldown - 0.5) {
-                player1.anims.play('caballero1_run', true);
+                if (formCheck1==0){
+                    player1.anims.play('caballero1_run', true);
+                }
+                else if (formCheck1==1){
+                    player1.anims.play('archer_run', true); 
+                }
             }
     
             // Orienta el sprite hacia la derecha
@@ -215,7 +254,12 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de estar quieto
             if (attackTimer1 <= attackCooldown - 0.5) {
-                player1.anims.play('caballero1_idle', true);
+                if (formCheck1==0){
+                    player1.anims.play('caballero1_idle', true);
+                }
+                else if (formCheck1==1){
+                    player1.anims.play('archer_idle', true); 
+                }
             }
         }
     
@@ -245,7 +289,12 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de correr si no está atacando
             if (attackTimer2 <= attackCooldown - 0.5) {
-                player2.anims.play('caballero2_run', true);
+                if (formCheck2==0){
+                    player2.anims.play('caballero2_run', true);
+                }
+                else if (formCheck2==1){
+                    player2.anims.play('archer_run', true); 
+                }
             }
     
             // Invierte el sprite para mirar a la izquierda
@@ -257,7 +306,12 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de correr si no está atacando
             if (attackTimer2 <= attackCooldown - 0.5) {
-                player2.anims.play('caballero2_run', true);
+                if (formCheck2==0){
+                    player2.anims.play('caballero2_run', true);
+                }
+                else if (formCheck2==1){
+                    player2.anims.play('archer_run', true); 
+                }
             }
     
             // Orienta el sprite hacia la derecha
@@ -269,7 +323,12 @@ class GameScene extends Phaser.Scene {
     
             // Reproduce la animación de estar quieto
             if (attackTimer2 <= attackCooldown - 0.5) {
-                player2.anims.play('caballero2_idle', true);
+                if (formCheck2==0){
+                    player2.anims.play('caballero2_idle', true);
+                }
+                else if (formCheck2==1){
+                    player2.anims.play('archer_idle', true); 
+                }
             }
         }
     
@@ -371,7 +430,7 @@ class GameScene extends Phaser.Scene {
         var y = Math.floor(Math.random() * (400 - 150 + 1)) + 150; // Rango vertical: 150 a 400
     
         // Crea el item en las coordenadas generadas
-        var item = sword.create(x, y, 'item');
+        var item = bow.create(x, y, 'bow');
     
         // Programa la destrucción del item después de 10 segundos si no se recoge
         setTimeout(() => {
@@ -382,12 +441,15 @@ class GameScene extends Phaser.Scene {
     }
     
     // Recoge el item cuando es tocado por el jugador 1
-    collectItem1(player, sword) {
-        sword.destroy(); // Destruye el item al ser recogido por el jugador 1
+    collectItem1(player, bow) {
+        bow.destroy(); // Destruye el item al ser recogido por el jugador 1
+        formCheck1= 1;  //transforma al jugador 2
+
     }
     
     // Recoge el item cuando es tocado por el jugador 2
-    collectItem2(player, sword) {
-        sword.destroy(); // Destruye el item al ser recogido por el jugador 2
+    collectItem2(player, bow) {
+        bow.destroy(); // Destruye el item al ser recogido por el jugador 2
+        formCheck2= 1; //transforma al jugador 2
     }
 }
