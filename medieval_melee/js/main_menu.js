@@ -13,6 +13,8 @@ class MainMenuScene extends Phaser.Scene {
     }
 
     create() {
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         this.add.image(640, 360, 'menu');
         this.add.image(640, 200, 'titulo');
 
@@ -25,7 +27,11 @@ class MainMenuScene extends Phaser.Scene {
                 start_button.setTexture('play');
             })
             .on('pointerdown', () => {
-                this.scene.start('GameScene');
+                this.cameras.main.fadeOut(500, 0, 0, 0);
+
+                this.cameras.main.once('camerafadeoutcomplete', () => {
+                    this.scene.start('GameScene');
+                });
         });    
 
         var credits_button = this.add.image(640, 425, 'credits')
@@ -37,7 +43,11 @@ class MainMenuScene extends Phaser.Scene {
                 credits_button.setTexture('credits');
             })
             .on('pointerdown', () => {
-                this.scene.start('CreditsScene');
+                this.cameras.main.fadeOut(500, 0, 0, 0);
+
+                this.cameras.main.once('camerafadeoutcomplete', () => {
+                    this.scene.start('CreditsScene');
+                });
         });  
     }
 

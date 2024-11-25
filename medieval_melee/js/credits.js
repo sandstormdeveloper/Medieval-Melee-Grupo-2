@@ -10,6 +10,8 @@ class CreditsScene extends Phaser.Scene {
     }
 
     create() {
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         this.add.image(640, 360, 'creditos');
 
         var exit_button = this.add.image(96, 64, 'exit')
@@ -21,7 +23,11 @@ class CreditsScene extends Phaser.Scene {
                 exit_button.setTexture('exit');
             })
             .on('pointerdown', () => {
-                this.scene.start('MainMenuScene');
+                this.cameras.main.fadeOut(500, 0, 0, 0);
+
+                this.cameras.main.once('camerafadeoutcomplete', () => {
+                    this.scene.start('MainMenuScene');
+                });
         });    
     }
 

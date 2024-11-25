@@ -47,6 +47,8 @@ class GameScene extends Phaser.Scene {
 
     // Método para inicializar los elementos de la escena
     create() {
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         // Inicialización de variables
         attackTimer1 = attackTimer2 = 0; // Temporizadores de ataque
         attackCooldown = 1; // Enfriamiento entre ataques (en segundos)
