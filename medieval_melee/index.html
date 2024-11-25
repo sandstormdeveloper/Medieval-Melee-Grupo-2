@@ -10,6 +10,10 @@
     <!-- Carga el archivo que contiene el código para la escena principal del juego -->
     <script src="js/game.js"></script>
 
+    <!-- Carga el archivo que contiene el código para la escena de créditos -->
+    <script src="js/credits.js"></script>
+
+    <!-- Carga el .css que se usa en el juego -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
@@ -28,7 +32,7 @@
                 }
             },
 
-            scene: [MainMenuScene, GameScene] // Escenas del juego: Menú principal y juego
+            scene: [MainMenuScene, GameScene, CreditsScene] // Escenas del juego: Menú principal y juego
         };
 
         // Crea una nueva instancia del juego con la configuración especificada
