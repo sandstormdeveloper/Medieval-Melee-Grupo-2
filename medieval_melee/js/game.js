@@ -214,6 +214,7 @@ class GameScene extends Phaser.Scene {
     update(time, delta) {   
         this.timers(delta);
         this.inputs();
+        this.checkWin();
     }    
 
     // Maneja el input de los dos jugadores
@@ -357,6 +358,21 @@ class GameScene extends Phaser.Scene {
         // Reducción del temporizador de ataque para el Jugador 2
         if (attackTimer2 > 0) {
             attackTimer2 -= delta / 1000; // Disminuye según el tiempo transcurrido
+        }
+    }
+
+    // Si un jugador se sale de la pantalla, gana el otro
+    checkWin() {
+        // Comprueba si el jugador 1 se ha salido de la pantalla
+        if(player1.x > 1280 || player1.x < 0 || player1.y > 720 || player1.y < 0) {
+            this.registry.set('winner', 2);
+            console.log("Player 2 wins!");
+        }
+
+        // Comprueba si el jugador 2 se ha salido de la pantalla
+        if(player2.x > 1280 || player2.x < 0 || player2.y > 720 || player2.y < 0) {
+            this.registry.set('winner', 1);
+            console.log("Player 1 wins!");
         }
     }
     
