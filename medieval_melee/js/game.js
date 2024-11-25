@@ -35,6 +35,9 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('caballero1_run', 'assets/p1_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero1_idle', 'assets/p1_caballero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('caballero1_attack', 'assets/p1_caballero/attack.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('arquero1_run', 'assets/p1_arquero/run.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('arquero1_idle', 'assets/p1_arquero/idle.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('arquero1_attack', 'assets/p1_arquero/attack.png', { frameWidth: 192, frameHeight: 128 });
 
         // Animaciones para el jugador 2
         this.load.spritesheet('caballero2_run', 'assets/p2_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
@@ -42,6 +45,7 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('caballero2_attack', 'assets/p2_caballero/attack.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero2_run', 'assets/p2_arquero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero2_idle', 'assets/p2_arquero/idle.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('arquero2_attack', 'assets/p2_arquero/attack.png', { frameWidth: 192, frameHeight: 128 });
 
     }
 
@@ -178,6 +182,26 @@ class GameScene extends Phaser.Scene {
             repeat: -1,
         });
 
+        this.anims.create({
+            key: 'arquero1_run',
+            frames: this.anims.generateFrameNumbers('arquero1_run', { start: 0, end: 6 }),
+            frameRate: 12,
+            repeat: -1,
+        });
+
+        this.anims.create({
+            key: 'arquero1_attack',
+            frames: this.anims.generateFrameNumbers('arquero1_attack', { start: 0, end: 7 }),
+            frameRate: 12,
+        });
+
+        this.anims.create({
+            key: 'arquero1_idle',
+            frames: this.anims.generateFrameNumbers('arquero1_idle', { start: 0, end: 6 }),
+            frameRate: 6,
+            repeat: -1,
+        });
+
         // Animaciones del jugador 2
         this.anims.create({
             key: 'caballero2_run',
@@ -204,6 +228,12 @@ class GameScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('arquero2_run', { start: 0, end: 7 }),
             frameRate: 12,
             repeat: -1,
+        });
+
+        this.anims.create({
+            key: 'arquero2_attack',
+            frames: this.anims.generateFrameNumbers('arquero2_attack', { start: 0, end: 7 }),
+            frameRate: 12,
         });
 
         this.anims.create({
@@ -234,7 +264,7 @@ class GameScene extends Phaser.Scene {
                     player1.anims.play('caballero1_run', true);
                 }
                 else if (formCheck1 == 1){
-                    player1.anims.play('arquero2_run', true); 
+                    player1.anims.play('arquero1_run', true); 
                 }
             }
 
@@ -251,7 +281,7 @@ class GameScene extends Phaser.Scene {
                     player1.anims.play('caballero1_run', true);
                 }
                 else if (formCheck1 == 1){
-                    player1.anims.play('arquero2_run', true); 
+                    player1.anims.play('arquero1_run', true); 
                 }
             }
     
@@ -268,7 +298,7 @@ class GameScene extends Phaser.Scene {
                     player1.anims.play('caballero1_idle', true);
                 }
                 else if (formCheck1 == 1){
-                    player1.anims.play('arquero2_idle', true); 
+                    player1.anims.play('arquero1_idle', true); 
                 }
             }
         }
@@ -282,7 +312,12 @@ class GameScene extends Phaser.Scene {
         if (cursors.down.isDown && !isKnockedBack1) {
             if (attackTimer1 <= 0) {
                 // Reproduce la animación de ataque y reinicia el temporizador
-                player1.anims.play('caballero1_attack');
+                if(formCheck1 == 0) {
+                    player1.anims.play('caballero1_attack');
+                }
+                else {
+                    player1.anims.play('arquero1_attack');
+                }
                 attackTimer1 = attackCooldown;
             }
         }
@@ -346,7 +381,12 @@ class GameScene extends Phaser.Scene {
         if (keyS.isDown && !isKnockedBack2) {
             if (attackTimer2 <= 0) {
                 // Reproduce la animación de ataque y reinicia el temporizador
-                player2.anims.play('caballero2_attack');
+                if(formCheck2 == 0) {
+                    player2.anims.play('caballero2_attack');
+                }
+                else {
+                    player2.anims.play('arquero2_attack');
+                }
                 attackTimer2 = attackCooldown;
             }
         }
@@ -396,6 +436,10 @@ class GameScene extends Phaser.Scene {
             this.registry.set('winner', 1);
             console.log("Player 1 wins!");
         }
+    }
+
+    shoot(player) {
+
     }
     
     // Ejecuta un ataque entre los jugadores, aplicando retroceso y actualizando porcentajes de daño
