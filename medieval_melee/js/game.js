@@ -211,7 +211,13 @@ class GameScene extends Phaser.Scene {
     }
 
     // Se ejecuta en cada frame del juego para actualizar los estados y comportamientos de los jugadores
-    update(time, delta) {
+    update(time, delta) {   
+        this.timers(delta);
+        this.inputs();
+    }    
+
+    // Maneja el input de los dos jugadores
+    inputs() {
         // ** Control del Jugador 1 **
         if (cursors.left.isDown && !isKnockedBack1) {
             // Movimiento hacia la izquierda
@@ -266,12 +272,7 @@ class GameScene extends Phaser.Scene {
         if (cursors.up.isDown && player1.body.touching.down && !isKnockedBack1) {
             player1.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
-    
-        // Reducción del temporizador de ataque para el Jugador 1
-        if (attackTimer1 > 0) {
-            attackTimer1 -= delta / 1000; // Disminuye según el tiempo transcurrido
-        }
-    
+
         // Ataque del Jugador 1
         if (cursors.down.isDown && !isKnockedBack1) {
             if (attackTimer1 <= 0) {
@@ -335,12 +336,7 @@ class GameScene extends Phaser.Scene {
         if (keyW.isDown && player2.body.touching.down && !isKnockedBack2) {
             player2.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
-    
-        // Reducción del temporizador de ataque para el Jugador 2
-        if (attackTimer2 > 0) {
-            attackTimer2 -= delta / 1000; // Disminuye según el tiempo transcurrido
-        }
-    
+
         // Ataque del Jugador 2
         if (keyS.isDown && !isKnockedBack2) {
             if (attackTimer2 <= 0) {
@@ -349,7 +345,20 @@ class GameScene extends Phaser.Scene {
                 attackTimer2 = attackCooldown;
             }
         }
-    }    
+    }
+
+    // Aquí se manejan los temporizadores del juego
+    timers(delta) {
+        // Reducción del temporizador de ataque para el Jugador 1
+        if (attackTimer1 > 0) {
+            attackTimer1 -= delta / 1000; // Disminuye según el tiempo transcurrido
+        }
+    
+        // Reducción del temporizador de ataque para el Jugador 2
+        if (attackTimer2 > 0) {
+            attackTimer2 -= delta / 1000; // Disminuye según el tiempo transcurrido
+        }
+    }
     
     // Ejecuta un ataque entre los jugadores, aplicando retroceso y actualizando porcentajes de daño
     attack(player) {
