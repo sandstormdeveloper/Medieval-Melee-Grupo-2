@@ -161,7 +161,7 @@ En cuanto a la música del juego, se han desarrollado dos canciones instrumental
 
 ### Escenario
 Se ha diseñado un escenario base para ofrecer un entorno funcional y equilibrado en el que los jugadores puedan centrarse en la dinámica del combate. Este escenario base sirve como el campo de batalla inicial, con plataformas sencillas y una disposición que favorece la acción continua. Sin embargo, este es solo el comienzo. En futuras actualizaciones se añadirán más escenarios, cada uno con su propia apariencia y características únicas, lo que permitirá a los jugadores disfrutar de una mayor variedad de entornos y estrategias de combate. A continuación, se muestra el escenario base.
-![Figura 17](/assets/escenario.png)
+![Figura 16](/assets/escenario.png)
 
 ### Pantallas del juego
 En este apartado se presentan las pantallas clave del juego. Cada pantalla está diseñada para optimizar la experiencia del jugador y facilitar la navegación durante el juego. A continuación, se muestran las imágenes de referencia correspondientes.
