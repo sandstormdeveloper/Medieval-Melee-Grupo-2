@@ -182,7 +182,7 @@ class GameScene extends Phaser.Scene {
             delay: spawnItemTimer,
             callback: this.spawnItem,
             callbackScope: this,
-            loop: false, // Sólo una vez
+            loop: 2, // Sólo una vez
         });
 
         this.time.addEvent({
