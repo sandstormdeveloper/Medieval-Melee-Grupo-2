@@ -174,7 +174,7 @@ En este apartado se presentan las pantallas clave del juego. Cada pantalla está
 En el menú principal, el título "Medieval Melee" ocupa el centro con una fuente llamativa, mientras las opciones de "Jugar" y "Créditos" están dispuestas de forma simple, invitando al jugador a entrar rápidamente en acción.
 
  - Pantalla in game
-![Figura 19](/assets/pantalla_partida.PNG)
+![Figura 19](/assets/ingame.PNG)
 La pantalla de partida muestra a dos luchadores pixelados enfrentándose en una arena flotante con plataformas. Los indicadores de los jugadores, junto al escenario, logran un equilibrio entre claridad visual y la acción dinámica del combate.
 
  - Pantalla victoria 
