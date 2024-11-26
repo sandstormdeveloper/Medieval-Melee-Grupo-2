@@ -157,3 +157,9 @@ En esta segunda fase, se ha trabajado en la diferenciación de personajes para m
 
 #### -Audio
 En cuanto a la música del juego, se han desarrollado dos canciones instrumentales inspiradas en la música de la Edad Media, diseñadas específicamente para enriquecer la experiencia del jugador. La primera es una pieza más calmada y melódica, que ambienta el menú principal con un tono sereno y envolvente, preparando al jugador para el desafío que está por venir. La segunda, mucho más animada y rítmica, acompaña las batallas, intensificando la acción y sumergiendo a los jugadores en la adrenalina de los combates. Ambas piezas refuerzan la ambientación medieval y aportan una capa adicional de inmersión al juego.
+
+#### -Escenario
+Se ha diseñado un escenario base para ofrecer un entorno funcional y equilibrado en el que los jugadores puedan centrarse en la dinámica del combate. Este escenario base sirve como el campo de batalla inicial, con plataformas sencillas y una disposición que favorece la acción continua. Sin embargo, este es solo el comienzo. En futuras actualizaciones se añadirán más escenarios, cada uno con su propia apariencia y características únicas, lo que permitirá a los jugadores disfrutar de una mayor variedad de entornos y estrategias de combate. A continuación, se muestra el escenario base.
+
+#### -Pantallas del juego
+En este apartado se presentan las pantallas clave del juego. Cada pantalla está diseñada para optimizar la experiencia del jugador y facilitar la navegación durante el juego. A continuación, se muestran las imágenes de referencia correspondientes.
