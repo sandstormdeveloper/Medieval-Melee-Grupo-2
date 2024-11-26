@@ -577,7 +577,7 @@ class GameScene extends Phaser.Scene {
         var verticalKnockback = 300;      // Fuerza de retroceso vertical
 
         if (player == 1) {
-            player1.setVelocityX(knockbackForce * direction * percent2); // Aplica fuerza hacia la derecha
+            player1.setVelocityX(knockbackForce * direction * percent1); // Aplica fuerza hacia la derecha
             player1.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
             isKnockedBack1 = true;                          // Marca al jugador 2 como en retroceso
             percent1 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
