@@ -57,6 +57,9 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('arquero2_run', 'assets/p2_arquero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero2_idle', 'assets/p2_arquero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero2_attack', 'assets/p2_arquero/attack.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('paladin2_run', 'assets/p2_paladin/run.png', { frameWidth: 256, frameHeight: 128 });
+        this.load.spritesheet('paladin2_idle', 'assets/p2_paladin/idle.png', { frameWidth: 256, frameHeight: 128 });
+        this.load.spritesheet('paladin2_attack', 'assets/p2_paladin/attack.png', { frameWidth: 256, frameHeight: 128 });
 
     }
 
@@ -139,7 +142,10 @@ class GameScene extends Phaser.Scene {
 
         // Eventos de ataque en animaciones
         player1.on('animationupdate', (animation, frame) => {
-            if (animation.key === 'caballero1_attack'||'paladin1_attack' && frame.index === 4) {
+            if (animation.key === 'caballero1_attack' && frame.index === 4) {
+                this.attack(1); // Ejecuta ataque del jugador 1
+            }
+            else if (animation.key === 'paladin1_attack' && frame.index === 4) {
                 this.attack(1); // Ejecuta ataque del jugador 1
             }
         });
@@ -147,6 +153,9 @@ class GameScene extends Phaser.Scene {
         player2.on('animationupdate', (animation, frame) => {
             if (animation.key === 'caballero2_attack' && frame.index === 4) {
                 this.attack(2); // Ejecuta ataque del jugador 2
+            }
+            else if (animation.key === 'paladin2_attack' && frame.index === 4) {
+                this.attack(2); // Ejecuta ataque del jugador 1
             }
         });
 
@@ -298,6 +307,24 @@ class GameScene extends Phaser.Scene {
             frameRate: 16,
             repeat: -1,
         });
+        this.anims.create({
+            key: 'paladin2_run',
+            frames: this.anims.generateFrameNumbers('paladin2_run', { start: 0, end: 9 }),
+            frameRate: 12,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: 'paladin2_idle',
+            frames: this.anims.generateFrameNumbers('paladin2_idle', { start: 0, end: 26 }),
+            frameRate: 12,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: 'paladin2_attack',
+            frames: this.anims.generateFrameNumbers('paladin2_attack', { start: 0, end: 7 }),
+            frameRate: 16,
+            repeat: -1,
+        });
     }
 
     // Se ejecuta en cada frame del juego para actualizar los estados y comportamientos de los jugadores
@@ -403,6 +430,9 @@ class GameScene extends Phaser.Scene {
                 else if (formCheck2 == 1){
                     player2.anims.play('arquero2_run', true); 
                 }
+                else if (formCheck2 == 2){
+                    player2.anims.play('paladin2_run', true); 
+                }
             }
     
             // Invierte el sprite para mirar a la izquierda
@@ -419,6 +449,9 @@ class GameScene extends Phaser.Scene {
                 }
                 else if (formCheck2 == 1){
                     player2.anims.play('arquero2_run', true); 
+                }
+                else if (formCheck2 == 2){
+                    player2.anims.play('paladin2_run', true); 
                 }
             }
     
@@ -437,6 +470,9 @@ class GameScene extends Phaser.Scene {
                 else if (formCheck2 == 1){
                     player2.anims.play('arquero2_idle', true); 
                 }
+                else if (formCheck2 == 2){
+                    player2.anims.play('paladin2_idle', true); 
+                }
             }
         }
     
@@ -452,8 +488,11 @@ class GameScene extends Phaser.Scene {
                 if(formCheck2 == 0) {
                     player2.anims.play('caballero2_attack');
                 }
-                else {
+                else if(formCheck2==1){
                     player2.anims.play('arquero2_attack');
+                }
+                else if (formCheck2 == 2){
+                    player2.anims.play('paladin2_attack', true); 
                 }
                 attackTimer2 = attackCooldown;
             }
@@ -673,7 +712,7 @@ class GameScene extends Phaser.Scene {
             item = bow.create(x, y, 'bow');
 
         }
-        if (randomizer<0.9){
+        if (randomizer<0.5){
             item = hammer.create(x, y, 'hammer');
 
         }
