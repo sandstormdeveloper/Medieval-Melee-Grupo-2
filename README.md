@@ -164,15 +164,21 @@ Se ha diseñado un escenario base para ofrecer un entorno funcional y equilibrad
 #### -Pantallas del juego
 En este apartado se presentan las pantallas clave del juego. Cada pantalla está diseñada para optimizar la experiencia del jugador y facilitar la navegación durante el juego. A continuación, se muestran las imágenes de referencia correspondientes.
 
+- Pantalla menú principal
+![Figura 15](/assets/pantalla_menu.PNG)
+En el menú principal, el título "Medieval Melee" ocupa el centro con una fuente llamativa, mientras las opciones de "Jugar" y "Créditos" están dispuestas de forma simple, invitando al jugador a entrar rápidamente en acción.
 
- ![Figura 15](/assets/pantalla_menu.PNG)
- 
- ![Figura 16](/assets/pantalla_partida.PNG)
+ - Pantalla in game
+![Figura 16](/assets/pantalla_partida.PNG)
+La pantalla de partida muestra a dos luchadores pixelados enfrentándose en una arena flotante con plataformas. Los indicadores de los jugadores, junto al escenario, logran un equilibrio entre claridad visual y la acción dinámica del combate.
 
- ![Figura 17](/assets/pantalla_victoria.PNG)
+ - Pantalla victoria 
+![Figura 17](/assets/pantalla_victoria.PNG)
+![Figura 18](/assets/pantalla_derrota.PNG)
+La pantalla de victoria celebra al ganador con un mensaje claro, "Player 1 Wins" o "Player 2 Wins", acompañado de opciones sencillas como "Volver a Jugar" y "Salir", manteniendo el enfoque en la emoción del triunfo.
 
- ![Figura 18](/assets/pantalla_derrota.PNG)
-
+- Pantalla créditos
  ![Figura 15](/assets/pantalla_creditos.PNG)
+La pantalla de créditos destaca el título "Créditos" en letras pixeladas grandes, seguido por una lista ordenada de los desarrolladores, ofreciendo un toque sencillo y personal para reconocer al equipo detrás del juego.
 
   
