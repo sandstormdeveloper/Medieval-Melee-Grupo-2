@@ -166,6 +166,7 @@ Se ha diseñado un escenario base para ofrecer un entorno funcional y equilibrad
 
 ### Pantallas del juego
 En este apartado se presentan las pantallas clave del juego. Cada pantalla está diseñada para optimizar la experiencia del jugador y facilitar la navegación durante el juego. A continuación, se muestran las imágenes de referencia correspondientes.
+
 ![Figura 27](/assets/diagrama_pantallas.png)
 
 - Pantalla menú principal
