@@ -1,6 +1,7 @@
 // Declaración de variables globales
 var platforms; // Plataformas estáticas del juego
 var bow; // Ítem
+var hammer; // Ítem 2
 var arrow1, arrow2; // Flechas
 var player1, player2; // Jugadores 1 y 2
 var cursors; // Controles del teclado para el jugador 2
@@ -13,6 +14,8 @@ var spawnItemTimer; // Tiempo inicial para generar ítems
 var spawnItemInterval; // Intervalo para generar ítems después del inicial
 var isFirstSpawn; // Indicador para saber si es la primera vez que se genera un ítem
 var formCheck1, formCheck2, formCooldown, formTimer1, formTimer2; // Indica qué forma tiene el jugador1: 0 base, 1 archer
+var dmgMult1; //Multiplicador de daño del p1, para el paladin
+var dmgMult2; //Multiplicador de daño del p1, para el paladin
 
 // Clase principal del juego
 class GameScene extends Phaser.Scene {
@@ -26,6 +29,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('escenario', 'assets/escenario.png'); // Escenario principal
         this.load.image('plataforma', 'assets/plataforma.png'); // Plataformas
         this.load.image('bow', 'assets/bow.png'); // Ítem coleccionable
+        this.load.image('hammer', 'assets/hammer.png'); // Ítem coleccionable
         this.load.image('arrow', 'assets/arrow.png'); // Flecha
 
         // Interfaz
@@ -39,6 +43,9 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('arquero1_run', 'assets/p1_arquero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero1_idle', 'assets/p1_arquero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero1_attack', 'assets/p1_arquero/attack.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('paladin1_run', 'assets/p1_paladin/run.png', { frameWidth: 256, frameHeight: 128 });
+        this.load.spritesheet('paladin1_idle', 'assets/p1_paladin/idle.png', { frameWidth: 256, frameHeight: 128 });
+        this.load.spritesheet('paladin1_attack', 'assets/p1_paladin/attack.png', { frameWidth: 256, frameHeight: 128 });
 
         // Animaciones para el jugador 2
         this.load.spritesheet('caballero2_run', 'assets/p2_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
@@ -68,7 +75,8 @@ class GameScene extends Phaser.Scene {
         formCheck1 = formCheck2 = 0; // Jugadores empiezan en su forma base
         formTimer1 = formTimer2 = 0 // Tiempo restante de la transformación
         formCooldown = 10 // Tiempo que dura una transformación
-        
+        var dmgMult1=1; 
+        var dmgMult2=1;
         // Configuración de controles del jugador 1
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -81,11 +89,13 @@ class GameScene extends Phaser.Scene {
         // Creación de grupos de plataformas y espadas
         platforms = this.physics.add.staticGroup();
         bow = this.physics.add.group();
+        hammer = this.physics.add.group();
         arrow1 = this.physics.add.group({allowGravity: false});
         arrow2 = this.physics.add.group({allowGravity: false});
 
         // Colisión entre los objetos y las plataformas
         this.physics.add.collider(bow, platforms);
+        this.physics.add.collider(hammer, platforms);
         this.physics.add.collider(arrow1, platforms);
         this.physics.add.collider(arrow2, platforms);
 
@@ -103,7 +113,7 @@ class GameScene extends Phaser.Scene {
         player1 = this.physics.add.sprite(440, 300, 'caballero1_idle');
         player1.setBodySize(32, 64); // Tamaño del cuerpo físico
         this.physics.add.collider(player1, platforms); // Colisión con plataformas
-
+        
         // Configuración del jugador 2
         player2 = this.physics.add.sprite(840, 300, 'caballero2_idle');
         player2.setBodySize(32, 64); // Tamaño del cuerpo físico
@@ -111,8 +121,10 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(player2, platforms); // Colisión con plataformas
 
         // Detección de superposición con ítems (espadas)
-        this.physics.add.overlap(player1, bow, this.collectItem1, null, this);
-        this.physics.add.overlap(player2, bow, this.collectItem2, null, this);
+        this.physics.add.overlap(player1, bow, this.collectBow1, null, this);
+        this.physics.add.overlap(player2, bow, this.collectBow2, null, this);
+        this.physics.add.overlap(player1, hammer, this.collectHammer1, null, this);
+        this.physics.add.overlap(player2, hammer, this.collectHammer2, null, this);
         this.physics.add.overlap(player1, arrow2, this.hit1, null, this);
         this.physics.add.overlap(player2, arrow1, this.hit2, null, this);
 
@@ -121,7 +133,7 @@ class GameScene extends Phaser.Scene {
 
         // Eventos de ataque en animaciones
         player1.on('animationupdate', (animation, frame) => {
-            if (animation.key === 'caballero1_attack' && frame.index === 4) {
+            if (animation.key === 'caballero1_attack'||'paladin1_attack' && frame.index === 4) {
                 this.attack(1); // Ejecuta ataque del jugador 1
             }
         });
@@ -261,6 +273,25 @@ class GameScene extends Phaser.Scene {
             frameRate: 12,
             repeat: -1,
         });
+
+        this.anims.create({
+            key: 'paladin1_run',
+            frames: this.anims.generateFrameNumbers('paladin1_run', { start: 0, end: 9 }),
+            frameRate: 12,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: 'paladin1_idle',
+            frames: this.anims.generateFrameNumbers('paladin1_idle', { start: 0, end: 26 }),
+            frameRate: 12,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: 'paladin1_attack',
+            frames: this.anims.generateFrameNumbers('paladin1_attack', { start: 0, end: 7 }),
+            frameRate: 16,
+            repeat: -1,
+        });
     }
 
     // Se ejecuta en cada frame del juego para actualizar los estados y comportamientos de los jugadores
@@ -285,6 +316,9 @@ class GameScene extends Phaser.Scene {
                 else if (formCheck1 == 1){
                     player1.anims.play('arquero1_run', true); 
                 }
+                else if(formCheck1 == 2){
+                    player1.anims.play('paladin1_run', true); 
+                }
             }
 
             // Invierte el sprite para mirar a la izquierda
@@ -301,6 +335,9 @@ class GameScene extends Phaser.Scene {
                 }
                 else if (formCheck1 == 1){
                     player1.anims.play('arquero1_run', true); 
+                }
+                else if(formCheck1 == 2){
+                    player1.anims.play('paladin1_run', true); 
                 }
             }
     
@@ -319,6 +356,9 @@ class GameScene extends Phaser.Scene {
                 else if (formCheck1 == 1){
                     player1.anims.play('arquero1_idle', true); 
                 }
+                else if(formCheck1 == 2){
+                    player1.anims.play('paladin1_idle', true); 
+                }
             }
         }
     
@@ -334,8 +374,11 @@ class GameScene extends Phaser.Scene {
                 if(formCheck1 == 0) {
                     player1.anims.play('caballero1_attack');
                 }
-                else {
+                else if(formCheck1 == 1) {
                     player1.anims.play('arquero1_attack');
+                }
+                else if(formCheck1 == 2){
+                    player1.anims.play('paladin1_attack', true); 
                 }
                 attackTimer1 = attackCooldown;
             }
@@ -562,7 +605,15 @@ class GameScene extends Phaser.Scene {
             player1.setVelocityX(knockbackForce * direction * percent2); // Aplica fuerza hacia la derecha
             player1.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
             isKnockedBack1 = true;                          // Marca al jugador 2 como en retroceso
-            percent1 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
+
+            if(formCheck2==2){
+                dmgMult2=2
+            }
+            else{
+                dmgMult2=1
+            }
+            percent1 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult2; // Incrementa el daño del jugador 2
+            console.log(dmgMult2);
             this.screenPercentage1.setText(Math.round((percent1- 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
             this.time.addEvent({
                 delay: knockbackDuration,
@@ -572,8 +623,15 @@ class GameScene extends Phaser.Scene {
         else {
             player2.setVelocityX(knockbackForce * direction * percent2); // Aplica fuerza hacia la derecha
             player2.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
-            isKnockedBack2 = true;                          // Marca al jugador 2 como en retroceso
-            percent2 += Math.random() * (0.2 - 0.1) + 0.1; // Incrementa el daño del jugador 2
+            isKnockedBack2 = true;      
+            if(formCheck1==2){
+                dmgMult1=2
+            }
+            else{
+                dmgMult1=1
+            }                    // Marca al jugador 2 como en retroceso
+            percent2 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult1; // Incrementa el daño del jugador 2
+            console.log(dmgMult1);
             this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
             this.time.addEvent({
                 delay: knockbackDuration,
@@ -586,11 +644,17 @@ class GameScene extends Phaser.Scene {
     spawnItem() {
         // Genera coordenadas aleatorias para la posición del item dentro del rango especificado
         var x = Math.floor(Math.random() * (930 - 350 + 1)) + 350; // Rango horizontal: 350 a 930
-        var y = Math.floor(Math.random() * (400 - 150 + 1)) + 150; // Rango vertical: 150 a 400
-    
-        // Crea el item en las coordenadas generadas
-        var item = bow.create(x, y, 'bow');
-    
+        var y = Math.floor(Math.random() * (400 - 150 + 1)); // Rango vertical: 150 a 400
+        var item
+        var randomizer = Math.random(); //se randomiza el spawn del objeto
+        if (randomizer>=0.5){
+            item = bow.create(x, y, 'bow');
+
+        }
+        if (randomizer<0.9){
+            item = hammer.create(x, y, 'hammer');
+
+        }
         // Programa la destrucción del item después de 10 segundos si no se recoge
         setTimeout(() => {
             if (item) {
@@ -600,16 +664,40 @@ class GameScene extends Phaser.Scene {
     }
     
     // Recoge el item cuando es tocado por el jugador 1
-    collectItem1(player1, bow) {
+    collectBow1(player, bow) {
+        
         bow.destroy(); // Destruye el item al ser recogido por el jugador 1
-        formCheck1 = 1;  // Transforma al jugador 2
+        formCheck1 = 1; // Transforma al jugador 1
+        
+        
         formTimer1 = formCooldown;
     }
     
     // Recoge el item cuando es tocado por el jugador 2
-    collectItem2(player1, bow) {
-        bow.destroy(); // Destruye el item al ser recogido por el jugador 2
-        formCheck2 = 1; // Transforma al jugador 2
+    collectBow2(player, bow) {
+        bow.destroy(); // Destruye el item al ser recogido por el jugador 1
+        formCheck2 = 1; // Transforma al jugador 1
+        
+        
         formTimer2 = formCooldown;
     }
+    collectHammer1(player, hammer) {
+        
+        hammer.destroy(); // Destruye el item al ser recogido por el jugador 1
+        formCheck1 = 2; // Transforma al jugador 1
+        
+        
+        formTimer1 = formCooldown;
+    }
+    
+    // Recoge el item cuando es tocado por el jugador 2
+    collectHammer2(player, hammer) {
+        hammer.destroy(); // Destruye el item al ser recogido por el jugador 1
+        formCheck2 = 2; // Transforma al jugador 1
+        
+        
+        formTimer2 = formCooldown;
+    }
+
+    
 }
