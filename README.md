@@ -17,6 +17,15 @@ Este videojuego está inspirado en juegos de lucha casuales como Super Smash Bro
 #### -Concepto del juego
 Medieval Melee es un videojuego de lucha en el que los jugadores controlan pequeños personajes que deben sobrevivir en un duelo a muerte contra otro jugador, que tendrá el mismo objetivo. Los personajes no sólo lucharán por conseguir la victoria, sino también por obtener el honor que conlleva triunfar en la justa.
 
+#### -Historia del juego
+En un reino lejano donde la paz ha sido rota por una disputa entre las facciones más poderosas de la región, el Rey decretó un torneo único llamado Medieval Melee. Este torneo no solo busca coronar al guerrero más hábil, sino también decidir el destino del reino.
+
+Cada combatiente representa su facción con un único objetivo, obtener el “Estandarte del Honor”, un antiguo emblema que simboliza el derecho a gobernar y la gloria eterna.
+
+El torneo se lleva a cabo en lugares emblemáticos del reino, como las ruinas de un majestuoso castillo, el bullicioso mercado medieval y el estratégico puerto de la ciudadela. Cada escenario, cargado de historia, se convierte en el campo de batalla donde los guerreros compiten por el honor supremo. Según la leyenda, aquel que triunfe en el torneo será considerado como un símbolo de valentía y destreza.
+
+Las puertas del torneo se abren, y el destino de los combatientes queda en sus propias manos. Aquí no hay lugar para dudas ni vacilaciones; sólo la habilidad, la astucia y el coraje decidirán quién se alza como vencedor. Guerreros, aferrad vuestras armas, tomad vuestros puestos y luchad con todo por el honor. ¡El duelo está por comenzar!
+
 #### -Características principales
 Entre las características principales de Medieval Melee destacan las siguientes:
 - Combate dinámico: es un aspecto central, fomentando enfrentamientos constantes entre los personajes, donde los jugadores deberán emplear  diferentes estrategias para derrotar a su oponente y sacarlo del escenario. 
