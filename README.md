@@ -154,6 +154,7 @@ En esta segunda fase de desarrollo, Medieval Melee ha dado un gran paso hacia su
 
 ### Personajes
 En esta segunda fase, se ha trabajado en la diferenciación de personajes para mejorar la experiencia de juego. Se han añadido dos nuevos diseños: un arquero y un caballero azul, ambos asociados al jugador 1. Esto no solo aporta variedad visual, sino que también facilita la identificación de los personajes durante el transcurso de la partida, ayudando a los jugadores a concentrarse en el combate sin confusiones. Estas incorporaciones permiten reconocer de forma inmediata quién controla a cada combatiente, reforzando la claridad y la fluidez en los enfrentamientos.
+![Figura 15](/assets/personajes.png)
 
 ### Audio
 En cuanto a la música del juego, se han desarrollado dos canciones instrumentales inspiradas en la música de la Edad Media, diseñadas específicamente para enriquecer la experiencia del jugador. La primera es una pieza más calmada y melódica, que ambienta el menú principal con un tono sereno y envolvente, preparando al jugador para el desafío que está por venir. La segunda, mucho más animada y rítmica, acompaña las batallas, intensificando la acción y sumergiendo a los jugadores en la adrenalina de los combates. Ambas piezas refuerzan la ambientación medieval y aportan una capa adicional de inmersión al juego.
@@ -165,15 +166,15 @@ Se ha diseñado un escenario base para ofrecer un entorno funcional y equilibrad
 En este apartado se presentan las pantallas clave del juego. Cada pantalla está diseñada para optimizar la experiencia del jugador y facilitar la navegación durante el juego. A continuación, se muestran las imágenes de referencia correspondientes.
 
 - Pantalla menú principal
-![Figura 15](/assets/pantalla_menu.PNG)
+![Figura 16](/assets/pantalla_menu.PNG)
 En el menú principal, el título "Medieval Melee" ocupa el centro con una fuente llamativa, mientras las opciones de "Jugar" y "Créditos" están dispuestas de forma simple, invitando al jugador a entrar rápidamente en acción.
 
  - Pantalla in game
-![Figura 16](/assets/pantalla_partida.PNG)
+![Figura 17](/assets/pantalla_partida.PNG)
 La pantalla de partida muestra a dos luchadores pixelados enfrentándose en una arena flotante con plataformas. Los indicadores de los jugadores, junto al escenario, logran un equilibrio entre claridad visual y la acción dinámica del combate.
 
  - Pantalla victoria 
-![Figura 17](/assets/pantalla_victoria.PNG)
+![Figura 18](/assets/pantalla_victoria.PNG)
 La pantalla de victoria celebra al ganador con un mensaje claro, "Player 1 Wins" o "Player 2 Wins", acompañado de opciones sencillas como "Volver a Jugar" y "Salir", manteniendo el enfoque en la emoción del triunfo.
 
   - Pantalla créditos
