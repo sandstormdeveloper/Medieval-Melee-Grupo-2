@@ -741,12 +741,8 @@ class GameScene extends Phaser.Scene {
         item1 = bow.create(x1, y1, 'bow');
         // Programa la destrucción del item después de 10 segundos si no se recoge
         setTimeout(() => {
-            if (item1) {
-                item1.destroy();
-            } 
-            else if (item2) {
-                item2.destroy();
-            }
+            item1.destroy();
+            item2.destroy();
         }, 10000);
     }
     
