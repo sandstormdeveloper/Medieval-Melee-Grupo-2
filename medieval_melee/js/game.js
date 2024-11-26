@@ -13,6 +13,8 @@ var spawnItemTimer; // Tiempo inicial para generar ítems
 var spawnItemInterval; // Intervalo para generar ítems después del inicial
 var isFirstSpawn; // Indicador para saber si es la primera vez que se genera un ítem
 var formCheck1, formCheck2, formCooldown, formTimer1, formTimer2; // Indica qué forma tiene el jugador1: 0 base, 1 archer
+var dmgMult1;
+var dmgMult2;
 var gameEnded;
 
 // Clase principal del juego
@@ -69,6 +71,8 @@ class GameScene extends Phaser.Scene {
         formCheck1 = formCheck2 = 0; // Jugadores empiezan en su forma base
         formTimer1 = formTimer2 = 0 // Tiempo restante de la transformación
         formCooldown = 10 // Tiempo que dura una transformación
+        dmgMult1=1; //multiplicador de daño, al transformarse en paladín se pone en 2
+        dmgMult2=1;
         gameEnded = false;
         
         // Configuración de controles del jugador 1
