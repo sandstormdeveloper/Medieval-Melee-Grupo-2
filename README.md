@@ -149,7 +149,7 @@ Menú principal: la música del menú principal está en sintonía con la  ambie
 
 Partidas: dentro de las partidas, es decir, durante los combates, la música pasará a ser más animada e intensa, aumentando la sensación de acción. Los ritmos rápidos crearán una atmósfera de tensión y emoción.
 
-#### Mejoras Fase 2
+### Mejoras Fase 2
 En esta segunda fase de desarrollo, Medieval Melee ha dado un gran paso hacia su identidad final. Se ha implementado el modo de juego local, permitiendo a los jugadores enfrentarse cara a cara en un mismo dispositivo, lo que fomenta la competencia directa y la diversión compartida. Además, se han añadido nuevos diseños de personajes que no solo amplían la variedad visual, sino que también ofrecen una mayor diversidad en estilos de combate, dándole vida a cada guerrero. Un escenario base ha sido establecido, sirviendo como el primer campo de batalla para las épicas justas medievales. Finalmente, para complementar la experiencia, se ha integrado música tanto en el menú principal como durante las partidas, reforzando la atmósfera del juego y sumergiendo a los jugadores en la acción y la ambientación medieval. Esta fase marca un avance significativo en la construcción del mundo y las sensaciones del juego.
 
 #### -Personajes
@@ -177,8 +177,8 @@ La pantalla de partida muestra a dos luchadores pixelados enfrentándose en una 
 ![Figura 18](/assets/pantalla_derrota.PNG)
 La pantalla de victoria celebra al ganador con un mensaje claro, "Player 1 Wins" o "Player 2 Wins", acompañado de opciones sencillas como "Volver a Jugar" y "Salir", manteniendo el enfoque en la emoción del triunfo.
 
-- Pantalla créditos
- ![Figura 15](/assets/pantalla_creditos.PNG)
+  - Pantalla créditos
+![Figura 19](/assets/pantalla_creditos.PNG)
 La pantalla de créditos destaca el título "Créditos" en letras pixeladas grandes, seguido por una lista ordenada de los desarrolladores, ofreciendo un toque sencillo y personal para reconocer al equipo detrás del juego.
 
   
