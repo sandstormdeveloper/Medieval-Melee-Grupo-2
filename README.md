@@ -174,7 +174,6 @@ La pantalla de partida muestra a dos luchadores pixelados enfrentándose en una 
 
  - Pantalla victoria 
 ![Figura 17](/assets/pantalla_victoria.PNG)
-![Figura 18](/assets/pantalla_derrota.PNG)
 La pantalla de victoria celebra al ganador con un mensaje claro, "Player 1 Wins" o "Player 2 Wins", acompañado de opciones sencillas como "Volver a Jugar" y "Salir", manteniendo el enfoque en la emoción del triunfo.
 
   - Pantalla créditos
