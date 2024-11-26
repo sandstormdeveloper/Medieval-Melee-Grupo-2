@@ -180,9 +180,9 @@ class GameScene extends Phaser.Scene {
         // Temporizador para generación de ítems
         this.time.addEvent({
             delay: spawnItemTimer,
-            callback: this.spawnItem,
+            callback: this.firstSpawnItem,
             callbackScope: this,
-            loop: 2, // Sólo una vez
+            loop: false, // Sólo una vez
         });
 
         this.time.addEvent({
@@ -726,6 +726,26 @@ class GameScene extends Phaser.Scene {
         setTimeout(() => {
             if (item) {
                 item.destroy();
+            }
+        }, 10000);
+    }
+
+    firstSpawnItem() {
+        // Genera coordenadas aleatorias para la posición del item dentro del rango especificado
+        var x1 = Math.floor(Math.random() * (930 - 350 + 1)) + 350; // Rango horizontal: 350 a 930
+        var y1 = Math.floor(Math.random() * (400 - 150 + 1)); // Rango vertical: 150 a 400
+        var x2 = Math.floor(Math.random() * (930 - 350 + 1)) + 350; // Rango horizontal: 350 a 930
+        var y2 = Math.floor(Math.random() * (400 - 150 + 1)); // Rango vertical: 150 a 400
+        var item1, item2;
+        item2 = hammer.create(x2, y2, 'hammer')
+        item1 = bow.create(x1, y1, 'bow');
+        // Programa la destrucción del item después de 10 segundos si no se recoge
+        setTimeout(() => {
+            if (item1) {
+                item1.destroy();
+            } 
+            else if (item2) {
+                item2.destroy();
             }
         }, 10000);
     }
