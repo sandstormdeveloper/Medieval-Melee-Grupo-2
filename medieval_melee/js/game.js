@@ -46,9 +46,9 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('arquero1_run', 'assets/p1_arquero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero1_idle', 'assets/p1_arquero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero1_attack', 'assets/p1_arquero/attack.png', { frameWidth: 192, frameHeight: 128 });
-        this.load.spritesheet('paladin1_run', 'assets/p1_paladin/run.png', { frameWidth: 256, frameHeight: 128 });
-        this.load.spritesheet('paladin1_idle', 'assets/p1_paladin/idle.png', { frameWidth: 256, frameHeight: 128 });
-        this.load.spritesheet('paladin1_attack', 'assets/p1_paladin/attack.png', { frameWidth: 256, frameHeight: 128 });
+        this.load.spritesheet('paladin1_run', 'assets/p1_paladin/run.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('paladin1_idle', 'assets/p1_paladin/idle.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('paladin1_attack', 'assets/p1_paladin/attack.png', { frameWidth: 192, frameHeight: 128 });
 
         // Animaciones para el jugador 2
         this.load.spritesheet('caballero2_run', 'assets/p2_caballero/run.png', { frameWidth: 192, frameHeight: 128 });
@@ -57,9 +57,9 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('arquero2_run', 'assets/p2_arquero/run.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero2_idle', 'assets/p2_arquero/idle.png', { frameWidth: 192, frameHeight: 128 });
         this.load.spritesheet('arquero2_attack', 'assets/p2_arquero/attack.png', { frameWidth: 192, frameHeight: 128 });
-        this.load.spritesheet('paladin2_run', 'assets/p2_paladin/run.png', { frameWidth: 256, frameHeight: 128 });
-        this.load.spritesheet('paladin2_idle', 'assets/p2_paladin/idle.png', { frameWidth: 256, frameHeight: 128 });
-        this.load.spritesheet('paladin2_attack', 'assets/p2_paladin/attack.png', { frameWidth: 256, frameHeight: 128 });
+        this.load.spritesheet('paladin2_run', 'assets/p2_paladin/run.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('paladin2_idle', 'assets/p2_paladin/idle.png', { frameWidth: 192, frameHeight: 128 });
+        this.load.spritesheet('paladin2_attack', 'assets/p2_paladin/attack.png', { frameWidth: 192, frameHeight: 128 });
 
     }
 
@@ -145,7 +145,10 @@ class GameScene extends Phaser.Scene {
             if (animation.key === 'caballero1_attack' && frame.index === 4) {
                 this.attack(1); // Ejecuta ataque del jugador 1
             }
-            else if (animation.key === 'paladin1_attack' && frame.index === 4) {
+        });
+
+        player1.on('animationupdate', (animation, frame) => {
+            if (animation.key === 'paladin1_attack' && frame.index === 5) {
                 this.attack(1); // Ejecuta ataque del jugador 1
             }
         });
@@ -154,7 +157,10 @@ class GameScene extends Phaser.Scene {
             if (animation.key === 'caballero2_attack' && frame.index === 4) {
                 this.attack(2); // Ejecuta ataque del jugador 2
             }
-            else if (animation.key === 'paladin2_attack' && frame.index === 4) {
+        });
+
+        player2.on('animationupdate', (animation, frame) => {
+            if (animation.key === 'paladin2_attack' && frame.index === 5) {
                 this.attack(2); // Ejecuta ataque del jugador 1
             }
         });
@@ -668,10 +674,10 @@ class GameScene extends Phaser.Scene {
             isKnockedBack1 = true;                          // Marca al jugador 2 como en retroceso
 
             if(formCheck2==2){
-                dmgMult2=2
+                dmgMult2=1.5;
             }
             else{
-                dmgMult2=1
+                dmgMult2=1;
             }
             percent1 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult2; // Incrementa el daño del jugador 2
             console.log(dmgMult2);
@@ -686,10 +692,10 @@ class GameScene extends Phaser.Scene {
             player2.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
             isKnockedBack2 = true;      
             if(formCheck1==2){
-                dmgMult1=2
+                dmgMult1=1.5;
             }
             else{
-                dmgMult1=1
+                dmgMult1=1;
             }                    // Marca al jugador 2 como en retroceso
             percent2 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult1; // Incrementa el daño del jugador 2
             console.log(dmgMult1);

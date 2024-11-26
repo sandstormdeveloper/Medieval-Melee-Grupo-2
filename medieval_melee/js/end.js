@@ -7,7 +7,7 @@ class EndScene extends Phaser.Scene {
 
     // Método preload: carga los recursos necesarios para esta escena
     preload() {
-        this.load.image('end', 'assets/menu.png');               // Fondo del menú
+        this.load.image('end', 'assets/castillo.png');               // Fondo del menú
         this.load.image('player1wins', 'assets/player1screen.png');           // Imagen del título
         this.load.image('player2wins', 'assets/player2screen.png');           // Imagen del título
         this.load.image('play2', 'assets/play2.png');               // Botón de "Jugar"
@@ -27,14 +27,14 @@ class EndScene extends Phaser.Scene {
         var player = this.registry.get('winner');
 
         if (player == 1) {
-            this.add.image(640, 200, 'player1wins');
+            this.add.image(640, 250, 'player1wins');
         }
         else {
-            this.add.image(640, 200, 'player2wins');
+            this.add.image(640, 250, 'player2wins');
         }
 
         // Botón de "Jugar"
-        var start_button = this.add.image(640, 350, 'play2')
+        var start_button = this.add.image(640, 400, 'play2')
             .setInteractive() // Hace el botón interactivo
             .on('pointerover', () => {
                 // Cambia a la textura de hover cuando el mouse pasa sobre el botón
@@ -55,7 +55,7 @@ class EndScene extends Phaser.Scene {
             });
 
         // Botón de "Salir"
-        var exit_button = this.add.image(640, 425, 'exit')
+        var exit_button = this.add.image(640, 475, 'exit')
             .setInteractive() // Hace el botón interactivo
             .on('pointerover', () => {
                 // Cambia a la textura de hover cuando el mouse pasa sobre el botón

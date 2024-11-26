@@ -7,7 +7,7 @@ class MainMenuScene extends Phaser.Scene {
 
     // Método preload: carga los recursos necesarios para esta escena
     preload() {
-        this.load.image('menu', 'assets/menu.png');               // Fondo del menú
+        this.load.image('menu', 'assets/castillo.png');               // Fondo del menú
         this.load.image('titulo', 'assets/titulo.png');           // Imagen del título
         this.load.image('play', 'assets/play.png');               // Botón de "Jugar"
         this.load.image('play_hover', 'assets/play_hover.png');   // Botón de "Jugar" en hover
@@ -22,10 +22,10 @@ class MainMenuScene extends Phaser.Scene {
 
         // Agrega la imagen de fondo y el título en posiciones específicas
         this.add.image(640, 360, 'menu');  // Imagen del fondo
-        this.add.image(640, 200, 'titulo'); // Imagen del título
+        this.add.image(640, 250, 'titulo'); // Imagen del título
 
         // Botón de "Jugar"
-        var start_button = this.add.image(640, 350, 'play')
+        var start_button = this.add.image(640, 400, 'play')
             .setInteractive() // Hace el botón interactivo
             .on('pointerover', () => {
                 // Cambia a la textura de hover cuando el mouse pasa sobre el botón
@@ -46,7 +46,7 @@ class MainMenuScene extends Phaser.Scene {
             });
 
         // Botón de "Créditos"
-        var credits_button = this.add.image(640, 425, 'credits')
+        var credits_button = this.add.image(640, 475, 'credits')
             .setInteractive() // Hace el botón interactivo
             .on('pointerover', () => {
                 // Cambia a la textura de hover cuando el mouse pasa sobre el botón
