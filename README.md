@@ -7,7 +7,7 @@
 ### Guillermo Hauschild Arencibia, g.hauschild.2022@alumnos.urjc.es, ghauschild
 ### Hugo Orejas Peláez, h.orejas.2022@alumnos.urjc.es, kelele26
 
-## Game Design Document (GDD Fase 1)
+## Game Design Document (GDD)
 ### Introducción
 Este es el documento de diseño de Medieval Melee. Es un videojuego en 2D para PC que se centra en el combate entre personajes. Su objetivo es detallar todos los elementos que conformarán el videojuego, sirviendo como una guía inicial para que los futuros colaboradores conozcan las características del proyecto.
 
