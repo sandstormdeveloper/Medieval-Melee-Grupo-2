@@ -13,6 +13,9 @@ class MainMenuScene extends Phaser.Scene {
         this.load.image('play_hover', 'assets/play_hover.png');   // Botón de "Jugar" en hover
         this.load.image('credits', 'assets/credits.png');         // Botón de "Créditos"
         this.load.image('credits_hover', 'assets/credits_hover.png'); // Botón de "Créditos" en hover
+
+        this.load.audio('menu_music', 'assets/menu.mp3');
+        this.load.audio('game_music', 'assets/juego.mp3');
     }
 
     // Método create: configura la escena y sus elementos
@@ -23,6 +26,12 @@ class MainMenuScene extends Phaser.Scene {
         // Agrega la imagen de fondo y el título en posiciones específicas
         this.add.image(640, 360, 'menu');  // Imagen del fondo
         this.add.image(640, 250, 'titulo'); // Imagen del título
+
+        // Reproducir la música
+        if(!this.game.music) {
+            this.game.music = this.sound.add('menu_music', { loop: true });
+            this.game.music.play();
+        }
 
         // Botón de "Jugar"
         var start_button = this.add.image(640, 400, 'play')
@@ -42,6 +51,9 @@ class MainMenuScene extends Phaser.Scene {
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
                 this.cameras.main.once('camerafadeoutcomplete', () => {
                     this.scene.start('GameScene'); // Cambia a la escena del juego
+                    this.game.music.stop();
+                    this.game.music = this.sound.add('game_music', { loop: true });
+                    this.game.music.play();
                 });
             });
 

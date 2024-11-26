@@ -35,6 +35,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('hammer', 'assets/hammer.png'); // Ítem coleccionable
         this.load.image('arrow', 'assets/arrow.png'); // Flecha
 
+        this.load.audio('menu_music', 'assets/menu.mp3');
+        this.load.audio('game_music', 'assets/juego.mp3');
+
         // Interfaz
         this.load.image('interfaz1', 'assets/interfaz_p1.png');
         this.load.image('interfaz2', 'assets/interfaz_p2.png');
@@ -549,6 +552,9 @@ class GameScene extends Phaser.Scene {
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
                 this.cameras.main.once('camerafadeoutcomplete', () => {
                     this.scene.start('EndScene'); // Cambia a la escena del juego
+                    this.game.music.stop();
+                    this.game.music = this.sound.add('menu_music', { loop: true });
+                    this.game.music.play();
                 });
             }
 
@@ -562,6 +568,9 @@ class GameScene extends Phaser.Scene {
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
                 this.cameras.main.once('camerafadeoutcomplete', () => {
                     this.scene.start('EndScene'); // Cambia a la escena del juego
+                    this.game.music.stop();
+                    this.game.music = this.sound.add('menu_music', { loop: true });
+                    this.game.music.play();
                 });
             }
         }

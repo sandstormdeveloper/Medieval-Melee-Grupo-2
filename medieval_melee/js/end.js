@@ -14,6 +14,9 @@ class EndScene extends Phaser.Scene {
         this.load.image('play2_hover', 'assets/play2_hover.png');   // Botón de "Jugar" en hover
         this.load.image('exit', 'assets/exit.png');         // Botón de "Salir"
         this.load.image('exit_hover', 'assets/exit_hover.png'); // Botón de "Salir" en hover
+
+        this.load.audio('menu_music', 'assets/menu.mp3');
+        this.load.audio('game_music', 'assets/juego.mp3');
     }
 
     // Método create: configura la escena y sus elementos
@@ -51,6 +54,9 @@ class EndScene extends Phaser.Scene {
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
                 this.cameras.main.once('camerafadeoutcomplete', () => {
                     this.scene.start('GameScene'); // Cambia a la escena del juego
+                    this.game.music.stop();
+                    this.game.music = this.sound.add('game_music', { loop: true });
+                    this.game.music.play();
                 });
             });
 
