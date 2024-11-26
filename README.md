@@ -161,24 +161,25 @@ En cuanto a la música del juego, se han desarrollado dos canciones instrumental
 
 ### Escenario
 Se ha diseñado un escenario base para ofrecer un entorno funcional y equilibrado en el que los jugadores puedan centrarse en la dinámica del combate. Este escenario base sirve como el campo de batalla inicial, con plataformas sencillas y una disposición que favorece la acción continua. Sin embargo, este es solo el comienzo. En futuras actualizaciones se añadirán más escenarios, cada uno con su propia apariencia y características únicas, lo que permitirá a los jugadores disfrutar de una mayor variedad de entornos y estrategias de combate. A continuación, se muestra el escenario base.
+![Figura 17](/medieval_melee/assets/escenario.png)
 
 ### Pantallas del juego
 En este apartado se presentan las pantallas clave del juego. Cada pantalla está diseñada para optimizar la experiencia del jugador y facilitar la navegación durante el juego. A continuación, se muestran las imágenes de referencia correspondientes.
 
 - Pantalla menú principal
-![Figura 16](/assets/pantalla_menu.PNG)
+![Figura 17](/assets/pantalla_menu.PNG)
 En el menú principal, el título "Medieval Melee" ocupa el centro con una fuente llamativa, mientras las opciones de "Jugar" y "Créditos" están dispuestas de forma simple, invitando al jugador a entrar rápidamente en acción.
 
  - Pantalla in game
-![Figura 17](/assets/pantalla_partida.PNG)
+![Figura 18](/assets/pantalla_partida.PNG)
 La pantalla de partida muestra a dos luchadores pixelados enfrentándose en una arena flotante con plataformas. Los indicadores de los jugadores, junto al escenario, logran un equilibrio entre claridad visual y la acción dinámica del combate.
 
  - Pantalla victoria 
-![Figura 18](/assets/pantalla_victoria.PNG)
+![Figura 19](/assets/pantalla_victoria.PNG)
 La pantalla de victoria celebra al ganador con un mensaje claro, "Player 1 Wins" o "Player 2 Wins", acompañado de opciones sencillas como "Volver a Jugar" y "Salir", manteniendo el enfoque en la emoción del triunfo.
 
   - Pantalla créditos
-![Figura 19](/assets/pantalla_creditos.PNG)
+![Figura 20](/assets/pantalla_creditos.PNG)
 La pantalla de créditos destaca el título "Créditos" en letras pixeladas grandes, seguido por una lista ordenada de los desarrolladores, ofreciendo un toque sencillo y personal para reconocer al equipo detrás del juego.
 
   
