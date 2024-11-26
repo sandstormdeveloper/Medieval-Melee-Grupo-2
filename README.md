@@ -149,19 +149,19 @@ Menú principal: la música del menú principal está en sintonía con la  ambie
 
 Partidas: dentro de las partidas, es decir, durante los combates, la música pasará a ser más animada e intensa, aumentando la sensación de acción. Los ritmos rápidos crearán una atmósfera de tensión y emoción.
 
-### Mejoras Fase 2
+## Mejoras Fase 2
 En esta segunda fase de desarrollo, Medieval Melee ha dado un gran paso hacia su identidad final. Se ha implementado el modo de juego local, permitiendo a los jugadores enfrentarse cara a cara en un mismo dispositivo, lo que fomenta la competencia directa y la diversión compartida. Además, se han añadido nuevos diseños de personajes que no solo amplían la variedad visual, sino que también ofrecen una mayor diversidad en estilos de combate, dándole vida a cada guerrero. Un escenario base ha sido establecido, sirviendo como el primer campo de batalla para las épicas justas medievales. Finalmente, para complementar la experiencia, se ha integrado música tanto en el menú principal como durante las partidas, reforzando la atmósfera del juego y sumergiendo a los jugadores en la acción y la ambientación medieval. Esta fase marca un avance significativo en la construcción del mundo y las sensaciones del juego.
 
-#### -Personajes
+### Personajes
 En esta segunda fase, se ha trabajado en la diferenciación de personajes para mejorar la experiencia de juego. Se han añadido dos nuevos diseños: un arquero y un caballero azul, ambos asociados al jugador 1. Esto no solo aporta variedad visual, sino que también facilita la identificación de los personajes durante el transcurso de la partida, ayudando a los jugadores a concentrarse en el combate sin confusiones. Estas incorporaciones permiten reconocer de forma inmediata quién controla a cada combatiente, reforzando la claridad y la fluidez en los enfrentamientos.
 
-#### -Audio
+### Audio
 En cuanto a la música del juego, se han desarrollado dos canciones instrumentales inspiradas en la música de la Edad Media, diseñadas específicamente para enriquecer la experiencia del jugador. La primera es una pieza más calmada y melódica, que ambienta el menú principal con un tono sereno y envolvente, preparando al jugador para el desafío que está por venir. La segunda, mucho más animada y rítmica, acompaña las batallas, intensificando la acción y sumergiendo a los jugadores en la adrenalina de los combates. Ambas piezas refuerzan la ambientación medieval y aportan una capa adicional de inmersión al juego.
 
-#### -Escenario
+### Escenario
 Se ha diseñado un escenario base para ofrecer un entorno funcional y equilibrado en el que los jugadores puedan centrarse en la dinámica del combate. Este escenario base sirve como el campo de batalla inicial, con plataformas sencillas y una disposición que favorece la acción continua. Sin embargo, este es solo el comienzo. En futuras actualizaciones se añadirán más escenarios, cada uno con su propia apariencia y características únicas, lo que permitirá a los jugadores disfrutar de una mayor variedad de entornos y estrategias de combate. A continuación, se muestra el escenario base.
 
-#### -Pantallas del juego
+### Pantallas del juego
 En este apartado se presentan las pantallas clave del juego. Cada pantalla está diseñada para optimizar la experiencia del jugador y facilitar la navegación durante el juego. A continuación, se muestran las imágenes de referencia correspondientes.
 
 - Pantalla menú principal
