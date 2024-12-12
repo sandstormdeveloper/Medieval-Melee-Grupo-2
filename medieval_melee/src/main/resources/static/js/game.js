@@ -215,7 +215,7 @@ class GameScene extends Phaser.Scene {
 
         //Pausa del videojuego
         // Configuración de la entrada de la tecla espacio
-        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         // Detecta la pulsación de la tecla espacio
         this.spaceKey.on('down', () => {
