@@ -214,11 +214,11 @@ class GameScene extends Phaser.Scene {
         });
 
         //Pausa del videojuego
-        // Configuración de la entrada de la tecla espacio
-        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+        // Configuración de la entrada de la tecla escape
+        this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
-        // Detecta la pulsación de la tecla espacio
-        this.spaceKey.on('down', () => {
+        // Detecta la pulsación de la tecla escape
+        this.escapeKey.on('down', () => {
             if (!this.scene.isPaused('PauseMenuScene')) {
                 this.scene.pause(); // Pausa la escena principal
                 this.scene.launch('PauseMenuScene'); // Inicia la escena de pausa
