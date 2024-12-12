@@ -213,17 +213,17 @@ class GameScene extends Phaser.Scene {
             });
         });
 
-         //Pausa del videojuego
-          // Configuración de la entrada de la tecla espacio
-          this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        //Pausa del videojuego
+        // Configuración de la entrada de la tecla espacio
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-          // Detecta la pulsación de la tecla espacio
-          this.spaceKey.on('down', () => {
-              if (!this.scene.isPaused('PauseMenuScene')) {
-                  this.scene.pause(); // Pausa la escena principal
-                  this.scene.launch('PauseMenuScene'); // Inicia la escena de pausa
-              }
-          });
+        // Detecta la pulsación de la tecla espacio
+        this.spaceKey.on('down', () => {
+            if (!this.scene.isPaused('PauseMenuScene')) {
+                this.scene.pause(); // Pausa la escena principal
+                this.scene.launch('PauseMenuScene'); // Inicia la escena de pausa
+            }
+        });
     }
 
     // Método para crear animaciones
