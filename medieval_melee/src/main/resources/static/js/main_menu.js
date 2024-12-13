@@ -77,6 +77,15 @@ class MainMenuScene extends Phaser.Scene {
                     this.scene.start('CreditsScene'); // Cambia a la escena de créditos
                 });
             });
+        
+        this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
+        this.escapeKey.on('down', () => {
+            if (!this.scene.isActive('ChatScene')) {
+                this.scene.pause();
+                this.scene.launch('ChatScene');
+            }
+        });
     }
 
     // Método update: se ejecuta en cada frame, puede usarse para lógica del juego (vacío aquí)
