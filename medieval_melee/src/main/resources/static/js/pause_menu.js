@@ -61,6 +61,15 @@ class PauseMenuScene extends Phaser.Scene {
                     this.game.music.play();
                 });
             });
+
+        this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
+        this.escapeKey.on('down', () => {
+            if (this.scene.isActive('PauseMenuScene')) {
+                this.scene.stop(); 
+                this.scene.resume('GameScene'); 
+            }
+        });
     }
 
     // Método update: se ejecuta en cada frame, puede usarse para lógica del juego (vacío aquí)
