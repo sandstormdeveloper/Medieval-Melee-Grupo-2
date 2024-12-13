@@ -9,17 +9,17 @@ class ChatScene extends Phaser.Scene {
 
     create() {
         this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
-
         this.escapeKey.on('down', () => {
             if (this.scene.isActive('ChatScene')) {
-                this.scene.stop(); 
-                this.scene.resume('MainMenuScene'); 
+                this.scene.stop();
+                this.scene.resume('MainMenuScene');
             }
         });
     }
 
     update() {
-        
+
     }
 }
+
 
