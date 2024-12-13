@@ -1,4 +1,4 @@
-// Clase PauseMenuScene que representa el menú principal del juego
+// Clase PauseMenuScene que representa el menú de pausa del juego
 class PauseMenuScene extends Phaser.Scene {
     // Constructor de la escena, define la clave de la escena
     constructor() {
