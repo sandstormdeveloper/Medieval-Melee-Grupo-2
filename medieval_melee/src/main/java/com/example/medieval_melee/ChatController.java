@@ -1,9 +1,11 @@
 package com.example.medieval_melee;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,35 +16,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/chat")
 public class ChatController {
     
-    private final List<ChatMessage> messages = new ArrayList<>();
+    private final List<ChatMessage> messages = new CopyOnWriteArrayList<>();
     private final AtomicInteger lastId = new AtomicInteger(0);
 
-
-    @GetMapping()
+    @GetMapping
     public ChatResponse getMessages(@RequestParam(defaultValue = "0") int since) {
-        List<String> newMessages = new ArrayList<>();
-        int latestId = since;
+        List<String> newMessages = messages.stream()
+                                           .filter(msg -> msg.id() > since)
+                                           .map(ChatMessage::text)
+                                           .toList();
 
-        synchronized (messages) {
-            for (ChatMessage msg : messages) {
-                if (msg.getId() > since) {
-                    newMessages.add(msg.getText());
-                    latestId = msg.getId();
-                }
-            }
-        }
+        int latestId = newMessages.isEmpty() ? since : messages.get(messages.size() - 1).id();
 
         return new ChatResponse(newMessages, latestId);
     }
 
     @PostMapping
-    public void postMessage(@RequestParam String message) {
-        synchronized (messages) {
-            messages.add(new ChatMessage(lastId.incrementAndGet(), message));
-            if (messages.size() > 50) {
-                messages.remove(0); // Keep only the last 50 messages
-            }
+    public ResponseEntity<Void> postMessage(@RequestParam String message) {
+        if (message == null || message.isBlank()) {
+            return ResponseEntity.badRequest().build();
         }
+
+        messages.add(new ChatMessage(lastId.incrementAndGet(), message.trim()));
+        if (messages.size() > 50) {
+            messages.remove(0);
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     public static class ChatResponse {

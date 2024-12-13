@@ -4,6 +4,9 @@
     <!-- Carga la biblioteca Phaser -->
     <script src="js/phaser.js"></script> 
 
+    <!-- Carga de jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- Carga el archivo que contiene el código para el menú principal -->
     <script src="js/main_menu.js"></script>
 
@@ -18,6 +21,9 @@
 
     <!-- Carga el archivo que contiene el código para la escena victoria -->
     <script src="js/end.js"></script>
+
+    <!-- Carga el archivo que contiene el código para la escena de chat -->
+    <script src="js/chat.js"></script>
 
     <!-- Carga el .css que se usa en el juego -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -59,14 +65,14 @@
                 }
             },
 
-            scene: [MainMenuScene, GameScene, PauseMenuScene, CreditsScene, EndScene] // Escenas del juego: Menú principal y juego
+            scene: [MainMenuScene, GameScene, PauseMenuScene, ChatScene, CreditsScene, EndScene] // Escenas del juego: Menú principal y juego
         };
 
         // Crea una nueva instancia del juego con la configuración especificada
         const game = new Phaser.Game(config);
 
         // Inicia directamente la escena del menú
-        game.scene.start('MainMenuScene');
+        game.scene.start('ChatScene');
     </script>
 </body>
 </html>
