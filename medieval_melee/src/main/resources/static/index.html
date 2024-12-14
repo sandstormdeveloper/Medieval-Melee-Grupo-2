@@ -2,7 +2,7 @@
 <html>
 <head>
     <!-- Carga la biblioteca Phaser -->
-    <script src="js/phaser.js"></script> 
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
 
     <!-- Carga de jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -28,34 +28,36 @@
     <!-- Carga el .css que se usa en el juego -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
-        <style>
-        /* Fondo del HTML */
-        body {
-            margin: 0;
-            background: #1a1a1a; /* Color del fondo en gris oscuro */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
-            overflow: hidden; /* Evita el scroll si el contenido supera el tamaño de la ventana */
-        }
+    <style>
+    /* Fondo del HTML */
+    body {
+        margin: 0;
+        background: #1a1a1a; /* Color del fondo en gris oscuro */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
+        overflow: hidden; /* Evita el scroll si el contenido supera el tamaño de la ventana */
+    }
 
-        /* Centrar el canvas del juego */
-        #game-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    /* Centrar el canvas del juego */
+    #game-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     </style>
     
 </head>
 <body>
+    <div id="game"></div>
     <script>
         // Configuración principal del juego
         const config = {
             type: Phaser.AUTO, // Selecciona automáticamente el renderizador: WebGL o Canvas
             width: 1280,      // Ancho de la ventana del juego
             height: 720,      // Alto de la ventana del juego
+            parent: "game",
 
             physics: {
                 default: 'arcade', // Usa el motor físico Arcade
@@ -63,6 +65,10 @@
                     debug: false,    // Desactiva el modo de depuración del motor físico
                     gravity: { y: 1500 } // Establece la gravedad vertical
                 }
+            },
+
+            dom: {
+                    createContainer: true
             },
 
             scene: [MainMenuScene, GameScene, PauseMenuScene, ChatScene, CreditsScene, EndScene] // Escenas del juego: Menú principal y juego

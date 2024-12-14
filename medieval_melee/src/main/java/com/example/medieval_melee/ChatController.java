@@ -1,8 +1,10 @@
 package com.example.medieval_melee;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,19 +18,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/chat")
 public class ChatController {
     
-    private final List<ChatMessage> messages = new CopyOnWriteArrayList<>();
+    private final Queue<ChatMessage> messages = new ConcurrentLinkedQueue<>();
     private final AtomicInteger lastId = new AtomicInteger(0);
+    private static final int MAX_MESSAGES = 50;
 
     @GetMapping
-    public ChatResponse getMessages(@RequestParam(defaultValue = "0") int since) {
+    public ChatResponse getMessages(@RequestParam(defaultValue = "0") long since) {
         List<String> newMessages = messages.stream()
-                                           .filter(msg -> msg.id() > since)
+                                           .filter(msg -> msg.timestamp() > since)
                                            .map(ChatMessage::text)
-                                           .toList();
+                                           .collect(Collectors.toList());
 
-        int latestId = newMessages.isEmpty() ? since : messages.get(messages.size() - 1).id();
+        long latestTimestamp = newMessages.isEmpty() ? since : messages.stream()
+                                                                       .mapToLong(ChatMessage::timestamp)
+                                                                       .max()
+                                                                       .orElse(since);
 
-        return new ChatResponse(newMessages, latestId);
+        return new ChatResponse(newMessages, latestTimestamp);
     }
 
     @PostMapping
@@ -37,9 +43,11 @@ public class ChatController {
             return ResponseEntity.badRequest().build();
         }
 
-        messages.add(new ChatMessage(lastId.incrementAndGet(), message.trim()));
-        if (messages.size() > 50) {
-            messages.remove(0);
+        synchronized (messages) {
+            if (messages.size() >= MAX_MESSAGES) {
+                messages.poll(); // Remove the oldest message
+            }
+            messages.add(new ChatMessage(lastId.incrementAndGet(), message.trim()));
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -47,9 +55,9 @@ public class ChatController {
 
     public static class ChatResponse {
         private final List<String> messages;
-        private final int timestamp;
+        private final long timestamp;
 
-        public ChatResponse(List<String> messages, int timestamp) {
+        public ChatResponse(List<String> messages, long timestamp) {
             this.messages = messages;
             this.timestamp = timestamp;
         }
@@ -58,7 +66,7 @@ public class ChatController {
             return messages;
         }
 
-        public int getTimestamp() {
+        public long getTimestamp() {
             return timestamp;
         }
     }

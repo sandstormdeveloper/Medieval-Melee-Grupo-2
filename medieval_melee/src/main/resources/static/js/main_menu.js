@@ -84,7 +84,6 @@ class MainMenuScene extends Phaser.Scene {
             if (!this.scene.isActive('ChatScene')) {
                 this.scene.pause();
                 this.scene.launch('ChatScene');
-                console.log("Chat abierto.")
             }
         });
     }
