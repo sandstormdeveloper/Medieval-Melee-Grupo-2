@@ -2,7 +2,7 @@
 <html>
 <head>
     <!-- Carga la biblioteca Phaser -->
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+    <script src="js/phaser.js"></script>
 
     <!-- Carga de jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -53,7 +53,7 @@
     <div id="game"></div>
     <script>
         // Configuración principal del juego
-        const config = {
+        var config = {
             type: Phaser.AUTO, // Selecciona automáticamente el renderizador: WebGL o Canvas
             width: 1280,      // Ancho de la ventana del juego
             height: 720,      // Alto de la ventana del juego
@@ -75,7 +75,9 @@
         };
 
         // Crea una nueva instancia del juego con la configuración especificada
-        const game = new Phaser.Game(config);
+        var game = new Phaser.Game(config);
+
+        var isConnected = false;
 
         // Inicia directamente la escena del menú
         game.scene.start('MainMenuScene');

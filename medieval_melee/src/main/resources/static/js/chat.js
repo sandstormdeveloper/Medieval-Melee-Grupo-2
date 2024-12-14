@@ -54,7 +54,6 @@ class ChatScene extends Phaser.Scene {
             if (messages.length > 0) {
                 this.latestMessageTimestamp = timestamp;
                 this.appendMessages(messages);
-                console.log("Mensajes recuperados");
             }
         } catch (error) {
             console.error("Error fetching messages:", error);
@@ -62,20 +61,13 @@ class ChatScene extends Phaser.Scene {
     }
 
     appendMessages(messages) {
-        // Append new messages
         this.messages.push(...messages);
-    
-        // Calculate the maximum number of lines that can fit in the chat box
-        const lineHeight = this.chat.style.lineSpacing + parseInt(this.chat.style.fontSize || 16); // Approx line height
         const maxVisibleLines = 21;
-        console.log(maxVisibleLines);
     
-        // Ensure messages do not exceed the maximum visible lines
         while (this.messages.length > maxVisibleLines) {
-            this.messages.shift(); // Remove the oldest message
+            this.messages.shift();
         }
-    
-        // Update the chat text
+        
         this.chat.setText(this.messages.join("\n"));
     }
     

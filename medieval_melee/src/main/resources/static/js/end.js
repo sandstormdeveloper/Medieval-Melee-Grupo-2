@@ -36,6 +36,18 @@ class EndScene extends Phaser.Scene {
             this.add.image(640, 250, 'player2wins');
         }
 
+        this.statusText = this.add.text(15, 15, '', {
+            fontFamily: 'font',
+            fontSize: '32px',
+            fill: '#fff'
+        });
+
+        this.userCountText = this.add.text(15, 55, '', {
+            fontFamily: 'font',
+            fontSize: '32px',
+            fill: '#fff'
+        });
+
         // Botón de "Jugar"
         var start_button = this.add.image(640, 400, 'play2')
             .setInteractive() // Hace el botón interactivo
@@ -80,10 +92,41 @@ class EndScene extends Phaser.Scene {
                     this.scene.start('MainMenuScene'); // Cambia a la escena de créditos
                 });
             });
+        
+        this.updateStatus();
+        this.time.addEvent({
+            delay: 1000, 
+            callback: this.updateStatus,
+            callbackScope: this,
+            loop: true
+        });
     }
 
     // Método update: se ejecuta en cada frame, puede usarse para lógica del juego (vacío aquí)
     update(time, delta) {
         // Sin implementación adicional en este ejemplo
+    }
+
+    async fetchServerStatus() {
+        try {
+            var response = await fetch('/api/status');
+            if (!response.ok) throw new Error('Server unreachable');
+            var data = await response.json();
+            return {
+                status: data.status,
+                connectedUsers: data.connectedUsers
+            };
+        } catch (error) {
+            return {
+                status: 'Disconnected',
+                connectedUsers: 0
+            };
+        }
+    }
+
+    async updateStatus() {
+        var { status, connectedUsers } = await this.fetchServerStatus();
+        this.statusText.setText(`Status: ${status}`);
+        this.userCountText.setText(`Users: ${connectedUsers}`);
     }
 }

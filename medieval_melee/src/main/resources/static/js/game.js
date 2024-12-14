@@ -24,6 +24,7 @@ var gameEnded;
 class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' }); // Asigna una clave para identificar la escena
+        this.decremented = false;
     }
 
     // Método para cargar los recursos del juego
@@ -121,6 +122,18 @@ class GameScene extends Phaser.Scene {
         this.add.image(540, 640, 'interfaz1');
         this.add.image(740, 640, 'interfaz2');
 
+        this.statusText = this.add.text(15, 15, '', {
+            fontFamily: 'font',
+            fontSize: '32px',
+            fill: '#fff'
+        });
+
+        this.userCountText = this.add.text(15, 55, '', {
+            fontFamily: 'font',
+            fontSize: '32px',
+            fill: '#fff'
+        });
+
         // Configuración del jugador 1
         player1 = this.physics.add.sprite(440, 300, 'caballero1_idle');
         player1.setBodySize(32, 64); // Tamaño del cuerpo físico
@@ -188,6 +201,7 @@ class GameScene extends Phaser.Scene {
             loop: false, // Sólo una vez
         });
 
+        this.updateStatus();
         this.time.addEvent({
             delay: spawnItemInterval,
             callback: this.spawnItem,
@@ -223,6 +237,14 @@ class GameScene extends Phaser.Scene {
                 this.scene.pause(); // Pausa la escena principal
                 this.scene.launch('PauseMenuScene'); // Inicia la escena de pausa
             }
+        });
+
+        this.updateStatus();
+        this.time.addEvent({
+            delay: 1000, 
+            callback: this.updateStatus,
+            callbackScope: this,
+            loop: true
         });
     }
 
@@ -558,7 +580,6 @@ class GameScene extends Phaser.Scene {
             if(player1.x > 1280 || player1.x < 0 || player1.y > 720 || player1.y < 0) {
                 gameEnded = true;
                 this.registry.set('winner', 2);
-                console.log("Player 2 wins!");
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
@@ -574,7 +595,6 @@ class GameScene extends Phaser.Scene {
             if(player2.x > 1280 || player2.x < 0 || player2.y > 720 || player2.y < 0) {
                 gameEnded = true;
                 this.registry.set('winner', 1);
-                console.log("Player 1 wins!");
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
@@ -593,7 +613,6 @@ class GameScene extends Phaser.Scene {
         var velocity = 1000;
 
         if (player == 1) {
-            console.log("Player 1 shot an arrow")
             var projectile = arrow1.create(player1.x, player1.y - 15, 'arrow');
             projectile.setGravityY(0);
     
@@ -612,7 +631,6 @@ class GameScene extends Phaser.Scene {
             }
         }
         else {
-            console.log("Player 2 shot an arrow")
             var projectile = arrow2.create(player2.x, player2.y - 15, 'arrow');
             projectile.setGravityY(0);
     
@@ -701,7 +719,6 @@ class GameScene extends Phaser.Scene {
                 dmgMult2=1;
             }
             percent1 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult2; // Incrementa el daño del jugador 2
-            console.log(dmgMult2);
             this.screenPercentage1.setText(Math.round((percent1- 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
             this.time.addEvent({
                 delay: knockbackDuration,
@@ -719,7 +736,6 @@ class GameScene extends Phaser.Scene {
                 dmgMult1=1;
             }                    // Marca al jugador 2 como en retroceso
             percent2 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult1; // Incrementa el daño del jugador 2
-            console.log(dmgMult1);
             this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
             this.time.addEvent({
                 delay: knockbackDuration,
@@ -804,6 +820,27 @@ class GameScene extends Phaser.Scene {
         formTimer2 = formCooldown;
     }
 
-    
+    async fetchServerStatus() {
+        try {
+            var response = await fetch('/api/status');
+            if (!response.ok) throw new Error('Server unreachable');
+            var data = await response.json();
+            return {
+                status: data.status,
+                connectedUsers: data.connectedUsers
+            };
+        } catch (error) {
+            return {
+                status: 'Disconnected',
+                connectedUsers: 0
+            };
+        }
+    }
+
+    async updateStatus() {
+        var { status, connectedUsers } = await this.fetchServerStatus();
+        this.statusText.setText(`Status: ${status}`);
+        this.userCountText.setText(`Users: ${connectedUsers}`);
+    }
 }
 

@@ -20,12 +20,29 @@ class MainMenuScene extends Phaser.Scene {
 
     // Método create: configura la escena y sus elementos
     create() {
+        if(!isConnected) {
+            this.incrementUsers();
+            isConnected = true;
+        }
+
         // Efecto de fade-in al entrar en la escena
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
         // Agrega la imagen de fondo y el título en posiciones específicas
         this.add.image(640, 360, 'menu');  // Imagen del fondo
         this.add.image(640, 250, 'titulo'); // Imagen del título
+
+        this.statusText = this.add.text(15, 15, '', {
+            fontFamily: 'font',
+            fontSize: '32px',
+            fill: '#fff'
+        });
+
+        this.userCountText = this.add.text(15, 55, '', {
+            fontFamily: 'font',
+            fontSize: '32px',
+            fill: '#fff'
+        });
 
         // Reproducir la música
         if(!this.game.music) {
@@ -86,10 +103,68 @@ class MainMenuScene extends Phaser.Scene {
                 this.scene.launch('ChatScene');
             }
         });
+
+        this.updateStatus();
+        this.time.addEvent({
+            delay: 1000, 
+            callback: this.updateStatus,
+            callbackScope: this,
+            loop: true
+        });
+
+        window.addEventListener('beforeunload', this.handleBeforeUnload.bind(this));
     }
 
-    // Método update: se ejecuta en cada frame, puede usarse para lógica del juego (vacío aquí)
-    update(time, delta) {
-        // Sin implementación adicional en este ejemplo
+    async fetchServerStatus() {
+        try {
+            var response = await fetch('/api/status');
+            if (!response.ok) throw new Error('Server unreachable');
+            var data = await response.json();
+            return {
+                status: data.status,
+                connectedUsers: data.connectedUsers
+            };
+        } catch (error) {
+            return {
+                status: 'Disconnected',
+                connectedUsers: 0
+            };
+        }
+    }
+
+    async updateStatus() {
+        var { status, connectedUsers } = await this.fetchServerStatus();
+        this.statusText.setText(`Status: ${status}`);
+        this.userCountText.setText(`Users: ${connectedUsers}`);
+    }
+
+    async incrementUsers() {
+        try {
+            var response = await fetch('/api/status/increment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) throw new Error('Failed to increment user count');
+        } catch (error) {
+            console.error('Error incrementing user count:', error);
+        }
+    }
+    
+    decrementUsers() {
+        if(!isConnected) {
+            return;
+        }
+
+        isConnected = false;
+        var url = '/api/status/decrement';
+        var data = JSON.stringify({ action: 'decrement' });
+    
+        navigator.sendBeacon(url, data);
+    }
+    
+    handleBeforeUnload(event) {
+        this.decrementUsers();
     }
 }
