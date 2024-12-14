@@ -45,7 +45,7 @@ public class ChatController {
 
         synchronized (messages) {
             if (messages.size() >= MAX_MESSAGES) {
-                messages.poll(); // Remove the oldest message
+                messages.poll();
             }
             messages.add(new ChatMessage(lastId.incrementAndGet(), message.trim()));
         }

@@ -16,7 +16,7 @@ class ChatScene extends Phaser.Scene {
             backgroundColor: "#21313CDD",
             color: "#26924F",
             padding: 10,
-            fontStyle: "bold"
+            fontStyle: "bold",
         });
         this.chat.setFixedSize(1260, 645);
 
@@ -62,9 +62,23 @@ class ChatScene extends Phaser.Scene {
     }
 
     appendMessages(messages) {
-        this.messages.push(...messages); 
-        this.chat.setText(this.messages.join("\n") + "\n");
+        // Append new messages
+        this.messages.push(...messages);
+    
+        // Calculate the maximum number of lines that can fit in the chat box
+        const lineHeight = this.chat.style.lineSpacing + parseInt(this.chat.style.fontSize || 16); // Approx line height
+        const maxVisibleLines = 21;
+        console.log(maxVisibleLines);
+    
+        // Ensure messages do not exceed the maximum visible lines
+        while (this.messages.length > maxVisibleLines) {
+            this.messages.shift(); // Remove the oldest message
+        }
+    
+        // Update the chat text
+        this.chat.setText(this.messages.join("\n"));
     }
+    
 
     async sendMessage() {
         const inputField = this.textInput.getChildByName("chat");
