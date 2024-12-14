@@ -12,11 +12,12 @@ class ChatScene extends Phaser.Scene {
     create() {
         this.textInput = this.add.dom(640, 690).createFromCache("chat").setOrigin(0.5);
         this.chat = this.add.text(10, 10, this.messages.join("\n"), {
-            lineSpacing: 15,
-            backgroundColor: "#21313CDD",
-            color: "#26924F",
-            padding: 10,
-            fontStyle: "bold",
+            lineSpacing: 16,
+            backgroundColor: "#21313c",
+            color: "#fff",
+            padding: 20,
+            fontFamily: 'font',
+            fontSize: '32px',
         });
         this.chat.setFixedSize(1260, 645);
 
@@ -62,7 +63,7 @@ class ChatScene extends Phaser.Scene {
 
     appendMessages(messages) {
         this.messages.push(...messages);
-        const maxVisibleLines = 21;
+        const maxVisibleLines = 12;
     
         while (this.messages.length > maxVisibleLines) {
             this.messages.shift();
