@@ -123,11 +123,16 @@ class MainMenuScene extends Phaser.Scene {
             var response = await fetch('/api/status');
             if (!response.ok) throw new Error('No se puede conectar al servidor');
             var data = await response.json();
+            if (!isConnected) {
+                this.incrementUsers();
+                isConnected = true;
+            }
             return {
                 status: data.status,
                 connectedUsers: data.connectedUsers
             };
         } catch (error) {
+            isConnected = false;
             return {
                 status: 'Desconectado',
                 connectedUsers: 0

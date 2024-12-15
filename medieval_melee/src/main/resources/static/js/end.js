@@ -112,13 +112,18 @@ class EndScene extends Phaser.Scene {
             var response = await fetch('/api/status');
             if (!response.ok) throw new Error('No se puede conectar al servidor');
             var data = await response.json();
+            if (!isConnected) {
+                this.incrementUsers();
+                isConnected = true;
+            }
             return {
                 status: data.status,
                 connectedUsers: data.connectedUsers
             };
         } catch (error) {
+            isConnected = false;
             return {
-                status: 'Disconnected',
+                status: 'Desconectado',
                 connectedUsers: 0
             };
         }
@@ -126,7 +131,21 @@ class EndScene extends Phaser.Scene {
 
     async updateStatus() {
         var { status, connectedUsers } = await this.fetchServerStatus();
-        this.statusText.setText(`Status: ${status}`);
-        this.userCountText.setText(`Users: ${connectedUsers}`);
+        this.statusText.setText(`Estado: ${status}`);
+        this.userCountText.setText(`Usuarios: ${connectedUsers}`);
+    }
+
+    async incrementUsers() {
+        try {
+            var response = await fetch('/api/status/increment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) throw new Error('No se ha podido incrementar el número de usuarios');
+        } catch (error) {
+            console.error('Error incrementando el número de usuarios:', error);
+        }
     }
 }
