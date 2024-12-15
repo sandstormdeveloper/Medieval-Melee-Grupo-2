@@ -18,7 +18,7 @@ public class StatusController {
     @GetMapping
     public Map<String, Object> getStatus() {
         Map<String, Object> response = new HashMap<>();
-        response.put("status", "Connected");
+        response.put("status", "Conectado");
         response.put("connectedUsers", connectedUsers.get());
         return response;
     }

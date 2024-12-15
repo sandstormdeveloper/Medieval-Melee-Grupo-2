@@ -23,6 +23,8 @@ class MainMenuScene extends Phaser.Scene {
         if(!isConnected) {
             this.incrementUsers();
             isConnected = true;
+        } else {
+            this.updateStatus();
         }
 
         // Efecto de fade-in al entrar en la escena
@@ -32,16 +34,18 @@ class MainMenuScene extends Phaser.Scene {
         this.add.image(640, 360, 'menu');  // Imagen del fondo
         this.add.image(640, 250, 'titulo'); // Imagen del título
 
-        this.statusText = this.add.text(15, 15, '', {
-            fontFamily: 'font',
-            fontSize: '32px',
-            fill: '#fff'
-        });
-
-        this.userCountText = this.add.text(15, 55, '', {
-            fontFamily: 'font',
-            fontSize: '32px',
-            fill: '#fff'
+        document.fonts.ready.then(() => {
+            this.statusText = this.add.text(15, 15, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
+    
+            this.userCountText = this.add.text(15, 55, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
         });
 
         // Reproducir la música
@@ -104,7 +108,6 @@ class MainMenuScene extends Phaser.Scene {
             }
         });
 
-        this.updateStatus();
         this.time.addEvent({
             delay: 1000, 
             callback: this.updateStatus,
@@ -118,7 +121,7 @@ class MainMenuScene extends Phaser.Scene {
     async fetchServerStatus() {
         try {
             var response = await fetch('/api/status');
-            if (!response.ok) throw new Error('Server unreachable');
+            if (!response.ok) throw new Error('No se puede conectar al servidor');
             var data = await response.json();
             return {
                 status: data.status,
@@ -126,7 +129,7 @@ class MainMenuScene extends Phaser.Scene {
             };
         } catch (error) {
             return {
-                status: 'Disconnected',
+                status: 'Desconectado',
                 connectedUsers: 0
             };
         }
@@ -134,8 +137,8 @@ class MainMenuScene extends Phaser.Scene {
 
     async updateStatus() {
         var { status, connectedUsers } = await this.fetchServerStatus();
-        this.statusText.setText(`Status: ${status}`);
-        this.userCountText.setText(`Users: ${connectedUsers}`);
+        this.statusText.setText(`Estado: ${status}`);
+        this.userCountText.setText(`Usuarios: ${connectedUsers}`);
     }
 
     async incrementUsers() {
@@ -146,9 +149,9 @@ class MainMenuScene extends Phaser.Scene {
                     'Content-Type': 'application/json'
                 }
             });
-            if (!response.ok) throw new Error('Failed to increment user count');
+            if (!response.ok) throw new Error('No se ha podido incrementar el número de usuarios');
         } catch (error) {
-            console.error('Error incrementing user count:', error);
+            console.error('Error incrementando el número de usuarios:', error);
         }
     }
     

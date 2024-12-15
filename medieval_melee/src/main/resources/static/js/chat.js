@@ -45,7 +45,7 @@ class ChatScene extends Phaser.Scene {
         try {
             const response = await fetch(`/api/chat?since=${this.latestMessageTimestamp}`);
             if (!response.ok) {
-                console.error("Failed to fetch messages:", response.status);
+                console.error("No se ha podido recuperar los mensajes:", response.status);
                 return;
             }
 
@@ -57,7 +57,7 @@ class ChatScene extends Phaser.Scene {
                 this.appendMessages(messages);
             }
         } catch (error) {
-            console.error("Error fetching messages:", error);
+            console.error("Error recuperando mensajes:", error);
         }
     }
 
@@ -91,14 +91,14 @@ class ChatScene extends Phaser.Scene {
             });
 
             if (!response.ok) {
-                console.error("Failed to send message:", response.status);
+                console.error("No se ha podido enviar el mensaje:", response.status);
                 return;
             }
 
             inputField.value = ""; 
             this.fetchMessages(); 
         } catch (error) {
-            console.error("Error sending message:", error);
+            console.error("Error enviando mensaje al chat:", error);
         }
     }
 }

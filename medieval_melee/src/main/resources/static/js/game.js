@@ -122,18 +122,6 @@ class GameScene extends Phaser.Scene {
         this.add.image(540, 640, 'interfaz1');
         this.add.image(740, 640, 'interfaz2');
 
-        this.statusText = this.add.text(15, 15, '', {
-            fontFamily: 'font',
-            fontSize: '32px',
-            fill: '#fff'
-        });
-
-        this.userCountText = this.add.text(15, 55, '', {
-            fontFamily: 'font',
-            fontSize: '32px',
-            fill: '#fff'
-        });
-
         // Configuración del jugador 1
         player1 = this.physics.add.sprite(440, 300, 'caballero1_idle');
         player1.setBodySize(32, 64); // Tamaño del cuerpo físico
@@ -201,7 +189,6 @@ class GameScene extends Phaser.Scene {
             loop: false, // Sólo una vez
         });
 
-        this.updateStatus();
         this.time.addEvent({
             delay: spawnItemInterval,
             callback: this.spawnItem,
@@ -221,6 +208,18 @@ class GameScene extends Phaser.Scene {
             });
 
             this.screenPercentage2 = this.add.text(750, 615, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
+
+            this.statusText = this.add.text(15, 15, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
+    
+            this.userCountText = this.add.text(15, 55, '', {
                 fontFamily: 'font',
                 fontSize: '32px',
                 fill: '#fff'
@@ -823,7 +822,7 @@ class GameScene extends Phaser.Scene {
     async fetchServerStatus() {
         try {
             var response = await fetch('/api/status');
-            if (!response.ok) throw new Error('Server unreachable');
+            if (!response.ok) throw new Error('No se puede conectar al servidor');
             var data = await response.json();
             return {
                 status: data.status,
@@ -831,7 +830,7 @@ class GameScene extends Phaser.Scene {
             };
         } catch (error) {
             return {
-                status: 'Disconnected',
+                status: 'Desconectado',
                 connectedUsers: 0
             };
         }
@@ -839,8 +838,8 @@ class GameScene extends Phaser.Scene {
 
     async updateStatus() {
         var { status, connectedUsers } = await this.fetchServerStatus();
-        this.statusText.setText(`Status: ${status}`);
-        this.userCountText.setText(`Users: ${connectedUsers}`);
+        this.statusText.setText(`Estado: ${status}`);
+        this.userCountText.setText(`Usuarios: ${connectedUsers}`);
     }
 }
 

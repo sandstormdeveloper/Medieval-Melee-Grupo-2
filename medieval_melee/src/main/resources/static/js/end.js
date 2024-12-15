@@ -110,7 +110,7 @@ class EndScene extends Phaser.Scene {
     async fetchServerStatus() {
         try {
             var response = await fetch('/api/status');
-            if (!response.ok) throw new Error('Server unreachable');
+            if (!response.ok) throw new Error('No se puede conectar al servidor');
             var data = await response.json();
             return {
                 status: data.status,
