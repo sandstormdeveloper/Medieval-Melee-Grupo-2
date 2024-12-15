@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .login {
+            background: #eceeee;
+            border: 1px solid #42464b;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally */
+        }
+        input[type="text"], input[type="password"] {
+            background: linear-gradient(to bottom, #d6d7d7, #dee0e0);
+            border: 1px solid #a1a3a3;
+            border-radius: 4px;
+            box-shadow: 0 1px #fff;
+            box-sizing: border-box;
+            color: #696969;
+            height: 39px;
+            margin: 10px 0;
+            padding-left: 10px;
+            transition: box-shadow 0.3s;
+            width: 90%; /* Adjust to make it responsive */
+            max-width: 260px;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            box-shadow: 0 0 4px 1px rgba(55, 166, 155, 0.3);
+            outline: none;
+        }
+        .button-container {
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+        }
+        input[type="submit"] {
+            background-color: cadetblue;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 10px 20px;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%; /* Make the button consistent with input fields */
+            max-width: 260px;
+        }
+        input[type="submit"]:hover {
+            background-color: darkcyan;
+        }
+        input[type="submit"]:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="login">
+        <input type="text" placeholder="Username" id="username" name="username">
+        <input type="password" placeholder="Password" id="password" name="password">
+        <div class="button-container">
+            <input type="submit" value="Sign In" name="loginButton">
+        </div>
+    </div>
+</body>
+</html>

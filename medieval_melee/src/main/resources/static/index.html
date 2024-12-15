@@ -25,6 +25,9 @@
     <!-- Carga el archivo que contiene el código para la escena de chat -->
     <script src="js/chat.js"></script>
 
+    <!-- Carga el archivo que contiene el código para la escena de login -->
+    <script src="js/login.js"></script>
+
     <!-- Carga el .css que se usa en el juego -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
@@ -71,7 +74,7 @@
                     createContainer: true
             },
 
-            scene: [MainMenuScene, GameScene, PauseMenuScene, ChatScene, CreditsScene, EndScene] // Escenas del juego: Menú principal y juego
+            scene: [LoginScene, MainMenuScene, GameScene, PauseMenuScene, ChatScene, CreditsScene, EndScene] // Escenas del juego: Menú principal y juego
         };
 
         // Crea una nueva instancia del juego con la configuración especificada
@@ -80,7 +83,7 @@
         var isConnected = false;
 
         // Inicia directamente la escena del menú
-        game.scene.start('MainMenuScene');
+        game.scene.start('LoginScene');
     </script>
 </body>
 </html>
