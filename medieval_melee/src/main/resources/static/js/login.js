@@ -25,9 +25,18 @@ class LoginScene extends Phaser.Scene {
         
                 if (inputUsername.value !== '' && inputPassword.value !== '') {
                     form.removeListener('click'); 
-                    
-                    //form.scene.tweens.add({ targets: form.rotate3d, x: 1, w: 90, duration: 2000, ease: 'Power3' });
+                    form.scene.tweens.add({
+                        targets: form, scaleX: 0, scaleY: 0, duration: 500, ease: 'Power3',
+                    });
 
+                    this.nextScene(); 
+                }
+            } else if (event.target.name === 'registerButton') {
+                const inputUsername = form.getChildByName('username'); 
+                const inputPassword = form.getChildByName('password');
+        
+                if (inputUsername.value !== '' && inputPassword.value !== '') {
+                    form.removeListener('click'); 
                     form.scene.tweens.add({
                         targets: form, scaleX: 0, scaleY: 0, duration: 500, ease: 'Power3',
                     });
