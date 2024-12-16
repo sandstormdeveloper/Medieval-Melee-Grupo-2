@@ -191,9 +191,11 @@ En esta tercera fase de desarrollo Medieval Melee ha continuado su evolución pa
 ### Chat en el juego
 Se ha implementado un sistema de chat que permite a los jugadores comunicarse entre sí. Este sistema está gestionado por tres elementos principales:
 
-    -ChatController: Es el encargado de gestionar el funcionamiento del cha. permite enviar mensajes a través de un método POST y recuperar los mensajes recientes utilizando un método GET. Esto asegura que los       jugadores puedan mantenerse al tanto de las conversaciones en tiempo real. 
-    -ChatMessage: Representa los atributos de cada mensaje, como el contenido del mensaje, el autor y la marca de tiempo. Esta clase es fundamental para estructurar y organizar los datos del chat.
-    -Escena de chat: Es la interfaz visual que muestra todos los mensajes enviados y recibidos. También incluye un campo de texto para que los jugadores puedan escribir y enviar sus propios mensajes de forma         intuitiva.
+  -ChatController: Es el encargado de gestionar el funcionamiento del cha. permite enviar mensajes a través de un método POST y recuperar los mensajes recientes utilizando un método GET. Esto asegura que los       jugadores puedan mantenerse al tanto de las conversaciones en tiempo real. 
+  
+  -ChatMessage: Representa los atributos de cada mensaje, como el contenido del mensaje, el autor y la marca de tiempo. Esta clase es fundamental para estructurar y organizar los datos del chat.
+    
+  -Escena de chat: Es la interfaz visual que muestra todos los mensajes enviados y recibidos. También incluye un campo de texto para que los jugadores puedan escribir y enviar sus propios mensajes de forma         intuitiva.
 
 ### Menú de inicio de sesión
 Se ha añadido un menú de inicio de sesión previo antes de acceder al videojuego. Con esta nueva funcionalidad los jugadores podrán crearse un usuario y conocer así sus estadísticas de juego. 
