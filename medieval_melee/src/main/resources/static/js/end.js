@@ -22,6 +22,8 @@ class EndScene extends Phaser.Scene {
 
     // Método create: configura la escena y sus elementos
     create() {
+        gamesPlayedByUser += 1;
+        this.updateGamesPlayed(userPlaying, gamesPlayedByUser);
         returnToMenu = false;
         // Efecto de fade-in al entrar en la escena
         this.cameras.main.fadeIn(500, 0, 0, 0);
@@ -159,5 +161,16 @@ class EndScene extends Phaser.Scene {
         } catch (error) {
             console.error('Error incrementando el número de usuarios:', error);
         }
+    }
+
+    updateGamesPlayed(username, gamesPlayed) {
+        fetch(`/api/users/updateGamesPlayed?username=${username}&gamesPlayed=${gamesPlayed}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 }

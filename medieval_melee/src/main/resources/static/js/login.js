@@ -130,6 +130,7 @@ class LoginScene extends Phaser.Scene {
         })
         .then(user => {
             userPlaying = user.username;
+            gamesPlayedByUser = user.gamesPlayed;
         })
         .catch(error => {
             console.error('Error:', error);

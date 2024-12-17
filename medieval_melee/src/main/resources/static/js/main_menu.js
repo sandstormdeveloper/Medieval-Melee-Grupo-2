@@ -40,7 +40,13 @@ class MainMenuScene extends Phaser.Scene {
                 fill: '#fff'
             });
 
-            this.userText = this.add.text(15, 95, '', {
+            this.userText = this.add.text(15, 635, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
+
+            this.gameText = this.add.text(15, 675, '', {
                 fontFamily: 'font',
                 fontSize: '32px',
                 fill: '#fff'
@@ -152,8 +158,14 @@ class MainMenuScene extends Phaser.Scene {
         this.userCountText.setText(`Usuarios: ${connectedUsers}`);
         if (isConnected) {
             this.userText.setText('Registrado como ' + userPlaying);
+            if(gamesPlayedByUser != 1) {
+                this.gameText.setText('Has jugado ' + gamesPlayedByUser + ' partidas');
+            } else {
+                this.gameText.setText('Has jugado ' + gamesPlayedByUser + ' partida');
+            }
         } else {
             this.userText.setText('');
+            this.gameText.setText('');
         }
     }
 
