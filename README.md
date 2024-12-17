@@ -191,12 +191,25 @@ En esta tercera fase de desarrollo Medieval Melee ha continuado su evolución pa
 ### Chat en el juego
 Se ha implementado un sistema de chat que permite a los jugadores comunicarse entre sí. Este sistema está gestionado por tres elementos principales:
 
-  -ChatController: Es el encargado de gestionar el funcionamiento del cha. permite enviar mensajes a través de un método POST y recuperar los mensajes recientes utilizando un método GET. Esto asegura que los       jugadores puedan mantenerse al tanto de las conversaciones en tiempo real. 
+  -ChatController: Es el encargado de gestionar el funcionamiento del chat. Permite enviar mensajes a través de un método POST y recuperar los mensajes recientes utilizando un método GET. Esto asegura que los       jugadores puedan mantenerse al tanto de las conversaciones en tiempo real. 
   
   -ChatMessage: Representa los atributos de cada mensaje, como el contenido del mensaje, el autor y la marca de tiempo. Esta clase es fundamental para estructurar y organizar los datos del chat.
     
   -Escena de chat: Es la interfaz visual que muestra todos los mensajes enviados y recibidos. También incluye un campo de texto para que los jugadores puedan escribir y enviar sus propios mensajes de forma         intuitiva.
 
 ### Menú de inicio de sesión
-Se ha añadido un menú de inicio de sesión previo antes de acceder al videojuego. Con esta nueva funcionalidad los jugadores podrán crearse un usuario y conocer así sus estadísticas de juego. 
+Se ha añadido un menú de inicio de sesión previo antes de acceder al videojuego.  El objetivo de esta funcionalidad es permitir a los usuarios acceder a la aplicación mediante la introducción de un nombre de usuario y una contraseña, validando las credenciales a través de un sistema de autenticación basado en una base de datos relacional.
+En cuanto al desarrollo de esta funcionalidad, se siguieron los siguientes pasos:
+
+Primero, se creó una clase User que representa la entidad de usuario en la base de datos. Esta clase contiene atributos como el nombre de usuario, la contraseña y el número de partidas jugadas.
+
+Posteriormente, se implementó un repositorio (UserRepository) para acceder y consultar los datos almacenados.
+
+La clase UserService se encarga de gestionar y coordinar las operaciones relacionadas con los usuarios. Esta clase se comunica con el repositorio para acceder y modificar los datos, aplica la lógica de negocio (como la validación de contraseñas, entre otros procesos) y actúa como un servicio en la aplicación. De esta forma, se separa la lógica de negocio del acceso directo a los datos.
+
+Además, se implementó la clase UserController para permitir la interacción de los usuarios con la aplicación. Esta clase recibe y procesa las solicitudes relacionadas con los usuarios, llama a UserService para ejecutar la lógica de negocio y, finalmente, devuelve los resultados o gestiona los errores. Entre las operaciones que controla se encuentran la búsqueda de usuarios, el inicio de sesión, el registro de nuevos usuarios, la actualización de datos y la eliminación de usuarios.
+
+Por otro lado, se ha desarrollado la escena de inicio de sesión y se ha implementado el formulario de inicio de sesión dentro de esta escena.
+
+
     
