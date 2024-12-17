@@ -28,13 +28,13 @@ class MainMenuScene extends Phaser.Scene {
         this.add.image(640, 250, 'titulo'); // Imagen del título
 
         document.fonts.ready.then(() => {
-            this.statusText = this.add.text(15, 15, '', {
+            this.statusText = this.add.text(15, 15, 'Estado: Desconectado', {
                 fontFamily: 'font',
                 fontSize: '32px',
                 fill: '#fff'
             });
     
-            this.userCountText = this.add.text(15, 55, '', {
+            this.userCountText = this.add.text(15, 55, 'Usuarios: 0', {
                 fontFamily: 'font',
                 fontSize: '32px',
                 fill: '#fff'
@@ -65,16 +65,20 @@ class MainMenuScene extends Phaser.Scene {
                 start_button.setTexture('play');
             })
             .on('pointerdown', () => {
-                // Al hacer clic, inicia un fade-out y cambia a la escena del juego
-                this.cameras.main.fadeOut(500, 0, 0, 0);
+                if(isConnected) {
+                    // Al hacer clic, inicia un fade-out y cambia a la escena del juego
+                    this.cameras.main.fadeOut(500, 0, 0, 0);
 
-                // Espera a que el fade-out termine antes de iniciar la nueva escena
-                this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.start('GameScene'); // Cambia a la escena del juego
-                    this.game.music.stop();
-                    this.game.music = this.sound.add('game_music', { loop: true });
-                    this.game.music.play();
-                });
+                    // Espera a que el fade-out termine antes de iniciar la nueva escena
+                    this.cameras.main.once('camerafadeoutcomplete', () => {
+                        this.scene.start('GameScene'); // Cambia a la escena del juego
+                        this.game.music.stop();
+                        this.game.music = this.sound.add('game_music', { loop: true });
+                        this.game.music.play();
+                    });
+                } else {
+                    alert('No se encuentra el servidor :(');
+                }
             });
 
         // Botón de "Créditos"
@@ -89,24 +93,29 @@ class MainMenuScene extends Phaser.Scene {
                 credits_button.setTexture('credits');
             })
             .on('pointerdown', () => {
-                // Al hacer clic, inicia un fade-out y cambia a la escena de créditos
-                this.cameras.main.fadeOut(500, 0, 0, 0);
+                if(isConnected) {
+                    // Al hacer clic, inicia un fade-out y cambia a la escena de créditos
+                    this.cameras.main.fadeOut(500, 0, 0, 0);
 
-                // Espera a que el fade-out termine antes de iniciar la nueva escena
-                this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.start('CreditsScene'); // Cambia a la escena de créditos
-                });
+                    // Espera a que el fade-out termine antes de iniciar la nueva escena
+                    this.cameras.main.once('camerafadeoutcomplete', () => {
+                        this.scene.start('CreditsScene'); // Cambia a la escena de créditos
+                    });
+                } else {
+                    alert('No se encuentra el servidor :(');
+                }
             });
         
         this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         this.escapeKey.on('down', () => {
-            if (!this.scene.isActive('ChatScene')) {
+            if (!this.scene.isActive('ChatScene') && isConnected) {
                 this.scene.pause();
                 this.scene.launch('ChatScene');
             }
         });
 
+        this.updateStatus();
         this.time.addEvent({
             delay: 1000, 
             callback: this.updateStatus,
@@ -141,7 +150,11 @@ class MainMenuScene extends Phaser.Scene {
         var { status, connectedUsers } = await this.fetchServerStatus();
         this.statusText.setText(`Estado: ${status}`);
         this.userCountText.setText(`Usuarios: ${connectedUsers}`);
-        this.userText.setText('Registrado como ' + userPlaying);
+        if (isConnected) {
+            this.userText.setText('Registrado como ' + userPlaying);
+        } else {
+            this.userText.setText('');
+        }
     }
 
     async incrementUsers() {

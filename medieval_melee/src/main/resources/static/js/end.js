@@ -1,3 +1,4 @@
+var returnToMenu;
 // Clase MainMenuScene que representa el menú principal del juego
 class EndScene extends Phaser.Scene {
     // Constructor de la escena, define la clave de la escena
@@ -21,6 +22,7 @@ class EndScene extends Phaser.Scene {
 
     // Método create: configura la escena y sus elementos
     create() {
+        returnToMenu = false;
         // Efecto de fade-in al entrar en la escena
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
@@ -36,13 +38,13 @@ class EndScene extends Phaser.Scene {
             this.add.image(640, 250, 'player2wins');
         }
 
-        this.statusText = this.add.text(15, 15, '', {
+        this.statusText = this.add.text(15, 15, 'Estado: Desconectado', {
             fontFamily: 'font',
             fontSize: '32px',
             fill: '#fff'
         });
 
-        this.userCountText = this.add.text(15, 55, '', {
+        this.userCountText = this.add.text(15, 55, 'Usuarios: 0', {
             fontFamily: 'font',
             fontSize: '32px',
             fill: '#fff'
@@ -133,6 +135,16 @@ class EndScene extends Phaser.Scene {
         var { status, connectedUsers } = await this.fetchServerStatus();
         this.statusText.setText(`Estado: ${status}`);
         this.userCountText.setText(`Usuarios: ${connectedUsers}`);
+        if(!isConnected && !returnToMenu) {
+            alert("No se encuentra el servidor :(")
+            returnToMenu = true;
+            this.cameras.main.fadeOut(500, 0, 0, 0);
+
+            // Espera a que el fade-out termine antes de iniciar la nueva escena
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                this.scene.start('MainMenuScene'); // Vuelve al menú principal
+            });
+        }
     }
 
     async incrementUsers() {

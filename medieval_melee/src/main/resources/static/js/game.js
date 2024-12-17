@@ -18,6 +18,7 @@ var formCheck1, formCheck2, formCooldown, formTimer1, formTimer2; // Indica qué
 var dmgMult1; //Multiplicador de daño del p1, para el paladin
 var dmgMult2; //Multiplicador de daño del p1, para el paladin
 var gameEnded;
+var returnToMenu;
 
 
 // Clase principal del juego
@@ -69,6 +70,7 @@ class GameScene extends Phaser.Scene {
 
     // Método para inicializar los elementos de la escena
     create() {
+        returnToMenu = false;
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
         // Inicialización de variables
@@ -213,13 +215,13 @@ class GameScene extends Phaser.Scene {
                 fill: '#fff'
             });
 
-            this.statusText = this.add.text(15, 15, '', {
+            this.statusText = this.add.text(15, 15, 'Estado: Desconectado', {
                 fontFamily: 'font',
                 fontSize: '32px',
                 fill: '#fff'
             });
     
-            this.userCountText = this.add.text(15, 55, '', {
+            this.userCountText = this.add.text(15, 55, 'Usuarios: 0', {
                 fontFamily: 'font',
                 fontSize: '32px',
                 fill: '#fff'
@@ -845,6 +847,20 @@ class GameScene extends Phaser.Scene {
         var { status, connectedUsers } = await this.fetchServerStatus();
         this.statusText.setText(`Estado: ${status}`);
         this.userCountText.setText(`Usuarios: ${connectedUsers}`);
+
+        if(!isConnected && !returnToMenu) {
+            alert("No se encuentra el servidor :(")
+            returnToMenu = true;
+            this.cameras.main.fadeOut(500, 0, 0, 0);
+
+            // Espera a que el fade-out termine antes de iniciar la nueva escena
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                this.scene.start('MainMenuScene'); // Vuelve al menú principal
+                this.game.music.stop();
+                this.game.music = this.sound.add('menu_music', { loop: true });
+                this.game.music.play();
+            });
+        }
     }
 
     async incrementUsers() {

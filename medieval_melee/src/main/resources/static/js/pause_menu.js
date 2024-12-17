@@ -1,3 +1,4 @@
+var returnToMenu;
 // Clase PauseMenuScene que representa el menú de pausa del juego
 class PauseMenuScene extends Phaser.Scene {
     // Constructor de la escena, define la clave de la escena
@@ -18,6 +19,7 @@ class PauseMenuScene extends Phaser.Scene {
 
     // Método create: configura la escena y sus elementos
     create() {
+        returnToMenu = false;
         // Agrega la imagen de fondo y el título en posiciones específicas
         this.add.image(640, 360, 'fondo_pausa');  // Imagen del fondo
 
@@ -54,7 +56,7 @@ class PauseMenuScene extends Phaser.Scene {
 
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
                 this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.stop('GameScene'); // Detiene la escena principal
+                    this.scene.stop('GameScene');
                     this.scene.start('MainMenuScene'); // Vuelve al menú principal
                     this.game.music.stop();
                     this.game.music = this.sound.add('menu_music', { loop: true });
@@ -70,10 +72,72 @@ class PauseMenuScene extends Phaser.Scene {
                 this.scene.resume('GameScene'); 
             }
         });
+
+        this.updateStatus();
+        this.time.addEvent({
+            delay: 1000, 
+            callback: this.updateStatus,
+            callbackScope: this,
+            loop: true
+        });
     }
 
     // Método update: se ejecuta en cada frame, puede usarse para lógica del juego (vacío aquí)
     update(time, delta) {
-        // Sin implementación adicional en este ejemplo
+        
+    }
+
+    async fetchServerStatus() {
+        try {
+            var response = await fetch('/api/status');
+            if (!response.ok) throw new Error('No se puede conectar al servidor');
+            var data = await response.json();
+            if (!isConnected) {
+                this.incrementUsers();
+                isConnected = true;
+            }
+            return {
+                status: data.status,
+                connectedUsers: data.connectedUsers
+            };
+        } catch (error) {
+            isConnected = false;
+            return {
+                status: 'Desconectado',
+                connectedUsers: 0
+            };
+        }
+    }
+
+    async updateStatus() {
+        await this.fetchServerStatus();
+        if(!isConnected && !returnToMenu) {
+            alert("No se encuentra el servidor :(")
+            returnToMenu = true;
+            this.cameras.main.fadeOut(500, 0, 0, 0);
+
+            // Espera a que el fade-out termine antes de iniciar la nueva escena
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                this.scene.stop('GameScene');
+                this.scene.start('MainMenuScene'); // Vuelve al menú principal
+                this.game.music.stop();
+                this.game.music = this.sound.add('menu_music', { loop: true });
+                this.game.music.play();
+            });
+        }
+    }
+
+    async incrementUsers() {
+        try {
+            var response = await fetch('/api/status/increment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) throw new Error('No se ha podido incrementar el número de usuarios');
+        } catch (error) {
+            console.error('Error incrementando el número de usuarios:', error);
+        }
     }
 }

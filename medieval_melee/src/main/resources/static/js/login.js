@@ -27,44 +27,71 @@ class LoginScene extends Phaser.Scene {
 
         form.addListener('click');
 
+        document.fonts.ready.then(() => {
+            this.statusText = this.add.text(15, 15, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
+    
+            this.userCountText = this.add.text(15, 55, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
+        });
+
         form.on('click', (event) => { 
-            if (event.target.name === 'loginButton') {
-                const inputUsername = form.getChildByName('username'); 
-                const inputPassword = form.getChildByName('password');
-        
-                if (inputUsername.value !== '' && inputPassword.value !== '') {
-                    fetch('/api/users/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: `username=${inputUsername.value}&password=${inputPassword.value}`
-                    })
-                    .then(response => response.json())
-                    .then(success => {
-                        this.getUser(inputUsername.value);
-                        if (success) this.nextScene();
-                        else alert('Usuario o contraseña incorrectos :(');
-                    });
+            if (isConnected) {
+                if (event.target.name === 'loginButton') {
+                    const inputUsername = form.getChildByName('username'); 
+                    const inputPassword = form.getChildByName('password');
+            
+                    if (inputUsername.value !== '' && inputPassword.value !== '') {
+                        fetch('/api/users/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `username=${inputUsername.value}&password=${inputPassword.value}`
+                        })
+                        .then(response => response.json())
+                        .then(success => {
+                            this.getUser(inputUsername.value);
+                            if (success) this.nextScene();
+                            else alert('Ese usuario no existe :(');
+                        });
+                    }
+                } else if (event.target.name === 'registerButton') {
+                    const inputUsername = form.getChildByName('username'); 
+                    const inputPassword = form.getChildByName('password');
+            
+                    if (inputUsername.value !== '' && inputPassword.value !== '') {
+                        fetch('/api/users/register', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username: inputUsername.value, password: inputPassword.value, gamesPlayed: 0 })
+                        })
+                        .then(response => response.json())
+                        .then(success => {
+                            this.getUser(inputUsername.value);
+                            if (success) this.nextScene();
+                            else alert('No se ha podido registrar el usuario :(');
+                        });
+                    }
                 }
-            } else if (event.target.name === 'registerButton') {
-                const inputUsername = form.getChildByName('username'); 
-                const inputPassword = form.getChildByName('password');
-        
-                if (inputUsername.value !== '' && inputPassword.value !== '') {
-                    fetch('/api/users/register', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: inputUsername.value, password: inputPassword.value, gamesPlayed: 0 })
-                    })
-                    .then(response => response.json())
-                    .then(success => {
-                        this.getUser(inputUsername.value);
-                        if (success) this.nextScene();
-                        else alert('No se ha podido registrar el usuario :(');
-                    });
+            }
+            else {
+                if (event.target.name === 'loginButton' || event.target.name === 'registerButton') {
+                    alert('No se encuentra el servidor :(');
                 }
             }
 
+        });
 
+        this.time.addEvent({
+            delay: 1000, 
+            callback: this.updateStatus,
+            callbackScope: this,
+            loop: true
         });
 
         window.addEventListener('beforeunload', this.handleBeforeUnload.bind(this));
@@ -82,6 +109,12 @@ class LoginScene extends Phaser.Scene {
         this.cameras.main.once('camerafadeoutcomplete', () => {
             this.scene.start('MainMenuScene');
         });
+    }
+
+    async updateStatus() {
+        var { status, connectedUsers } = await this.fetchServerStatus();
+        this.statusText.setText(`Estado: ${status}`);
+        this.userCountText.setText(`Usuarios: ${connectedUsers}`);
     }
 
     getUser(usernameInput) {
@@ -123,10 +156,6 @@ class LoginScene extends Phaser.Scene {
                 connectedUsers: 0
             };
         }
-    }
-
-    async updateStatus() {
-        await this.fetchServerStatus();
     }
 
     async incrementUsers() {
