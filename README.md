@@ -196,6 +196,10 @@ Se ha implementado un sistema de chat que permite a los jugadores comunicarse en
   -ChatMessage: Representa los atributos de cada mensaje, como el contenido del mensaje, el autor y la marca de tiempo. Esta clase es fundamental para estructurar y organizar los datos del chat.
     
   -Escena de chat: Es la interfaz visual que muestra todos los mensajes enviados y recibidos. También incluye un campo de texto para que los jugadores puedan escribir y enviar sus propios mensajes de forma         intuitiva.
+  
+- Pantalla del chat:
+![Figura 22](/assets/)
+
 
 ### Menú de inicio de sesión
 Se ha añadido un menú de inicio de sesión previo antes de acceder al videojuego.  El objetivo de esta funcionalidad es permitir a los usuarios acceder a la aplicación mediante la introducción de un nombre de usuario y una contraseña, validando las credenciales a través de un sistema de autenticación basado en una base de datos relacional.
@@ -211,5 +215,6 @@ Además, se implementó la clase UserController para permitir la interacción de
 
 Por otro lado, se ha desarrollado la escena de inicio de sesión y se ha implementado el formulario de inicio de sesión dentro de esta escena.
 
-
+- Pantalla de inicio de sesión:
+![Figura 23](/assets/)
     
