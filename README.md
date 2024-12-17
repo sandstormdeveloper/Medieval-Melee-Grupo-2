@@ -198,7 +198,7 @@ Se ha implementado un sistema de chat que permite a los jugadores comunicarse en
   -Escena de chat: Es la interfaz visual que muestra todos los mensajes enviados y recibidos. También incluye un campo de texto para que los jugadores puedan escribir y enviar sus propios mensajes de forma         intuitiva.
   
 - Pantalla del chat:
-![Figura 22](/assets/)
+![Figura 22](/assets/pantallachat.PNG)
 
 
 ### Menú de inicio de sesión
@@ -216,5 +216,5 @@ Además, se implementó la clase UserController para permitir la interacción de
 Por otro lado, se ha desarrollado la escena de inicio de sesión y se ha implementado el formulario de inicio de sesión dentro de esta escena.
 
 - Pantalla de inicio de sesión:
-![Figura 23](/assets/)
+![Figura 23](/assets/pantalla_inicio_de_sesión)
     
