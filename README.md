@@ -216,5 +216,6 @@ Además, se implementó la clase UserController para permitir la interacción de
 Por otro lado, se ha desarrollado la escena de inicio de sesión y se ha implementado el formulario de inicio de sesión dentro de esta escena.
 
 - Pantalla de inicio de sesión:
-![Figura 23](/assets/pantalla_inicio_de_sesión)
+![Figura 23](/assets/pantalla_inicio_de_sesión.PNG)
+
     
