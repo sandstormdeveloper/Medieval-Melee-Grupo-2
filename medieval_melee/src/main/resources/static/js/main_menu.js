@@ -20,13 +20,6 @@ class MainMenuScene extends Phaser.Scene {
 
     // Método create: configura la escena y sus elementos
     create() {
-        if(!isConnected) {
-            this.incrementUsers();
-            isConnected = true;
-        } else {
-            this.updateStatus();
-        }
-
         // Efecto de fade-in al entrar en la escena
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
@@ -42,6 +35,12 @@ class MainMenuScene extends Phaser.Scene {
             });
     
             this.userCountText = this.add.text(15, 55, '', {
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
+
+            this.userText = this.add.text(15, 95, '', {
                 fontFamily: 'font',
                 fontSize: '32px',
                 fill: '#fff'
@@ -114,8 +113,6 @@ class MainMenuScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-
-        window.addEventListener('beforeunload', this.handleBeforeUnload.bind(this));
     }
 
     async fetchServerStatus() {
@@ -144,6 +141,7 @@ class MainMenuScene extends Phaser.Scene {
         var { status, connectedUsers } = await this.fetchServerStatus();
         this.statusText.setText(`Estado: ${status}`);
         this.userCountText.setText(`Usuarios: ${connectedUsers}`);
+        this.userText.setText('Registrado como ' + userPlaying);
     }
 
     async incrementUsers() {
@@ -158,21 +156,5 @@ class MainMenuScene extends Phaser.Scene {
         } catch (error) {
             console.error('Error incrementando el número de usuarios:', error);
         }
-    }
-    
-    decrementUsers() {
-        if(!isConnected) {
-            return;
-        }
-
-        isConnected = false;
-        var url = '/api/status/decrement';
-        var data = JSON.stringify({ action: 'decrement' });
-    
-        navigator.sendBeacon(url, data);
-    }
-    
-    handleBeforeUnload(event) {
-        this.decrementUsers();
     }
 }

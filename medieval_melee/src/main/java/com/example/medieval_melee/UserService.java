@@ -10,6 +10,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public Optional<User> getUser(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     public Optional<User> login(String username, String password) {
         return userRepository.findByUsername(username)
                 .filter(user -> user.getPassword().equals(password));

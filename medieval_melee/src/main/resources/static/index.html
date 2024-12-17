@@ -81,6 +81,8 @@
         var game = new Phaser.Game(config);
 
         var isConnected = false;
+        var userPlaying = null;
+        var gamesPlayedByUser = 0;
 
         // Inicia directamente la escena del menú
         game.scene.start('LoginScene');
