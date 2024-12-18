@@ -27,12 +27,6 @@ Este archivo describe todas las funcionalidades implementadas con API REST en la
    - **Respuesta**:
      - Código 201: Mensaje creado exitosamente.
      - Código 400: Solicitud inválida si el mensaje está vacío o nulo.
-     - Ejemplo de respuesta:
-       ```json
-       {
-         "status": "CREATED"
-       }
-       ```
 
 ### 3. **GET /api/status**
    - **Descripción**: Obtiene el estado actual del sistema, incluyendo el número de usuarios conectados.
