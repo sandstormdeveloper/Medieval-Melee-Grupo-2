@@ -20,6 +20,17 @@ var dmgMult2; //Multiplicador de daño del p1, para el paladin
 var gameEnded;
 var returnToMenu;
 
+var keyStates = {
+    w: false,
+    a: false,
+    s: false,
+    d: false,
+    arrowup: false,
+    arrowdown: false,
+    arrowleft: false,
+    arrowright: false,
+};
+
 
 // Clase principal del juego
 class GameScene extends Phaser.Scene {
@@ -92,11 +103,21 @@ class GameScene extends Phaser.Scene {
         dmgMult2=1;
         gameEnded = false;
         
-        // Configuración de controles del jugador 1
-        keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        // Handle keydown events
+        this.input.keyboard.on('keydown', (event) => {
+            const key = event.key.toLowerCase(); // Normalize the key to lowercase
+            if (key in keyStates) {
+                keyStates[key] = true; // Update the state to true when the key is pressed
+            }
+        });
+
+        // Handle keyup events
+        this.input.keyboard.on('keyup', (event) => {
+            const key = event.key.toLowerCase(); // Normalize the key to lowercase
+            if (key in keyStates) {
+                keyStates[key] = false; // Update the state to false when the key is released
+            }
+        });
 
         // Agrega el fondo del escenario
         this.add.image(640, 360, 'fondo');
@@ -197,9 +218,6 @@ class GameScene extends Phaser.Scene {
             callbackScope: this,
             loop: true, // Repetición continua
         });
-
-        // Configuración de controles del jugador 2
-        cursors = this.input.keyboard.createCursorKeys();
 
         //Contador en pantalla para mostrar el porcentaje de cada jugador
         document.fonts.ready.then(() => {
@@ -381,7 +399,7 @@ class GameScene extends Phaser.Scene {
     // Maneja el input de los dos jugadores
     inputs() {
         // ** Control del Jugador 1 **
-        if (keyA.isDown && !isKnockedBack1) {
+        if (keyStates['a'] && !isKnockedBack1) {
             // Movimiento hacia la izquierda
             player1.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
            
@@ -401,7 +419,7 @@ class GameScene extends Phaser.Scene {
             // Invierte el sprite para mirar a la izquierda
             player1.flipX = true;
     
-        } else if (keyD.isDown && !isKnockedBack1) {
+        } else if (keyStates['d'] && !isKnockedBack1) {
             // Movimiento hacia la derecha
             player1.setVelocityX(moveSpeed); // Velocidad positiva para ir a la derecha
     
@@ -440,12 +458,14 @@ class GameScene extends Phaser.Scene {
         }
     
         // Salto del Jugador 1
-        if (keyW.isDown && player1.body.touching.down && !isKnockedBack1) {
+        if (keyStates['w'] && player1.body.touching.down && !isKnockedBack1) {
+            keyStates['w'] = false;
             player1.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
 
         // Ataque del Jugador 1
-        if (keyS.isDown && !isKnockedBack1) {
+        if (keyStates['s'] && !isKnockedBack1) {
+            keyStates['s'] = false;
             if (attackTimer1 <= 0) {
                 // Reproduce la animación de ataque y reinicia el temporizador
                 if(formCheck1 == 0) {
@@ -462,7 +482,7 @@ class GameScene extends Phaser.Scene {
         }
     
         // ** Control del Jugador 2 **
-        if (cursors.left.isDown && !isKnockedBack2) {
+        if (keyStates['arrowleft'] && !isKnockedBack2) {
             // Movimiento hacia la izquierda
             player2.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
     
@@ -482,7 +502,7 @@ class GameScene extends Phaser.Scene {
             // Invierte el sprite para mirar a la izquierda
             player2.flipX = true;
     
-        } else if (cursors.right.isDown && !isKnockedBack2) {
+        } else if (keyStates['arrowright'] && !isKnockedBack2) {
             // Movimiento hacia la derecha
             player2.setVelocityX(moveSpeed); // Velocidad positiva para ir a la derecha
     
@@ -521,12 +541,14 @@ class GameScene extends Phaser.Scene {
         }
     
         // Salto del Jugador 2
-        if (cursors.up.isDown && player2.body.touching.down && !isKnockedBack2) {
+        if (keyStates['arrowup'] && player2.body.touching.down && !isKnockedBack2) {
+            keyStates['arrowup'] = false;
             player2.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
 
         // Ataque del Jugador 2
-        if (cursors.down.isDown && !isKnockedBack2) {
+        if (keyStates['arrowdown'] && !isKnockedBack2) {
+            keyStates['arrowdown'] = false;
             if (attackTimer2 <= 0) {
                 // Reproduce la animación de ataque y reinicia el temporizador
                 if(formCheck2 == 0) {

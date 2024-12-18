@@ -114,7 +114,7 @@ class MainMenuScene extends Phaser.Scene {
                 }
             });
         
-        var ajustes_button = this.add.image(640, 575, 'ajustes')
+        var ajustes_button = this.add.image(640, 560, 'ajustes')
             .setInteractive() // Hace el botón interactivo
             .on('pointerover', () => {
                 // Cambia a la textura de hover cuando el mouse pasa sobre el botón

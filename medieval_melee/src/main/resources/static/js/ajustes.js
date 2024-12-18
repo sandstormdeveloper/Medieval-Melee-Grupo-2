@@ -47,13 +47,13 @@ class AjustesScene extends Phaser.Scene {
         this.sliderBar.setOrigin(0.5, 0.5);
 
         // Crear el deslizador 
-        this.sliderHandle = this.add.circle(250, 360, 15, 0xffffff);
+        this.sliderHandle = this.add.circle(posSlider, 360, 15, 0xffffff);
         this.sliderHandle.setInteractive({ draggable: true });
 
         // Rango del slider (mínimo y máximo)
         this.minX = this.sliderBar.x - this.sliderBar.width / 2; // Posición mínima (izquierda)
         this.maxX = this.sliderBar.x + this.sliderBar.width / 2; // Posición máxima (derecha)
-        this.currentVolume = 0.5; // De 0 a 1
+        this.currentVolume = (posSlider - this.minX) / (this.maxX - this.minX);
         this.updateSliderPosition();
 
         // Evento de arrastre para el deslizador
@@ -65,13 +65,11 @@ class AjustesScene extends Phaser.Scene {
 
             // Mover el deslizador
             this.sliderHandle.x = dragX;
+            posSlider = dragX;
 
             // Actualizar el volumen
             this.updateVolume();
         });
-
-        
-
 
         this.updateStatus();
         this.time.addEvent({
