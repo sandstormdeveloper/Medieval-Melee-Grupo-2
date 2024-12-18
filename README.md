@@ -182,7 +182,7 @@ La pantalla de partida muestra a dos luchadores pixelados enfrentándose en una 
 La pantalla de victoria celebra al ganador con un mensaje claro, "Player 1 Wins" o "Player 2 Wins", acompañado de opciones sencillas como "Volver a Jugar" y "Salir", manteniendo el enfoque en la emoción del triunfo.
 
   - Pantalla créditos
-![Figura 21](/assets/pantalla_creditos2.png)
+![Figura 21](/assets/pantalla_créditos2.png)
 La pantalla de créditos destaca el título "Créditos" en letras pixeladas grandes, seguido por una lista ordenada de los desarrolladores, ofreciendo un toque sencillo y personal para reconocer al equipo detrás del juego.
 
 ## Mejoras Fase 3
