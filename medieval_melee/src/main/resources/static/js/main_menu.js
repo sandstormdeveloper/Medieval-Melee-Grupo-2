@@ -13,6 +13,8 @@ class MainMenuScene extends Phaser.Scene {
         this.load.image('play_hover', 'assets/play_hover.png');   // Botón de "Jugar" en hover
         this.load.image('credits', 'assets/credits.png');         // Botón de "Créditos"
         this.load.image('credits_hover', 'assets/credits_hover.png'); // Botón de "Créditos" en hover
+        this.load.image('ajustes', 'assets/ajustes.png');         // Botón de "Créditos"
+        this.load.image('ajustes_hover', 'assets/ajustes_hover.png'); // Botón de "Créditos" en hover
 
         this.load.audio('menu_music', 'assets/menu.mp3');
         this.load.audio('game_music', 'assets/juego.mp3');
@@ -106,6 +108,30 @@ class MainMenuScene extends Phaser.Scene {
                     // Espera a que el fade-out termine antes de iniciar la nueva escena
                     this.cameras.main.once('camerafadeoutcomplete', () => {
                         this.scene.start('CreditsScene'); // Cambia a la escena de créditos
+                    });
+                } else {
+                    alert('No se encuentra el servidor :(');
+                }
+            });
+        
+        var ajustes_button = this.add.image(640, 575, 'ajustes')
+            .setInteractive() // Hace el botón interactivo
+            .on('pointerover', () => {
+                // Cambia a la textura de hover cuando el mouse pasa sobre el botón
+                ajustes_button.setTexture('ajustes_hover');
+            })
+            .on('pointerout', () => {
+                // Vuelve a la textura normal cuando el mouse sale del botón
+                ajustes_button.setTexture('ajustes');
+            })
+            .on('pointerdown', () => {
+                if(isConnected) {
+                    // Al hacer clic, inicia un fade-out y cambia a la escena de créditos
+                    this.cameras.main.fadeOut(500, 0, 0, 0);
+
+                    // Espera a que el fade-out termine antes de iniciar la nueva escena
+                    this.cameras.main.once('camerafadeoutcomplete', () => {
+                        this.scene.start('AjustesScene'); // Cambia a la escena de créditos
                     });
                 } else {
                     alert('No se encuentra el servidor :(');
