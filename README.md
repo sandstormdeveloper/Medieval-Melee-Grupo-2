@@ -186,7 +186,7 @@ La pantalla de victoria celebra al ganador con un mensaje claro, "Player 1 Wins"
 La pantalla de créditos destaca el título "Créditos" en letras pixeladas grandes, seguido por una lista ordenada de los desarrolladores, ofreciendo un toque sencillo y personal para reconocer al equipo detrás del juego.
 
 ## Mejoras Fase 3
-En esta tercera fase de desarrollo Medieval Melee ha continuado su evolución para ofrecer una experiencia más completa y moderna. Como primera mejora, se han corregido los errores identificados en la fase anterior, garantizando una experiencia de juego más estable y fluida. Entre las principales novedades, destaca la incorporación de un sistema de chat en el juego, así como un menú de inicio de sesión antes de entrar al juego. 
+En esta tercera fase de desarrollo Medieval Melee ha continuado su evolución para ofrecer una experiencia más completa y moderna. Como primera mejora, se han corregido los errores identificados en la fase anterior, garantizando una experiencia de juego más estable y fluida. Entre las principales novedades, destaca la incorporación de un sistema de chat en el juego, así como un menú de inicio de sesión antes de entrar al juego. Además, se ha incorporado un menú de ajustes que permite controlar el volumen del juego, lo que incluye la opción de ajustar el nivel de la música, tanto para aumentarlo como para reducirlo.
 
 ### Chat en el juego
 Se ha implementado un sistema de chat que permite a los jugadores comunicarse entre sí. Este sistema está gestionado por tres elementos principales:
@@ -198,7 +198,7 @@ Se ha implementado un sistema de chat que permite a los jugadores comunicarse en
   -Escena de chat: Es la interfaz visual que muestra todos los mensajes enviados y recibidos. También incluye un campo de texto para que los jugadores puedan escribir y enviar sus propios mensajes de forma         intuitiva.
   
 - Pantalla del chat:
-![Figura 18](/assets/pantallachat.PNG)
+![Figura 18](/assets/pantallachat.png)
 
 
 ### Menú de inicio de sesión
@@ -216,6 +216,12 @@ Además, se implementó la clase UserController para permitir la interacción de
 Por otro lado, se ha desarrollado la escena de inicio de sesión y se ha implementado el formulario de inicio de sesión dentro de esta escena.
 
 - Pantalla de inicio de sesión:
-![Figura 23](/assets/pantalla_inicio_de_sesión.PNG)
+![Figura 23](/assets/pantalla_inicio_de_sesión.png)
+
+### Menú de ajustes
+En el menú de ajustes que se ha implementado, los usuarios pueden controlar el volumen de la música, permitiendo al jugador aumentar o disminuir el nivel de sonido según sus preferencias. Esta funcionalidad mejora la experiencia del usuario, otorgándole mayor control sobre los aspectos sonoros del juego para adaptarlo a sus necesidades.
+
+- Pantalla de menú de ajustes:
+![Figura 24](/assets/menú_de_ajustes.png)
 
     
