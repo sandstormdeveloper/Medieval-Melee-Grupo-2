@@ -170,7 +170,7 @@ En este apartado se presentan las pantallas clave del juego. Cada pantalla está
 ![Figura 27](/assets/diagrama_pantallas.png)
 
 - Pantalla menú principal
-![Figura 18](/assets/pantalla_menu2.PNG)
+![Figura 18](/assets/pantalla_menu2.png)
 En el menú principal, el título "Medieval Melee" ocupa el centro con una fuente llamativa, mientras las opciones de "Jugar" y "Créditos" están dispuestas de forma simple, invitando al jugador a entrar rápidamente en acción.
 
  - Pantalla in game
