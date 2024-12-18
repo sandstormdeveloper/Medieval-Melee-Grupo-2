@@ -149,18 +149,36 @@ class MainMenuScene extends Phaser.Scene {
 
         this.updateStatus();
         this.time.addEvent({
-            delay: 100, 
+            delay: 1000, 
             callback: this.updateStatus,
             callbackScope: this,
             loop: true
         });
     }
 
+    async fetchWithTimeout(url, options = {}, timeout = 5000) {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const fetchPromise = fetch(url, { ...options, signal });
+    
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+        try {
+            const response = await fetchPromise;
+            clearTimeout(timeoutId);
+            return response;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            throw error; 
+        }
+    }
+
     async fetchServerStatus() {
         try {
-            var response = await fetch('/api/status');
-            if (!response.ok) throw new Error('No se puede conectar al servidor');
-            var data = await response.json();
+            const response = await this.fetchWithTimeout('/api/status', {}, 2000);
+            if (!response.ok) throw new Error('Server response error');
+    
+            const data = await response.json();
             if (!isConnected) {
                 this.incrementUsers();
                 isConnected = true;
@@ -170,6 +188,7 @@ class MainMenuScene extends Phaser.Scene {
                 connectedUsers: data.connectedUsers
             };
         } catch (error) {
+            console.error('Error fetching server status:', error.message);
             isConnected = false;
             return {
                 status: 'Desconectado',
