@@ -198,7 +198,7 @@ Se ha implementado un sistema de chat que permite a los jugadores comunicarse en
   -Escena de chat: Es la interfaz visual que muestra todos los mensajes enviados y recibidos. También incluye un campo de texto para que los jugadores puedan escribir y enviar sus propios mensajes de forma         intuitiva.
   
 - Pantalla del chat:
-![Figura 18](/assets/pantallachat.png)
+![Figura 22](/assets/pantallachat.png)
 
 
 ### Menú de inicio de sesión
@@ -222,6 +222,6 @@ Por otro lado, se ha desarrollado la escena de inicio de sesión y se ha impleme
 En el menú de ajustes que se ha implementado, los usuarios pueden controlar el volumen de la música, permitiendo al jugador aumentar o disminuir el nivel de sonido según sus preferencias. Esta funcionalidad mejora la experiencia del usuario, otorgándole mayor control sobre los aspectos sonoros del juego para adaptarlo a sus necesidades.
 
 - Pantalla de menú de ajustes:
-![Figura 24](/assets/menú_de_ajustes.png)
+![Figura 24](/assets/pantalla_menú_de_ajustes.png)
 
     
