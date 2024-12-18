@@ -217,6 +217,7 @@ Por otro lado, se ha desarrollado la escena de inicio de sesión y se ha impleme
 
 - Pantalla de inicio de sesión:
 ![Figura 23](/assets/pantalla_inicio_de_sesión.png)
+Una interfaz clara y sencilla con campos para introducir usuario y contraseña, acompañada de dos botones destacados: Log In para acceder rápidamente y Register para crear una nueva cuenta. El diseño minimalista permite al jugador centrarse en las acciones esenciales sin distracciones.
 
 ### Menú de ajustes
 En el menú de ajustes que se ha implementado, los usuarios pueden controlar el volumen de la música, permitiendo al jugador aumentar o disminuir el nivel de sonido según sus preferencias. Esta funcionalidad mejora la experiencia del usuario, otorgándole mayor control sobre los aspectos sonoros del juego para adaptarlo a sus necesidades.
