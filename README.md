@@ -237,3 +237,4 @@ Un menú de pausa sencillo. Permite reanudar la partida o volver al menú y aban
 ![Figura 26](/assets/diagrama_pantallas2.png)
 
 ### Diagrama de clases y API REST
+![Figura 27](/assets/diagrama_api.png)
