@@ -225,6 +225,6 @@ En el menú de ajustes que se ha implementado, los usuarios pueden controlar el 
 
 - Pantalla de menú de ajustes:
 ![Figura 24](/assets/pantalla_menú_de_ajustes.png)
-Un panel intuitivo que permite ajustar el volumen del juego, con un diseño minimalista y limpio, acompañado por el fondo medieval que mantiene la inmersión visual del jugador.
+Un panel intuitivo que permite ajustar el volumen del juego, con un diseño minimalista y limpio, acompañado por el fondo medieval que mantiene la inmersión visual del jugador. Además, en esta pantalla, el jugador podrá borrar su usuario si así lo desea.
 
     
