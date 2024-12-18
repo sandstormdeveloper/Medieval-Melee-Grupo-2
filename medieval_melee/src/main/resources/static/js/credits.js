@@ -45,7 +45,7 @@ class CreditsScene extends Phaser.Scene {
         
         this.updateStatus();
         this.time.addEvent({
-            delay: 1000, 
+            delay: 100, 
             callback: this.updateStatus,
             callbackScope: this,
             loop: true

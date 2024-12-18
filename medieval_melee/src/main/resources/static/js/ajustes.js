@@ -1,4 +1,5 @@
 var returnToMenu;
+var button;
 // Clase CreditsScene que representa la escena de créditos
 class AjustesScene extends Phaser.Scene {
     // Constructor de la escena, define la clave de la escena
@@ -10,7 +11,8 @@ class AjustesScene extends Phaser.Scene {
     preload() {
         this.load.image('ajustes_menu', 'assets/ajustes_menu.png');          // Imagen de fondo de los créditos
         this.load.image('exit', 'assets/exit.png');  
-        this.load.image('exit_hover', 'assets/exit_hover.png');              
+        this.load.image('exit_hover', 'assets/exit_hover.png');   
+        this.load.html('delete', 'delete.html');      
     }
 
     // Método create: configura la escena y sus elementos
@@ -21,6 +23,18 @@ class AjustesScene extends Phaser.Scene {
 
         // Agrega la imagen de fondo de los créditos
         this.add.image(640, 360, 'ajustes_menu');  // Imagen de fondo de los créditos
+
+        button = this.add.dom(650, 420).createFromCache('delete').setOrigin(0.5);
+
+        button.addListener('click');
+
+        button.on('click', (event) => { 
+            if (isConnected) {
+                if (event.target.name === 'deleteButton') {
+                    this.deleteUser(userPlaying);
+                }
+            }
+        });
 
         // Botón de "Salir"
         var exit_button = this.add.image(104, 64, 'exit')  // Coloca el botón en las coordenadas (96, 64)
@@ -43,7 +57,7 @@ class AjustesScene extends Phaser.Scene {
                 });
             });
         //SLIDER DE VOLUMEN
-        this.sliderBar = this.add.rectangle(640, 360, 300, 10, 0x888888);
+        this.sliderBar = this.add.rectangle(650, 360, 300, 10, 0x888888);
         this.sliderBar.setOrigin(0.5, 0.5);
 
         // Crear el deslizador 
@@ -73,7 +87,7 @@ class AjustesScene extends Phaser.Scene {
 
         this.updateStatus();
         this.time.addEvent({
-            delay: 1000, 
+            delay: 100, 
             callback: this.updateStatus,
             callbackScope: this,
             loop: true
@@ -148,5 +162,34 @@ class AjustesScene extends Phaser.Scene {
         } catch (error) {
             console.error('Error incrementando el número de usuarios:', error);
         }
+    }
+
+    deleteUser(username) {
+        fetch(`/api/users/delete?username=${username}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(success => {
+            if (success) {
+                alert(`El usuario "${username}" se ha borrado.`);
+                this.cameras.main.fadeOut(500, 0, 0, 0);
+                button.removeListener('click');
+
+                // Espera a que el fade-out termine antes de iniciar la nueva escena
+                this.cameras.main.once('camerafadeoutcomplete', () => {
+                    this.game.music.stop();
+                    this.scene.start('LoginScene'); // Vuelve al menú principal
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 }

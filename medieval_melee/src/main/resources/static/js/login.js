@@ -88,7 +88,7 @@ class LoginScene extends Phaser.Scene {
         });
 
         this.time.addEvent({
-            delay: 1000, 
+            delay: 100, 
             callback: this.updateStatus,
             callbackScope: this,
             loop: true
@@ -99,6 +99,7 @@ class LoginScene extends Phaser.Scene {
     }
 
     nextScene() {
+        form.removeListener('click');
         form.scene.tweens.add({
             targets: form, alpha: 0, duration: 1000, ease: 'Power3',
         });
