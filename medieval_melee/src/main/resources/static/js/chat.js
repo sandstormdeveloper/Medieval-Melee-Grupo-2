@@ -86,28 +86,29 @@ class ChatScene extends Phaser.Scene {
     
 
     async sendMessage() {
-        if(isConnected) {
+        if (isConnected) {
             const inputField = this.textInput.getChildByName("chat");
             if (!inputField || !inputField.value.trim()) {
                 return; 
             }
-
-            const message = inputField.value.trim();
-
+    
+            const messageContent = inputField.value.trim();
+            const fullMessage = `[${userPlaying}]: ${messageContent}`;
+    
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: new URLSearchParams({ message })
+                    body: new URLSearchParams({ message: fullMessage }) 
                 });
-
+    
                 if (!response.ok) {
                     console.error("No se ha podido enviar el mensaje:", response.status);
                     return;
                 }
-
+    
                 inputField.value = ""; 
                 this.fetchMessages(); 
             } catch (error) {
