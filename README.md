@@ -231,9 +231,9 @@ Un panel intuitivo que permite ajustar el volumen del juego, con un diseño mini
 Un menú de pausa sencillo. Permite reanudar la partida o volver al menú y abandonar la partida.
 
 - Pantalla de menú de pausa:
-![Figura 24](/assets/pausa.png)
+![Figura 25](/assets/pausa.png)
 
 ### Diagrama de pantallas (actualizado)
-
+![Figura 26](/assets/diagrama_pantallas2.png)
 
 ### Diagrama de clases y API REST
