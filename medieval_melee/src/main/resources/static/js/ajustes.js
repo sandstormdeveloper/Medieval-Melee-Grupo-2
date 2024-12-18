@@ -133,7 +133,7 @@ class AjustesScene extends Phaser.Scene {
 
     async fetchServerStatus() {
         try {
-            const response = await this.fetchWithTimeout('/api/status', {}, 2000);
+            const response = await this.fetchWithTimeout('/api/status', {}, 3000);
             if (!response.ok) throw new Error('Server response error');
     
             const data = await response.json();
