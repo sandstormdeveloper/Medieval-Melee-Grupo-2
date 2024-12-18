@@ -235,6 +235,7 @@ Un menú de pausa sencillo. Permite reanudar la partida o volver al menú y aban
 
 ### Diagrama de pantallas (actualizado)
 ![Figura 26](/assets/diagrama_pantallas2.png)
+![Figura 26](/assets/diagrama_pantallas.jpg)
 
 ### Diagrama de clases y API REST
 ![Figura 27](/assets/diagrama_api.png)
