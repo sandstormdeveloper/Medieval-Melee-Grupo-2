@@ -199,6 +199,7 @@ Se ha implementado un sistema de chat que permite a los jugadores comunicarse en
   
 - Pantalla del chat:
 ![Figura 22](/assets/pantallachat.png)
+Una interfaz sencilla y funcional que permite a los jugadores comunicarse, mostrando mensajes en texto sobre un fondo oscuro que garantiza claridad y fácil lectura.
 
 
 ### Menú de inicio de sesión
@@ -224,5 +225,6 @@ En el menú de ajustes que se ha implementado, los usuarios pueden controlar el 
 
 - Pantalla de menú de ajustes:
 ![Figura 24](/assets/pantalla_menú_de_ajustes.png)
+Un panel intuitivo que permite ajustar el volumen del juego, con un diseño minimalista y limpio, acompañado por el fondo medieval que mantiene la inmersión visual del jugador.
 
     
