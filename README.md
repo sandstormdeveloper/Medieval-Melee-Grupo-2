@@ -235,7 +235,19 @@ Un menú de pausa sencillo. Permite reanudar la partida o volver al menú y aban
 
 ### Diagrama de pantallas (actualizado)
 ![Figura 26](/assets/diagrama_pantallas2.png)
-![Figura 26](/assets/diagrama_pantallas.jpg)
+![Figura 27](/assets/diagrama_pantallas.jpg)
 
 ### Diagrama de clases y API REST
-![Figura 27](/assets/diagrama_api.png)
+![Figura 28](/assets/diagrama_api.png)
+
+### Instrucciones para ejecutar la aplicación
+- Requisitos previos:
+  - JDK: Asegúrate de tener instalada la versión Java 17 o superior.
+  - Maven: Necesitas Maven instalado para gestionar las dependencias.
+
+- Compilación del proyecto:
+  - Ubícate en la raíz del proyecto donde está el archivo pom.xml.
+  - Ejecuta el siguiente comando para compilar y empaquetar el proyecto --> .\mvnw.cmd package
+
+- Ejecución de la aplicación:
+  - Ejecuta el archivo .jar con el siguiente comando --> java -jar .\target\medieval_melee-0.0.1-SNAPSHOT.jar
