@@ -36,7 +36,7 @@ class ChatScene extends Phaser.Scene {
 
         this.fetchMessages();
         this.time.addEvent({
-            delay: 500, 
+            delay: 1000, 
             callback: this.fetchMessages,
             callbackScope: this,
             loop: true
@@ -136,25 +136,23 @@ class ChatScene extends Phaser.Scene {
         }
     }
 
-    async fetchServerStatus() {
-        try {
-            var response = await fetch('/api/status');
-            if (!response.ok) throw new Error('No se puede conectar al servidor');
-            var data = await response.json();
-            if (!isConnected) {
-                this.incrementUsers();
-                isConnected = true;
+    async fetchMessages() {
+        if(isConnected) {
+            try {
+                const response = await fetch(`/api/chat?since=${this.latestMessageTimestamp}`);
+                if (!response.ok) {
+                    console.error("No se ha podido recuperar los mensajes:", response.status);
+                    return;
+                }
+                const data = await response.json();
+                const { messages, timestamp } = data;
+                if (messages.length > 0) {
+                    this.latestMessageTimestamp = timestamp;
+                    this.appendMessages(messages);
+                }
+            } catch (error) {
+                console.error("Error recuperando mensajes:", error);
             }
-            return {
-                status: data.status,
-                connectedUsers: data.connectedUsers
-            };
-        } catch (error) {
-            isConnected = false;
-            return {
-                status: 'Desconectado',
-                connectedUsers: 0
-            };
         }
     }
 
