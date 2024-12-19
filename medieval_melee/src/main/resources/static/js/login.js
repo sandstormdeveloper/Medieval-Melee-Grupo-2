@@ -161,7 +161,7 @@ class LoginScene extends Phaser.Scene {
 
     async fetchServerStatus() {
         try {
-            const response = await this.fetchWithTimeout('/api/status', {}, 3000);
+            const response = await this.fetchWithTimeout('/api/status', {}, 5000);
             if (!response.ok) throw new Error('Server response error');
     
             const data = await response.json();
