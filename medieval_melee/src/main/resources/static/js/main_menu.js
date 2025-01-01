@@ -16,7 +16,7 @@ class MainMenuScene extends Phaser.Scene {
         this.load.image('ajustes', 'assets/ajustes.png');         // Botón de "Créditos"
         this.load.image('ajustes_hover', 'assets/ajustes_hover.png'); // Botón de "Créditos" en hover
 
-        this.load.audio('game_music', 'assets/juego.mp3');
+        this.load.audio('menu_music', 'assets/menu.mp3');
 
         this.load.image('chat', 'assets/chat.png');               // Botón de "Chat"
         this.load.image('chat_hover', 'assets/chat_hover.png');   // Botón de "Chat" en hover
