@@ -25,6 +25,11 @@ class AjustesScene extends Phaser.Scene {
         this.add.image(640, 360, 'ajustes_menu');  // Imagen de fondo de los créditos
 
         button = this.add.dom(650, 420).createFromCache('delete').setOrigin(0.5);
+        button.setAlpha(0);
+
+        button.scene.tweens.add({
+            targets: button, alpha: 1, duration: 500, ease: 'Power3',
+        });
 
         button.addListener('click');
 
@@ -50,6 +55,10 @@ class AjustesScene extends Phaser.Scene {
             .on('pointerdown', () => {
                 // Al hacer clic, inicia un fade-out y cambia a la escena del menú principal
                 this.cameras.main.fadeOut(500, 0, 0, 0);
+
+                button.scene.tweens.add({
+                    targets: button, alpha: 0, duration: 500, ease: 'Power3',
+                });
 
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
                 this.cameras.main.once('camerafadeoutcomplete', () => {
@@ -199,6 +208,10 @@ class AjustesScene extends Phaser.Scene {
                 alert(`El usuario "${username}" se ha borrado.`);
                 this.cameras.main.fadeOut(500, 0, 0, 0);
                 button.removeListener('click');
+
+                button.scene.tweens.add({
+                    targets: button, alpha: 0, duration: 500, ease: 'Power3',
+                });
 
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
                 this.cameras.main.once('camerafadeoutcomplete', () => {

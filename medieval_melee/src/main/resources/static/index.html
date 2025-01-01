@@ -14,7 +14,8 @@
     <script src="js/pause_menu.js"></script> 
 
     <!-- Carga el archivo que contiene el código para la escena principal del juego -->
-    <script src="js/game.js"></script>
+    <script src="js/game_local.js"></script>
+    <script src="js/game_red.js"></script>
 
     <!-- Carga el archivo que contiene el código para la escena de créditos -->
     <script src="js/credits.js"></script>
@@ -29,6 +30,8 @@
     <script src="js/login.js"></script>
 
     <script src="js/ajustes.js"></script>
+
+    <script src="js/select.js"></script>
 
     <!-- Carga el .css que se usa en el juego -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -76,7 +79,7 @@
                     createContainer: true
             },
 
-            scene: [LoginScene, MainMenuScene, GameScene, PauseMenuScene, ChatScene, CreditsScene, AjustesScene, EndScene] // Escenas del juego: Menú principal y juego
+            scene: [LoginScene, MainMenuScene, SelectScene, LocalGameScene, RedGameScene, PauseMenuScene, ChatScene, CreditsScene, AjustesScene, EndScene] // Escenas del juego: Menú principal y juego
         };
 
         // Crea una nueva instancia del juego con la configuración especificada
@@ -86,6 +89,7 @@
         var userPlaying = null;
         var gamesPlayedByUser = 0;
         var posSlider = 790;
+        var playingRed = false;
 
         // Inicia directamente la escena del menú
         game.scene.start('LoginScene');

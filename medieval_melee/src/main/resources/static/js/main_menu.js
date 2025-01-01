@@ -79,10 +79,7 @@ class MainMenuScene extends Phaser.Scene {
 
                     // Espera a que el fade-out termine antes de iniciar la nueva escena
                     this.cameras.main.once('camerafadeoutcomplete', () => {
-                        this.scene.start('GameScene'); // Cambia a la escena del juego
-                        this.game.music.stop();
-                        this.game.music = this.sound.add('game_music', { loop: true });
-                        this.game.music.play();
+                        this.scene.start('SelectScene'); // Cambia a la escena de selección
                     });
                 } else {
                     alert('No se encuentra el servidor :(');

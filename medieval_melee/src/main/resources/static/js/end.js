@@ -31,13 +31,15 @@ class EndScene extends Phaser.Scene {
         // Agrega la imagen de fondo y el título en posiciones específicas
         this.add.image(640, 360, 'end');  // Imagen del fondo
         
-        var player = this.registry.get('winner');
+        if (!playingRed) {
+            var player = this.registry.get('winner');
 
-        if (player == 1) {
-            this.add.image(640, 250, 'player1wins');
-        }
-        else {
-            this.add.image(640, 250, 'player2wins');
+            if (player == 1) {
+                this.add.image(640, 250, 'player1wins');
+            }
+            else {
+                this.add.image(640, 250, 'player2wins');
+            }
         }
 
         this.statusText = this.add.text(15, 15, 'Estado: Desconectado', {
@@ -69,7 +71,12 @@ class EndScene extends Phaser.Scene {
 
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
                 this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.start('GameScene'); // Cambia a la escena del juego
+                    if (!playingRed) {
+                        this.scene.start('LocalGameScene'); // Cambia a la escena del juego
+                    } else {
+                        this.scene.start('RedGameScene'); // Cambia a la escena del juego
+                    }
+                    
                     this.game.music.stop();
                     this.game.music = this.sound.add('game_music', { loop: true });
                     this.game.music.play();

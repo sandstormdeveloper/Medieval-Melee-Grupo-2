@@ -33,9 +33,9 @@ var keyStates = {
 
 
 // Clase principal del juego
-class GameScene extends Phaser.Scene {
+class RedGameScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'GameScene' }); // Asigna una clave para identificar la escena
+        super({ key: 'RedGameScene' }); // Asigna una clave para identificar la escena
         this.decremented = false;
     }
 
@@ -248,15 +248,15 @@ class GameScene extends Phaser.Scene {
 
         //Pausa del videojuego
         // Configuración de la entrada de la tecla escape
-        this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+        // this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
-        // Detecta la pulsación de la tecla escape
-        this.escapeKey.on('down', () => {
-            if (!this.scene.isPaused('PauseMenuScene')) {
-                this.scene.pause(); // Pausa la escena principal
-                this.scene.launch('PauseMenuScene'); // Inicia la escena de pausa
-            }
-        });
+        // // Detecta la pulsación de la tecla escape
+        // this.escapeKey.on('down', () => {
+        //     if (!this.scene.isPaused('PauseMenuScene')) {
+        //         this.scene.pause(); // Pausa la escena principal
+        //         this.scene.launch('PauseMenuScene'); // Inicia la escena de pausa
+        //     }
+        // });
 
         this.updateStatus();
         this.time.addEvent({

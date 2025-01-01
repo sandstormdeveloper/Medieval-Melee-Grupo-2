@@ -1,46 +1,36 @@
 var returnToMenu;
-// Clase PauseMenuScene que representa el menú de pausa del juego
-class PauseMenuScene extends Phaser.Scene {
+// Clase SelectScene que representa la escena de selección
+class SelectScene extends Phaser.Scene {
     // Constructor de la escena, define la clave de la escena
     constructor() {
-        super({ key: 'PauseMenuScene' });
+        super({ key: 'SelectScene' });
     }
 
     // Método preload: carga los recursos necesarios para esta escena
     preload() {
-        this.load.image('fondo_pausa', 'assets/pausa.png');               // Fondo del menú
-        this.load.image('play', 'assets/play.png');               // Botón de "Jugar"
-        this.load.image('play_hover', 'assets/play_hover.png');   // Botón de "Jugar" en hover
-        this.load.image('exit', 'assets/exit.png');         // Botón de "Salir"
-        this.load.image('exit_hover', 'assets/exit_hover.png'); // Botón de "Salir" en hover
+        this.load.image('select', 'assets/castillo.png');          // Imagen de fondo de los créditos
+        this.load.image('exit', 'assets/exit.png');               // Botón de "Salir"
+        this.load.image('exit_hover', 'assets/exit_hover.png');   // Botón de "Salir" en hover
 
-        this.load.audio('menu_music', 'assets/menu.mp3');
+        this.load.image('local', 'assets/local.png');               
+        this.load.image('local_hover', 'assets/local_hover.png');
+        this.load.image('red', 'assets/enred.png');               
+        this.load.image('red_hover', 'assets/enred_hover.png');
+
+        this.load.audio('game_music', 'assets/juego.mp3');
     }
 
     // Método create: configura la escena y sus elementos
     create() {
         returnToMenu = false;
-        // Agrega la imagen de fondo y el título en posiciones específicas
-        this.add.image(640, 360, 'fondo_pausa');  // Imagen del fondo
+        // Efecto de fade-in al entrar en la escena
+        this.cameras.main.fadeIn(500, 0, 0, 0);
 
-        // Botón de "Jugar"
-        var start_button = this.add.image(640, 390, 'play')
-            .setInteractive() // Hace el botón interactivo
-            .on('pointerover', () => {
-                // Cambia a la textura de hover cuando el mouse pasa sobre el botón
-                start_button.setTexture('play_hover');
-            })
-            .on('pointerout', () => {
-                // Vuelve a la textura normal cuando el mouse sale del botón
-                start_button.setTexture('play');
-            })
-            .on('pointerdown', () => {
-                this.scene.stop(); // Detiene la escena de pausa
-                this.scene.resume('LocalGameScene'); // Reanuda la escena principal
-            });
+        // Agrega la imagen de fondo
+        this.add.image(640, 360, 'select');  // Imagen de fondo
 
-        // Botón de "Créditos"
-        var exit_button = this.add.image(640, 450, 'exit')
+        // Botón de "Salir"
+        var exit_button = this.add.image(104, 64, 'exit')
             .setInteractive() // Hace el botón interactivo
             .on('pointerover', () => {
                 // Cambia a la textura de hover cuando el mouse pasa sobre el botón
@@ -51,28 +41,63 @@ class PauseMenuScene extends Phaser.Scene {
                 exit_button.setTexture('exit');
             })
             .on('pointerdown', () => {
-                // Al hacer clic, inicia un fade-out y cambia a la escena de créditos
+                // Al hacer clic, inicia un fade-out y cambia a la escena del menú principal
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
                 this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.stop('LocalGameScene');
-                    this.scene.start('MainMenuScene'); // Vuelve al menú principal
+                    this.scene.start('MainMenuScene'); // Cambia a la escena del menú principal
+                });
+            });
+
+        var local_button = this.add.image(540, 360, 'local')
+            .setInteractive() // Hace el botón interactivo
+            .on('pointerover', () => {
+                // Cambia a la textura de hover cuando el mouse pasa sobre el botón
+                local_button.setTexture('local_hover');
+            })
+            .on('pointerout', () => {
+                // Vuelve a la textura normal cuando el mouse sale del botón
+                local_button.setTexture('local');
+            })
+            .on('pointerdown', () => {
+                // Al hacer clic, inicia un fade-out y cambia a la escena del menú principal
+                this.cameras.main.fadeOut(500, 0, 0, 0);
+
+                // Espera a que el fade-out termine antes de iniciar la nueva escena
+                this.cameras.main.once('camerafadeoutcomplete', () => {
+                    playingRed = false;
+                    this.scene.start('LocalGameScene');
                     this.game.music.stop();
-                    this.game.music = this.sound.add('menu_music', { loop: true });
+                    this.game.music = this.sound.add('game_music', { loop: true });
                     this.game.music.play();
                 });
             });
 
-        this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+        var red_button = this.add.image(740, 360, 'red')
+            .setInteractive() // Hace el botón interactivo
+            .on('pointerover', () => {
+                // Cambia a la textura de hover cuando el mouse pasa sobre el botón
+                red_button.setTexture('red_hover');
+            })
+            .on('pointerout', () => {
+                // Vuelve a la textura normal cuando el mouse sale del botón
+                red_button.setTexture('red');
+            })
+            .on('pointerdown', () => {
+                // Al hacer clic, inicia un fade-out y cambia a la escena del menú principal
+                this.cameras.main.fadeOut(500, 0, 0, 0);
 
-        this.escapeKey.on('down', () => {
-            if (this.scene.isActive('PauseMenuScene')) {
-                this.scene.stop(); 
-                this.scene.resume('LocalGameScene'); 
-            }
-        });
-
+                // Espera a que el fade-out termine antes de iniciar la nueva escena
+                this.cameras.main.once('camerafadeoutcomplete', () => {
+                    playingRed = true;
+                    this.scene.start('RedGameScene');
+                    this.game.music.stop();
+                    this.game.music = this.sound.add('game_music', { loop: true });
+                    this.game.music.play();
+                });
+            });
+        
         this.updateStatus();
         this.time.addEvent({
             delay: 1000, 
@@ -84,7 +109,7 @@ class PauseMenuScene extends Phaser.Scene {
 
     // Método update: se ejecuta en cada frame, puede usarse para lógica del juego (vacío aquí)
     update(time, delta) {
-        
+        // Sin implementación adicional en este ejemplo
     }
 
     async fetchWithTimeout(url, options = {}, timeout = 5000) {
@@ -137,11 +162,7 @@ class PauseMenuScene extends Phaser.Scene {
 
             // Espera a que el fade-out termine antes de iniciar la nueva escena
             this.cameras.main.once('camerafadeoutcomplete', () => {
-                this.scene.stop('LocalGameScene');
                 this.scene.start('MainMenuScene'); // Vuelve al menú principal
-                this.game.music.stop();
-                this.game.music = this.sound.add('menu_music', { loop: true });
-                this.game.music.play();
             });
         }
     }
