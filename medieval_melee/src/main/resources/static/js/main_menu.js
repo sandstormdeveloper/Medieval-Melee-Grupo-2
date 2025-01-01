@@ -11,15 +11,15 @@ class MainMenuScene extends Phaser.Scene {
         this.load.image('titulo', 'assets/titulo.png');           // Imagen del título
         this.load.image('play', 'assets/play.png');               // Botón de "Jugar"
         this.load.image('play_hover', 'assets/play_hover.png');   // Botón de "Jugar" en hover
-        this.load.image('chat', 'assets/chat.png');               // Botón de "Chat"
-        this.load.image('chat_hover', 'assets/chat_hover.png');   // Botón de "Chat" en hover
         this.load.image('credits', 'assets/credits.png');         // Botón de "Créditos"
         this.load.image('credits_hover', 'assets/credits_hover.png'); // Botón de "Créditos" en hover
         this.load.image('ajustes', 'assets/ajustes.png');         // Botón de "Créditos"
         this.load.image('ajustes_hover', 'assets/ajustes_hover.png'); // Botón de "Créditos" en hover
 
-        this.load.audio('menu_music', 'assets/menu.mp3');
         this.load.audio('game_music', 'assets/juego.mp3');
+
+        this.load.image('chat', 'assets/chat.png');               // Botón de "Chat"
+        this.load.image('chat_hover', 'assets/chat_hover.png');   // Botón de "Chat" en hover
     }
 
     // Método create: configura la escena y sus elementos
@@ -88,6 +88,25 @@ class MainMenuScene extends Phaser.Scene {
                 }
             });
 
+        //Botón de "Chat"
+        var chat_button = this.add.image(1200, 675, 'chat')  // Añadir una imagen para el botón de chat
+            .setInteractive()  // Hace el botón interactivo
+            .on('pointerover', () => {
+                // Cambia a la textura de hover cuando el mouse pasa sobre el botón
+                chat_button.setTexture('chat_hover');
+            })
+            .on('pointerout', () => {
+                // Vuelve a la textura normal cuando el mouse sale del botón
+                chat_button.setTexture('chat');
+            })
+            .on('pointerdown', () => {
+                if (isConnected) {
+                    // Al hacer clic, pausa la escena actual y lanza la escena de chat
+                    this.scene.pause();
+                    this.scene.launch('ChatScene');
+                }
+            });
+
         // Botón de "Créditos"
         var credits_button = this.add.image(640, 475, 'credits')
             .setInteractive() // Hace el botón interactivo
@@ -136,27 +155,6 @@ class MainMenuScene extends Phaser.Scene {
                     alert('No se encuentra el servidor :(');
                 }
             });
-
-
-        //Botón de "Chat"
-        var chat_button = this.add.image(1200, 675, 'chat')  // Añadir una imagen para el botón de chat
-        .setInteractive()  // Hace el botón interactivo
-        .on('pointerover', () => {
-            // Cambia a la textura de hover cuando el mouse pasa sobre el botón
-            chat_button.setTexture('chat_hover');
-        })
-        .on('pointerout', () => {
-            // Vuelve a la textura normal cuando el mouse sale del botón
-            chat_button.setTexture('chat');
-        })
-        .on('pointerdown', () => {
-            if (isConnected) {
-                // Al hacer clic, pausa la escena actual y lanza la escena de chat
-                this.scene.pause();
-                this.scene.launch('ChatScene');
-            }
-        });
-
         
         this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
