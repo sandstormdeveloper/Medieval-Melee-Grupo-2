@@ -139,12 +139,12 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 
         if(rand.nextBoolean()) {
             game.hammer = new Hammer();
-            sendToPlayer(game.player1, "s", Arrays.asList(game.hammer.x, game.hammer.y));
-            sendToPlayer(game.player2, "s", Arrays.asList(game.hammer.x, game.hammer.y));
+            sendToPlayer(game.player1, "h", Arrays.asList(game.hammer.x, game.hammer.y));
+            sendToPlayer(game.player2, "h", Arrays.asList(game.hammer.x, game.hammer.y));
         } else {
             game.bow = new Bow();
-            sendToPlayer(game.player1, "s", Arrays.asList(game.bow.x, game.bow.y));
-            sendToPlayer(game.player2, "s", Arrays.asList(game.bow.x, game.bow.y));
+            sendToPlayer(game.player1, "b", Arrays.asList(game.bow.x, game.bow.y));
+            sendToPlayer(game.player2, "b", Arrays.asList(game.bow.x, game.bow.y));
         }
     }
 
@@ -175,7 +175,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                             Arrays.asList(currentPlayer.playerId, currentPlayer.x, currentPlayer.y));
                     break;
 
-                case 'h':
+                case 'j':
                     if (game.hammer != null) {
                         double dx = currentPlayer.x - game.hammer.x;
                         double dy = currentPlayer.y - game.hammer.y;
@@ -189,13 +189,13 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                                     currentPlayer.playerId,
                                     game.player1.percent,
                                     game.player2.percent);
-                            sendToPlayer(game.player1, "h", scoreData);
-                            sendToPlayer(game.player2, "h", scoreData);
+                            sendToPlayer(game.player1, "j", scoreData);
+                            sendToPlayer(game.player2, "j", scoreData);
                         }
                     }
                     break;
                 
-                case 'b':
+                case 'n':
                     if (game.bow != null) {
                         double dx = currentPlayer.x - game.bow.x;
                         double dy = currentPlayer.y - game.bow.y;
@@ -209,8 +209,8 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                                     currentPlayer.playerId,
                                     game.player1.percent,
                                     game.player2.percent);
-                            sendToPlayer(game.player1, "b", scoreData);
-                            sendToPlayer(game.player2, "b", scoreData);
+                            sendToPlayer(game.player1, "n", scoreData);
+                            sendToPlayer(game.player2, "n", scoreData);
                         }
                     }
                     break;

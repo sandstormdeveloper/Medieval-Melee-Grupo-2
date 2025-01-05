@@ -31,6 +31,19 @@ var keyStates = {
     arrowright: false,
 };
 
+const MSG_TYPES = {
+    INIT: 'i',    
+    POS: 'p',        
+    HAMMER: 'h',    
+    BOW: 'b',    
+    COLLECT_HAMMER: 'j',   
+    COLLECT_BOW: 'n',  
+    TIME: 't',       
+    OVER: 'o'         
+};
+
+var timeLeft;
+
 
 // Clase principal del juego
 class RedGameScene extends Phaser.Scene {
@@ -81,6 +94,8 @@ class RedGameScene extends Phaser.Scene {
 
     // Método para inicializar los elementos de la escena
     create() {
+        this.socket = new WebSocket("ws://" + location.host + "/ws");
+
         returnToMenu = false;
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
@@ -102,6 +117,8 @@ class RedGameScene extends Phaser.Scene {
         dmgMult1=1; //multiplicador de daño, al transformarse en paladín se pone en 2
         dmgMult2=1;
         gameEnded = false;
+
+        timeLeft = 180;
         
         // Handle keydown events
         this.input.keyboard.on('keydown', (event) => {
