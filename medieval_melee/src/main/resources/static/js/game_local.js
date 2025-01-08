@@ -42,6 +42,9 @@ class LocalGameScene extends Phaser.Scene {
     // Método para cargar los recursos del juego
     preload() {
         this.load.image('fondo', 'assets/fondo.png'); // Fondo del escenario
+        this.load.image('PlayaFondo', 'assets/PlayaFondo.png'); // Fondo del escenario
+        this.load.image('MuelleFondo', 'assets/MuelleFondo.png'); // Fondo del escenario
+        this.load.image('BosqueFondo', 'assets/BosqueFondo.png'); // Fondo del escenario
         this.load.image('escenario', 'assets/escenario.png'); // Escenario principal
         this.load.image('plataforma', 'assets/plataforma.png'); // Plataformas
         this.load.image('bow', 'assets/bow.png'); // Ítem coleccionable
@@ -120,7 +123,12 @@ class LocalGameScene extends Phaser.Scene {
         });
 
         // Agrega el fondo del escenario
-        this.add.image(640, 360, 'fondo');
+             // Agrega el fondo del escenario
+        const fondos = ['fondo', 'PlayaFondo', 'MuelleFondo', 'BosqueFondo'];
+        const fondoSeleccionado = Phaser.Math.RND.pick(fondos);
+
+        // Agrega el fondo seleccionado
+        this.add.image(640, 360, fondoSeleccionado);
 
         // Creación de grupos de plataformas y espadas
         platforms = this.physics.add.staticGroup();
