@@ -260,13 +260,6 @@ Entre las principales funcionalidades incorporadas en esta fase se encuentran:
 
 - Sincronización de movimientos y acciones: El servidor gestiona en tiempo real las posiciones y acciones de los jugadores, asegurando que ambos participantes tengan la misma visión del estado del juego.
 
-
-Se han solucionado los errores que se detectaron en las fases anteriores y, además, se han realizado ajustes en las recomendaciones correspondientes a la fase 3 para mejorar la experiencia general. Entre las novedades, se ha incorporado un botón de acceso al chat, que ahora se encuentra en la esquina inferior derecha de la pantalla. Esto permite a los usuarios tener una opción más práctica e intuitiva para abrir el chat cuando lo necesiten. Ahora es posible acceder al chat de dos maneras: usando este nuevo botón o simplemente presionando la tecla "Esc" en el teclado.
-
-Otra mejora importante es que las alertas de error ahora se muestran directamente dentro del juego, evitando las ventanas emergentes del navegador que podían resultar molestas o interrumpir la experiencia de juego. Este cambio hace que los errores se presenten de manera más integrada y acorde al diseño del juego.
-
-En el apartado visual, se han diseñado nuevos fondos para las partidas con el objetivo de ofrecer una experiencia más variada y atractiva. Estos fondos se seleccionan de forma aleatoria al inicio de cada partida, lo que añade un toque de novedad y evita la repetición constante del mismo escenario visual.
-
 ### Descripción del protocolo
 - INIT ('i'):
   - Se envía al cliente al inicio de la conexión para establecer la identificación del jugador y las posiciones iniciales de los jugadores.
