@@ -259,3 +259,8 @@ En esta cuarta fase de desarrollo, Medieval Melee da un paso crucial hacia la ex
 Entre las principales funcionalidades incorporadas en esta fase se encuentran:
 
 - Sincronización de movimientos y acciones: El servidor gestiona en tiempo real las posiciones y acciones de los jugadores, asegurando que ambos participantes tengan la misma visión del estado del juego.
+
+
+Además de esto se han corregido los errores de las fases anteriores y se han modificado las recomendaciones de la fase 3. Se ha implementado un botón de acceso al chat que se encuentra en la parte inferior derecha de la pantalla, esto ofrece una opción más intuitiva para acceder al chat. Ahora se puede acceder al chat dándole al botón del chat o pulsando la tecla ‘esc’. Como segunda corrección se han implementado las alertas de error dentro del propio juego en vez de que salten las alertas del navegador. 
+En cuanto al aspecto visual del juego se han creado nuevos fondos de las partidas para generar más variedad. Estos fondos se establecen de forma aleatoria para cada partida que se juega.
+
