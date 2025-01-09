@@ -102,6 +102,9 @@ class RedGameScene extends Phaser.Scene {
     // Método para cargar los recursos del juego
     preload() {
         this.load.image('fondo', 'assets/fondo.png'); // Fondo del escenario
+        this.load.image('PlayaFondo', 'assets/PlayaFondo.png'); // Fondo del escenario
+        this.load.image('MuelleFondo', 'assets/MuelleFondo.png'); // Fondo del escenario
+        this.load.image('BosqueFondo', 'assets/BosqueFondo.png'); // Fondo del escenario
         this.load.image('escenario', 'assets/escenario.png'); // Escenario principal
         this.load.image('plataforma', 'assets/plataforma.png'); // Plataformas
         this.load.image('bow', 'assets/bow.png'); // Ítem coleccionable
@@ -110,6 +113,13 @@ class RedGameScene extends Phaser.Scene {
 
         this.load.audio('menu_music', 'assets/menu.mp3');
         this.load.audio('game_music', 'assets/juego.mp3');
+
+        //SFX
+        this.load.audio('swordSound', 'assets/SFX/swordSound.wav');
+        this.load.audio('hammerSound', 'assets/SFX/hammerSound.wav');
+        this.load.audio('arrowSound', 'assets/SFX/arrowSound.wav');
+        this.load.audio('hitSound', 'assets/SFX/hitSound.wav');
+        this.load.audio('jumpSound', 'assets/SFX/jumpSound.wav');
 
         // Interfaz
         this.load.image('interfaz1', 'assets/interfaz_p1.png');
@@ -166,6 +176,13 @@ class RedGameScene extends Phaser.Scene {
         dmgMult2=1;
         gameEnded = false;
         
+        //crear SFX
+        this.swordSound = this.sound.add('swordSound');
+        this.hammerSound = this.sound.add('hammerSound');
+        this.arrowSound = this.sound.add('arrowSound');
+        this.hitSound = this.sound.add('hitSound');
+        this.jumpSound = this.sound.add('jumpSound');
+
         // Handle keydown events
         this.input.keyboard.on('keydown', (event) => {
             const key = event.key.toLowerCase(); // Normalize the key to lowercase
@@ -182,8 +199,11 @@ class RedGameScene extends Phaser.Scene {
             }
         });
 
-        // Agrega el fondo del escenario
-        this.add.image(640, 360, 'fondo');
+        const fondos = ['fondo', 'PlayaFondo', 'MuelleFondo', 'BosqueFondo'];
+        const fondoSeleccionado = Phaser.Math.RND.pick(fondos);
+
+        // Agrega el fondo seleccionado
+        this.add.image(640, 360, fondoSeleccionado);
 
         // Creación de grupos de plataformas y espadas
         platforms = this.physics.add.staticGroup();
@@ -540,6 +560,7 @@ class RedGameScene extends Phaser.Scene {
         // Salto del Jugador 1
         if (keyStates['w'] && this.player.body.touching.down && !isKnockedBack1) {
             keyStates['w'] = false;
+            this.jumpSound.play();
             this.player.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
 
@@ -550,12 +571,15 @@ class RedGameScene extends Phaser.Scene {
                 // Reproduce la animación de ataque y reinicia el temporizador
                 if(formCheck1 == 0) {
                     this.player.anims.play('caballero1_attack');
+                    this.swordSound.play();
                 }
                 else if(formCheck1 == 1) {
                     this.player.anims.play('arquero1_attack');
+                    this.arrowSound.play();
                 }
                 else if(formCheck1 == 2){
                     this.player.anims.play('paladin1_attack'); 
+                    this.hammerSound.play();
                 }
                 attackTimer1 = attackCooldown;
                 this.sendMessage(MSG_TYPES.ATTACK);
@@ -758,12 +782,32 @@ class RedGameScene extends Phaser.Scene {
 
     knockback(player, direction) {
         var knockbackForce = 750;          // Fuerza de retroceso horizontal
-        var knockbackDuration = 100;      // Duración del estado de retroceso (en ms)
-        var verticalKnockback = 300;      // Fuerza de retroceso vertical
+        var knockbackDuration = 100;      // Duración del impulso inicial (en ms)
+        var verticalKnockback = 350;      // Fuerza de retroceso vertical
+        var slowDownDuration = 300;
 
         if (player == 1) {
-            this.player.setVelocityX(knockbackForce * direction * percent1); // Aplica fuerza hacia la derecha
-            this.player.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
+            this.hitSound.play();
+            // Aplicar knockback inicial con interpolación
+            this.tweens.add({
+                targets: this.player.body.velocity,
+                x: knockbackForce * direction * percent1,
+                y: -verticalKnockback,
+                ease: 'Quad.easeOut',
+                duration: knockbackDuration,
+                onComplete: () => {
+                    isKnockedBack1 = false;
+    
+                    // Tween secundario para reducir la velocidad gradualmente
+                    this.tweens.add({
+                        targets: this.player.body.velocity,
+                        x: 10, // La velocidad horizontal se reduce a 0
+                        y: 10, // La velocidad vertical también se reduce a 0
+                        ease: 'Quad.easeOut', // Curva suave de desaceleración
+                        duration: slowDownDuration
+                    });
+                }
+            });
             isKnockedBack1 = true;                          // Marca al jugador 2 como en retroceso
 
             if(formCheck2==2){
@@ -780,6 +824,7 @@ class RedGameScene extends Phaser.Scene {
             });
         } 
         else {   
+            this.hitSound.play();
             isKnockedBack2 = true;    
             if(formCheck1==2){
                 dmgMult1=1.5;
@@ -1096,12 +1141,15 @@ class RedGameScene extends Phaser.Scene {
         if(data[0] != this.playerId) {
             if(formCheck2 == 0) {
                 this.otherPlayer.anims.play('caballero2_attack');
+                this.swordSound.play();
             }
             else if(formCheck2 == 1) {
                 this.otherPlayer.anims.play('arquero2_attack');
+                this.arrowSound.play();
             }
             else if(formCheck2 == 2){
                 this.otherPlayer.anims.play('paladin2_attack'); 
+                this.hammerSound.play();
             }
         }
     }

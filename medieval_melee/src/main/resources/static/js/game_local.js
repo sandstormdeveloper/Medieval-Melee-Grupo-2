@@ -504,7 +504,7 @@ class LocalGameScene extends Phaser.Scene {
                 }
                 else if(formCheck1 == 1) {
                     player1.anims.play('arquero1_attack');
-                    this.bowSound.play();
+                    this.arrowSound.play();
                 }
                 else if(formCheck1 == 2){
                     player1.anims.play('paladin1_attack', true); 
