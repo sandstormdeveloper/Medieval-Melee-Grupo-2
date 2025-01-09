@@ -182,15 +182,9 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                         double distance = Math.sqrt(dx * dx + dy * dy);
 
                         if (distance < 32) {
-                            currentPlayer.percent++;
                             game.hammer = null;
-
-                            List<Integer> scoreData = Arrays.asList(
-                                    currentPlayer.playerId,
-                                    game.player1.percent,
-                                    game.player2.percent);
-                            sendToPlayer(game.player1, "j", scoreData);
-                            sendToPlayer(game.player2, "j", scoreData);
+                            sendToPlayer(game.player1, "j", 0);
+                            sendToPlayer(game.player2, "j", 0);
                         }
                     }
                     break;
@@ -202,15 +196,11 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                         double distance = Math.sqrt(dx * dx + dy * dy);
 
                         if (distance < 32) {
-                            currentPlayer.percent++;
-                            game.hammer = null;
-
-                            List<Integer> scoreData = Arrays.asList(
-                                    currentPlayer.playerId,
-                                    game.player1.percent,
-                                    game.player2.percent);
-                            sendToPlayer(game.player1, "n", scoreData);
-                            sendToPlayer(game.player2, "n", scoreData);
+                            game.bow = null;
+                            sendToPlayer(game.player1, "n", Arrays.asList(
+                                currentPlayer.playerId));
+                            sendToPlayer(game.player2, "n", Arrays.asList(
+                                currentPlayer.playerId));
                         }
                     }
                     break;

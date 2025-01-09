@@ -1,7 +1,7 @@
 // Declaración de variables globales
 var platforms; // Plataformas estáticas del juego
-var bow; // Ítem
-var hammer; // Ítem 2
+// var bow; // Ítem
+// var hammer; // Ítem 2
 var arrow1, arrow2; // Flechas
 var player1, player2; // Jugadores 1 y 2
 var cursors; // Controles del teclado para el jugador 2
@@ -42,14 +42,67 @@ const MSG_TYPES = {
     OVER: 'o'         
 };
 
-var timeLeft;
-
-
 // Clase principal del juego
 class RedGameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'RedGameScene' }); // Asigna una clave para identificar la escena
         this.decremented = false;
+
+        // Game variables
+        /** @type {Phaser.GameObjects.GameObject} Player-controlled circle */
+        this.player = null;
+
+        /** @type {Phaser.GameObjects.GameObject} Opponent's circle */
+        this.otherPlayer = null;
+
+        /** @type {Phaser.GameObjects.GameObject} Square to be collected */
+        this.hammer = null;
+
+        /** @type {Phaser.GameObjects.GameObject} Square to be collected */
+        this.bow = null;
+
+        /** @type {WebSocket} WebSocket for server communication */
+        this.socket = null;
+
+        /** @type {number} Current player score */
+        this.score = 0;
+
+        /** @type {number} Opponent's score */
+        this.otherScore = 0;
+
+        /** @type {number} Remaining time in seconds */
+        this.timeLeft = 180;
+
+        /** @type {Phaser.GameObjects.Text} Score display */
+        this.scoreText = null;
+
+        /** @type {Phaser.GameObjects.Text} Timer display */
+        this.timeText = null;
+
+        /** @type {Phaser.GameObjects.Text} Player display */
+        this.playerText = null;
+
+        /** @type {Phaser.GameObjects.Text} Waiting display */
+        this.waitingDisplay = null;
+
+        /** @type {boolean} Indicates whether the game has started */
+        this.gameStarted = false;
+
+        /** @type {number|null} Player ID assigned by the server */
+        this.playerId = null;
+
+        // Network optimization variables
+        /** @type {{x: number, y: number}} Last sent position */
+        this.lastSentPosition = { x: 0, y: 0 };
+
+        /** @type {number} Last update timestamp */
+        this.lastUpdateTime = 0;
+
+        /** @type {number} Interval for position updates in milliseconds */
+        this.POSITION_UPDATE_INTERVAL = 50;
+
+        /** @type {number} Minimum movement threshold for sending position updates */
+        this.POSITION_THRESHOLD = 2;
     }
 
     // Método para cargar los recursos del juego
@@ -117,8 +170,6 @@ class RedGameScene extends Phaser.Scene {
         dmgMult1=1; //multiplicador de daño, al transformarse en paladín se pone en 2
         dmgMult2=1;
         gameEnded = false;
-
-        timeLeft = 180;
         
         // Handle keydown events
         this.input.keyboard.on('keydown', (event) => {
@@ -141,14 +192,14 @@ class RedGameScene extends Phaser.Scene {
 
         // Creación de grupos de plataformas y espadas
         platforms = this.physics.add.staticGroup();
-        bow = this.physics.add.group();
-        hammer = this.physics.add.group();
+        // bow = this.physics.add.group();
+        // hammer = this.physics.add.group();
         arrow1 = this.physics.add.group({allowGravity: false});
         arrow2 = this.physics.add.group({allowGravity: false});
 
         // Colisión entre los objetos y las plataformas
-        this.physics.add.collider(bow, platforms);
-        this.physics.add.collider(hammer, platforms);
+        //this.physics.add.collider(bow, platforms);
+        //this.physics.add.collider(hammer, platforms);
         this.physics.add.collider(arrow1, platforms);
         this.physics.add.collider(arrow2, platforms);
 
@@ -162,79 +213,79 @@ class RedGameScene extends Phaser.Scene {
         this.add.image(540, 640, 'interfaz1');
         this.add.image(740, 640, 'interfaz2');
 
-        // Configuración del jugador 1
-        player1 = this.physics.add.sprite(440, 300, 'caballero1_idle');
-        player1.setBodySize(32, 64); // Tamaño del cuerpo físico
-        this.physics.add.collider(player1, platforms); // Colisión con plataformas
+        // // Configuración del jugador 1
+        // player1 = this.physics.add.sprite(440, 300, 'caballero1_idle');
+        // player1.setBodySize(32, 64); // Tamaño del cuerpo físico
+        // this.physics.add.collider(player1, platforms); // Colisión con plataformas
         
-        // Configuración del jugador 2
-        player2 = this.physics.add.sprite(840, 300, 'caballero2_idle');
-        player2.setBodySize(32, 64); // Tamaño del cuerpo físico
-        player2.flipX = true; // Invierte la dirección de la imagen
-        this.physics.add.collider(player2, platforms); // Colisión con plataformas
+        // // Configuración del jugador 2
+        // player2 = this.physics.add.sprite(840, 300, 'caballero2_idle');
+        // player2.setBodySize(32, 64); // Tamaño del cuerpo físico
+        // player2.flipX = true; // Invierte la dirección de la imagen
+        // this.physics.add.collider(player2, platforms); // Colisión con plataformas
 
-        // Detección de superposición con ítems (espadas)
-        this.physics.add.overlap(player1, bow, this.collectBow1, null, this);
-        this.physics.add.overlap(player2, bow, this.collectBow2, null, this);
-        this.physics.add.overlap(player1, hammer, this.collectHammer1, null, this);
-        this.physics.add.overlap(player2, hammer, this.collectHammer2, null, this);
-        this.physics.add.overlap(player1, arrow2, this.hit1, null, this);
-        this.physics.add.overlap(player2, arrow1, this.hit2, null, this);
+        // // Detección de superposición con ítems (espadas)
+        // this.physics.add.overlap(player1, bow, this.collectBow1, null, this);
+        // this.physics.add.overlap(player2, bow, this.collectBow2, null, this);
+        // this.physics.add.overlap(player1, hammer, this.collectHammer1, null, this);
+        // this.physics.add.overlap(player2, hammer, this.collectHammer2, null, this);
+        // this.physics.add.overlap(player1, arrow2, this.hit1, null, this);
+        // this.physics.add.overlap(player2, arrow1, this.hit2, null, this);
 
         // Creación de animaciones para ambos jugadores
         this.createAnimations();
 
         // Eventos de ataque en animaciones
-        player1.on('animationupdate', (animation, frame) => {
-            if (animation.key === 'caballero1_attack' && frame.index === 4) {
-                this.attack(1); // Ejecuta ataque del jugador 1
-            }
-        });
+        // this.player.on('animationupdate', (animation, frame) => {
+        //     if (animation.key === 'caballero1_attack' && frame.index === 4) {
+        //         this.attack(1); // Ejecuta ataque del jugador 1
+        //     }
+        // });
 
-        player1.on('animationupdate', (animation, frame) => {
-            if (animation.key === 'paladin1_attack' && frame.index === 5) {
-                this.attack(1); // Ejecuta ataque del jugador 1
-            }
-        });
+        // this.player.on('animationupdate', (animation, frame) => {
+        //     if (animation.key === 'paladin1_attack' && frame.index === 5) {
+        //         this.attack(1); // Ejecuta ataque del jugador 1
+        //     }
+        // });
 
-        player2.on('animationupdate', (animation, frame) => {
-            if (animation.key === 'caballero2_attack' && frame.index === 4) {
-                this.attack(2); // Ejecuta ataque del jugador 2
-            }
-        });
+        // this.player.on('animationupdate', (animation, frame) => {
+        //     if (animation.key === 'caballero2_attack' && frame.index === 4) {
+        //         this.attack(2); // Ejecuta ataque del jugador 2
+        //     }
+        // });
 
-        player2.on('animationupdate', (animation, frame) => {
-            if (animation.key === 'paladin2_attack' && frame.index === 5) {
-                this.attack(2); // Ejecuta ataque del jugador 1
-            }
-        });
+        // this.player.on('animationupdate', (animation, frame) => {
+        //     if (animation.key === 'paladin2_attack' && frame.index === 5) {
+        //         this.attack(2); // Ejecuta ataque del jugador 1
+        //     }
+        // });
 
-        player1.on('animationupdate', (animation, frame) => {
-            if (animation.key === 'arquero1_attack' && frame.index === 6) {
-                this.shoot(1); // Ejecuta disparo del jugador 1
-            }
-        });
+        // this.player.on('animationupdate', (animation, frame) => {
+        //     if (animation.key === 'arquero1_attack' && frame.index === 6) {
+        //         this.shoot(1); // Ejecuta disparo del jugador 1
+        //     }
+        // });
 
-        player2.on('animationupdate', (animation, frame) => {
-            if (animation.key === 'arquero2_attack' && frame.index === 6) {
-                this.shoot(2); // Ejecuta disparo del jugador 2
-            }
-        });
+        // this.player.on('animationupdate', (animation, frame) => {
+        //     if (animation.key === 'arquero2_attack' && frame.index === 6) {
+        //         this.shoot(2); // Ejecuta disparo del jugador 2
+        //     }
+        // });
 
         // Temporizador para generación de ítems
-        this.time.addEvent({
-            delay: spawnItemTimer,
-            callback: this.firstSpawnItem,
-            callbackScope: this,
-            loop: false, // Sólo una vez
-        });
+        // this.time.addEvent({
+        //     delay: spawnItemTimer,
+        //     callback: this.firstSpawnItem,
+        //     callbackScope: this,
+        //     loop: false, // Sólo una vez
+        // });
 
-        this.time.addEvent({
-            delay: spawnItemInterval,
-            callback: this.spawnItem,
-            callbackScope: this,
-            loop: true, // Repetición continua
-        });
+        // this.time.addEvent({
+        //     delay: spawnItemInterval,
+        //     callback: this.spawnItem,
+        //     callbackScope: this,
+        //     loop: true, // Repetición continua
+        // });
 
         //Contador en pantalla para mostrar el porcentaje de cada jugador
         document.fonts.ready.then(() => {
@@ -261,6 +312,12 @@ class RedGameScene extends Phaser.Scene {
                 fontSize: '32px',
                 fill: '#fff'
             });
+
+            this.waitingDisplay = this.add.text(640, 360, 'Waiting for another player', { 
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            });
         });
 
         //Pausa del videojuego
@@ -282,6 +339,8 @@ class RedGameScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+        this.setupWebSocket();
     }
 
     // Método para crear animaciones
@@ -408,9 +467,11 @@ class RedGameScene extends Phaser.Scene {
 
     // Se ejecuta en cada frame del juego para actualizar los estados y comportamientos de los jugadores
     update(time, delta) {   
+        if (!this.gameStarted || !this.player) return;
         this.timers(delta);
         this.inputs();
-        this.checkWin();
+        this.handlePositionUpdates();
+        //this.checkWin();
     }    
 
     // Maneja el input de los dos jugadores
@@ -418,66 +479,66 @@ class RedGameScene extends Phaser.Scene {
         // ** Control del Jugador 1 **
         if (keyStates['a'] && !isKnockedBack1) {
             // Movimiento hacia la izquierda
-            player1.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
+            this.player.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
            
             // Reproduce la animación de correr si no está atacando
             if (attackTimer1 <= attackCooldown - 0.5) {
                 if (formCheck1 == 0){
-                    player1.anims.play('caballero1_run', true);
+                    this.player.anims.play('caballero1_run', true);
                 }
                 else if (formCheck1 == 1){
-                    player1.anims.play('arquero1_run', true); 
+                    this.player.anims.play('arquero1_run', true); 
                 }
                 else if(formCheck1 == 2){
-                    player1.anims.play('paladin1_run', true); 
+                    this.player.anims.play('paladin1_run', true); 
                 }
             }
 
             // Invierte el sprite para mirar a la izquierda
-            player1.flipX = true;
+            this.player.flipX = true;
     
         } else if (keyStates['d'] && !isKnockedBack1) {
             // Movimiento hacia la derecha
-            player1.setVelocityX(moveSpeed); // Velocidad positiva para ir a la derecha
+            this.player.setVelocityX(moveSpeed); // Velocidad positiva para ir a la derecha
     
             // Reproduce la animación de correr si no está atacando
             if (attackTimer1 <= attackCooldown - 0.5) {
                 if (formCheck1 == 0){
-                    player1.anims.play('caballero1_run', true);
+                    this.player.anims.play('caballero1_run', true);
                 }
                 else if (formCheck1 == 1){
-                    player1.anims.play('arquero1_run', true); 
+                    this.player.anims.play('arquero1_run', true); 
                 }
                 else if(formCheck1 == 2){
-                    player1.anims.play('paladin1_run', true); 
+                    this.player.anims.play('paladin1_run', true); 
                 }
             }
     
             // Orienta el sprite hacia la derecha
-            player1.flipX = false;
+            this.player.flipX = false;
     
         } else if (!isKnockedBack1) {
             // Si no se mueve y no está retrocediendo, se detiene
-            player1.setVelocityX(0);
+            this.player.setVelocityX(0);
     
             // Reproduce la animación de estar quieto
             if (attackTimer1 <= attackCooldown - 0.5) {
                 if (formCheck1 == 0){
-                    player1.anims.play('caballero1_idle', true);
+                    this.player.anims.play('caballero1_idle', true);
                 }
                 else if (formCheck1 == 1){
-                    player1.anims.play('arquero1_idle', true); 
+                    this.player.anims.play('arquero1_idle', true); 
                 }
                 else if(formCheck1 == 2){
-                    player1.anims.play('paladin1_idle', true); 
+                    this.player.anims.play('paladin1_idle', true); 
                 }
             }
         }
     
         // Salto del Jugador 1
-        if (keyStates['w'] && player1.body.touching.down && !isKnockedBack1) {
+        if (keyStates['w'] && this.player.body.touching.down && !isKnockedBack1) {
             keyStates['w'] = false;
-            player1.setVelocityY(-jumpHeight); // Impulso hacia arriba
+            this.player.setVelocityY(-jumpHeight); // Impulso hacia arriba
         }
 
         // Ataque del Jugador 1
@@ -486,100 +547,48 @@ class RedGameScene extends Phaser.Scene {
             if (attackTimer1 <= 0) {
                 // Reproduce la animación de ataque y reinicia el temporizador
                 if(formCheck1 == 0) {
-                    player1.anims.play('caballero1_attack');
+                    this.player.anims.play('caballero1_attack');
                 }
                 else if(formCheck1 == 1) {
-                    player1.anims.play('arquero1_attack');
+                    this.player.anims.play('arquero1_attack');
                 }
                 else if(formCheck1 == 2){
-                    player1.anims.play('paladin1_attack', true); 
+                    this.player.anims.play('paladin1_attack', true); 
                 }
                 attackTimer1 = attackCooldown;
             }
         }
-    
-        // ** Control del Jugador 2 **
-        if (keyStates['arrowleft'] && !isKnockedBack2) {
-            // Movimiento hacia la izquierda
-            player2.setVelocityX(-moveSpeed); // Velocidad negativa para ir a la izquierda
-    
-            // Reproduce la animación de correr si no está atacando
-            if (attackTimer2 <= attackCooldown - 0.5) {
-                if (formCheck2 == 0){
-                    player2.anims.play('caballero2_run', true);
-                }
-                else if (formCheck2 == 1){
-                    player2.anims.play('arquero2_run', true); 
-                }
-                else if (formCheck2 == 2){
-                    player2.anims.play('paladin2_run', true); 
-                }
-            }
-    
-            // Invierte el sprite para mirar a la izquierda
-            player2.flipX = true;
-    
-        } else if (keyStates['arrowright'] && !isKnockedBack2) {
-            // Movimiento hacia la derecha
-            player2.setVelocityX(moveSpeed); // Velocidad positiva para ir a la derecha
-    
-            // Reproduce la animación de correr si no está atacando
-            if (attackTimer2 <= attackCooldown - 0.5) {
-                if (formCheck2 == 0){
-                    player2.anims.play('caballero2_run', true);
-                }
-                else if (formCheck2 == 1){
-                    player2.anims.play('arquero2_run', true); 
-                }
-                else if (formCheck2 == 2){
-                    player2.anims.play('paladin2_run', true); 
-                }
-            }
-    
-            // Orienta el sprite hacia la derecha
-            player2.flipX = false;
-    
-        } else if (!isKnockedBack2) {
-            // Si no se mueve y no está retrocediendo, se detiene
-            player2.setVelocityX(0);
-    
-            // Reproduce la animación de estar quieto
-            if (attackTimer2 <= attackCooldown - 0.5) {
-                if (formCheck2 == 0){
-                    player2.anims.play('caballero2_idle', true);
-                }
-                else if (formCheck2 == 1){
-                    player2.anims.play('arquero2_idle', true); 
-                }
-                else if (formCheck2 == 2){
-                    player2.anims.play('paladin2_idle', true); 
-                }
-            }
-        }
-    
-        // Salto del Jugador 2
-        if (keyStates['arrowup'] && player2.body.touching.down && !isKnockedBack2) {
-            keyStates['arrowup'] = false;
-            player2.setVelocityY(-jumpHeight); // Impulso hacia arriba
-        }
+    }
 
-        // Ataque del Jugador 2
-        if (keyStates['arrowdown'] && !isKnockedBack2) {
-            keyStates['arrowdown'] = false;
-            if (attackTimer2 <= 0) {
-                // Reproduce la animación de ataque y reinicia el temporizador
-                if(formCheck2 == 0) {
-                    player2.anims.play('caballero2_attack');
-                }
-                else if(formCheck2==1){
-                    player2.anims.play('arquero2_attack');
-                }
-                else if (formCheck2 == 2){
-                    player2.anims.play('paladin2_attack', true); 
-                }
-                attackTimer2 = attackCooldown;
+    handlePositionUpdates() {
+        const currentTime = Date.now();
+        if (currentTime - this.lastUpdateTime >= this.POSITION_UPDATE_INTERVAL) {
+            const dx = Math.abs(this.player.x - this.lastSentPosition.x);
+            const dy = Math.abs(this.player.y - this.lastSentPosition.y);
+
+            if (dx > this.POSITION_THRESHOLD || dy > this.POSITION_THRESHOLD) {
+                this.sendPosition();
+                this.lastUpdateTime = currentTime;
+                this.lastSentPosition = { x: this.player.x, y: this.player.y };
             }
         }
+    }
+
+    sendMessage(type, data = null) {
+        if (this.socket.readyState === WebSocket.OPEN) {
+            if (data) {
+                this.socket.send(`${type}${JSON.stringify(data)}`);
+            } else {
+                this.socket.send(type);
+            }
+        }
+    }
+
+    sendPosition() {
+        this.sendMessage(MSG_TYPES.POS, [
+            Math.round(this.player.x),
+            Math.round(this.player.y),
+        ]); 
     }
 
     // Aquí se manejan los temporizadores del juego
@@ -784,82 +793,6 @@ class RedGameScene extends Phaser.Scene {
         }
     }
 
-    // Genera un objeto (item) en una posición aleatoria
-    spawnItem() {
-        // Genera coordenadas aleatorias para la posición del item dentro del rango especificado
-        var x = Math.floor(Math.random() * (930 - 350 + 1)) + 350; // Rango horizontal: 350 a 930
-        var y = Math.floor(Math.random() * (400 - 150 + 1)); // Rango vertical: 150 a 400
-        var item
-        var randomizer = Math.random(); //se randomiza el spawn del objeto
-        if (randomizer>=0.5){
-            item = bow.create(x, y, 'bow');
-
-        }
-        if (randomizer<0.5){
-            item = hammer.create(x, y, 'hammer');
-
-        }
-        // Programa la destrucción del item después de 10 segundos si no se recoge
-        setTimeout(() => {
-            if (item) {
-                item.destroy();
-            }
-        }, 10000);
-    }
-
-    firstSpawnItem() {
-        // Genera coordenadas aleatorias para la posición del item dentro del rango especificado
-        var x1 = Math.floor(Math.random() * (930 - 350 + 1)) + 350; // Rango horizontal: 350 a 930
-        var y1 = Math.floor(Math.random() * (400 - 150 + 1)); // Rango vertical: 150 a 400
-        var x2 = Math.floor(Math.random() * (930 - 350 + 1)) + 350; // Rango horizontal: 350 a 930
-        var y2 = Math.floor(Math.random() * (400 - 150 + 1)); // Rango vertical: 150 a 400
-        var item1, item2;
-        item2 = hammer.create(x2, y2, 'hammer')
-        item1 = bow.create(x1, y1, 'bow');
-        // Programa la destrucción del item después de 10 segundos si no se recoge
-        setTimeout(() => {
-            item1.destroy();
-            item2.destroy();
-        }, 10000);
-    }
-    
-    // Recoge el item cuando es tocado por el jugador 1
-    collectBow1(player, bow) {
-        
-        bow.destroy(); // Destruye el item al ser recogido por el jugador 1
-        formCheck1 = 1; // Transforma al jugador 1
-        
-        
-        formTimer1 = formCooldown;
-    }
-    
-    // Recoge el item cuando es tocado por el jugador 2
-    collectBow2(player, bow) {
-        bow.destroy(); // Destruye el item al ser recogido por el jugador 1
-        formCheck2 = 1; // Transforma al jugador 1
-        
-        
-        formTimer2 = formCooldown;
-    }
-
-    collectHammer1(player, hammer) {
-        
-        hammer.destroy(); // Destruye el item al ser recogido por el jugador 1
-        formCheck1 = 2; // Transforma al jugador 1
-        
-        
-        formTimer1 = formCooldown;
-    }
-    
-    // Recoge el item cuando es tocado por el jugador 2
-    collectHammer2(player, hammer) {
-        hammer.destroy(); // Destruye el item al ser recogido por el jugador 1
-        formCheck2 = 2; // Transforma al jugador 1
-        
-        
-        formTimer2 = formCooldown;
-    }
-
     async fetchWithTimeout(url, options = {}, timeout = 5000) {
         const controller = new AbortController();
         const signal = controller.signal;
@@ -934,5 +867,112 @@ class RedGameScene extends Phaser.Scene {
             console.error('Error incrementando el número de usuarios:', error);
         }
     }
+
+    setupWebSocket() {
+        this.socket.onopen = () => {
+            console.log('Conectado al servidor');
+        };
+
+        this.socket.onmessage = (event) => {
+            const type = event.data.charAt(0);
+            const data = event.data.length > 1 ? JSON.parse(event.data.substring(1)) : null;
+
+            switch(type) {
+                case MSG_TYPES.INIT:
+                    this.handleInit(data);
+                    break;
+                case MSG_TYPES.POS:
+                    this.handlePosition(data);
+                    break;
+                case MSG_TYPES.HAMMER:
+                    this.handleHammerSpawn(data);
+                    break;
+                case MSG_TYPES.BOW:
+                    this.handleBowSpawn(data);
+                    break;
+                case MSG_TYPES.COLLECT_HAMMER:
+                    this.handleHammerCollection(data);
+                    break;
+                case MSG_TYPES.COLLECT_BOW:
+                    this.handleBowCollection(data);
+                    break;
+                // case MSG_TYPES.TIME:
+                //     this.handleTimeUpdate(data);
+                //     break;
+                // case MSG_TYPES.OVER:
+                //     this.handleGameOver(data);
+                //     break;
+            }
+        };
+
+        this.socket.onclose = () => {
+            this.gameStarted = false;
+        };
+    }
+
+    handleInit(data) {
+        if (this.waitingDisplay) {
+            this.waitingDisplay.destroy();
+        }
+
+        this.playerId = data.id;
+        this.initializePlayers(data.p);
+        this.gameStarted = true;
+    }
+
+    handlePosition(data) {
+        if (data[0] !== this.playerId && this.otherPlayer) {
+            this.otherPlayer.x = data[1];
+            this.otherPlayer.y = data[2];
+        }
+    }
+
+    handleHammerSpawn(data) {
+        if (this.hammer) this.hammer.destroy();
+        if (this.bow) this.bow.destroy();
+        this.hammer = this.physics.add.sprite(data[0], data[1], 'hammer');
+        this.physics.add.collider(this.hammer, platforms);
+        this.physics.add.overlap(this.player, this.hammer, () => {
+            this.sendMessage(MSG_TYPES.COLLECT_HAMMER);
+        })
+    }
+
+    handleBowSpawn(data) {
+        if (this.hammer) this.hammer.destroy();
+        if (this.bow) this.bow.destroy();
+        this.bow = this.physics.add.sprite(data[0], data[1], 'bow');
+        this.physics.add.collider(this.bow, platforms);
+        this.physics.add.overlap(this.player, this.bow, () => {
+            this.sendMessage(MSG_TYPES.COLLECT_BOW);
+        })
+    }
+
+    handleHammerCollection(data) {
+        if (this.hammer) this.hammer.destroy();
+        this.hammer = null;
+    }
+
+    handleBowCollection(data) {
+        if (this.bow) this.bow.destroy();
+        this.bow = null;
+    }
+
+    initializePlayers(players) {
+        players.forEach(p => {
+            const spriteKey = p[2] === this.playerId ? 'caballero1_idle' : 'caballero2_idle';
+            const player = this.physics.add.sprite(p[0], p[1], spriteKey);
+            
+            player.setBodySize(32, 64); 
+            this.physics.add.collider(player, platforms);
+            
+            if (p[2] === this.playerId) {
+                this.player = player; 
+                this.lastSentPosition = { x: p[0], y: p[1] };
+            } else {
+                this.otherPlayer = player;
+            }
+        });
+    }
+    
 }
 
