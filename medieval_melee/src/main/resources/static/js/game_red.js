@@ -41,7 +41,8 @@ const MSG_TYPES = {
     TIME: 't',       
     OVER: 'o',
     CHANGE_FORM: 'f',
-    ATTACK: 'a'
+    ATTACK: 'a',
+    KNOCKBACK: 'k'
 };
 
 // Clase principal del juego
@@ -721,16 +722,16 @@ class RedGameScene extends Phaser.Scene {
     // Ejecuta un ataque entre los jugadores, aplicando retroceso y actualizando porcentajes de daño
     attack(player) {
         // Calcula la distancia entre los dos jugadores
-        var distance = Phaser.Math.Distance.Between(player1.x, player1.y, player2.x, player2.y);
+        var distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.otherPlayer.x, this.otherPlayer.y);
     
         // Lógica de ataque para el Jugador 1
         if (player == 1) {
             // Ataque hacia la derecha
-            if (!player1.flipX && distance < attackRange && player1.x - 8 < player2.x) {
+            if (!this.player.flipX && distance < attackRange && this.player.x - 8 < this.otherPlayer.x) {
                 this.knockback(2, 1);
             }
             // Ataque hacia la izquierda
-            else if (player1.flipX && distance < attackRange && player1.x + 8 > player2.x) {
+            else if (this.player.flipX && distance < attackRange && this.player.x + 8 > this.otherPlayer.x) {
                 this.knockback(2, -1);
             }
         }
@@ -738,11 +739,11 @@ class RedGameScene extends Phaser.Scene {
         // Lógica de ataque para el Jugador 2
         else if (player == 2) {
             // Ataque hacia la derecha
-            if (!player2.flipX && distance < attackRange && player2.x - 8 < player1.x) {
+            if (!this.otherPlayer.flipX && distance < attackRange && this.otherPlayer.x - 8 < this.player.x) {
                 this.knockback(1, 1);
             }
             // Ataque hacia la izquierda
-            else if (player2.flipX && distance < attackRange && player2.x + 8 > player1.x) {
+            else if (this.otherPlayer.flipX && distance < attackRange && this.otherPlayer.x + 8 > this.player.x) {
                 this.knockback(1, -1);
             }
         }
@@ -754,8 +755,8 @@ class RedGameScene extends Phaser.Scene {
         var verticalKnockback = 300;      // Fuerza de retroceso vertical
 
         if (player == 1) {
-            player1.setVelocityX(knockbackForce * direction * percent1); // Aplica fuerza hacia la derecha
-            player1.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
+            this.player.setVelocityX(knockbackForce * direction * percent1); // Aplica fuerza hacia la derecha
+            this.player.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
             isKnockedBack1 = true;                          // Marca al jugador 2 como en retroceso
 
             if(formCheck2==2){
@@ -764,24 +765,21 @@ class RedGameScene extends Phaser.Scene {
             else{
                 dmgMult2=1;
             }
-            percent1 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult2; // Incrementa el daño del jugador 2
+            percent1 += 0.1*dmgMult2; // Incrementa el daño del jugador 2
             this.screenPercentage1.setText(Math.round((percent1- 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
             this.time.addEvent({
                 delay: knockbackDuration,
                 callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
             });
         } 
-        else {
-            player2.setVelocityX(knockbackForce * direction * percent2); // Aplica fuerza hacia la derecha
-            player2.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
-            isKnockedBack2 = true;      
+        else {   
             if(formCheck1==2){
                 dmgMult1=1.5;
             }
             else{
                 dmgMult1=1;
             }                    // Marca al jugador 2 como en retroceso
-            percent2 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult1; // Incrementa el daño del jugador 2
+            percent2 += 0.1*dmgMult1; // Incrementa el daño del jugador 2
             this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
             this.time.addEvent({
                 delay: knockbackDuration,
@@ -904,6 +902,9 @@ class RedGameScene extends Phaser.Scene {
                     break;
                 case MSG_TYPES.ATTACK:
                     this.handleAttack(data);
+                    break;
+                case MSG_TYPES.ATTACK:
+                    this.handleKnockBack(data);
                     break;
             }
         };
@@ -1028,6 +1029,10 @@ class RedGameScene extends Phaser.Scene {
         }
     }
 
+    handleKnockBack(data) {
+        
+    }
+
     initializePlayers(players) {
         players.forEach(p => {
             const spriteKey = p[2] === this.playerId ? 'caballero1_idle' : 'caballero2_idle';
@@ -1039,29 +1044,29 @@ class RedGameScene extends Phaser.Scene {
             if (p[2] === this.playerId) {
                 this.player = player; 
 
-                // this.player.on('animationupdate', (animation, frame) => {
-                //     if (animation.key === 'caballero1_attack' && frame.index === 4) {
-                //         this.attack();
-                //     }
+                this.player.on('animationupdate', (animation, frame) => {
+                    if (animation.key === 'caballero1_attack' && frame.index === 4) {
+                        this.attack(1);
+                    }
 
-                //     if (animation.key === 'paladin1_attack' && frame.index === 5) {
-                //         this.attack();
-                //     }
-                // });
+                    if (animation.key === 'paladin1_attack' && frame.index === 5) {
+                        this.attack(1);
+                    }
+                });
 
                 this.lastSentPosition = { x: p[0], y: p[1] };
             } else {
                 this.otherPlayer = player;
 
-                // this.otherPlayer.on('animationupdate', (animation, frame) => {
-                //     if (animation.key === 'caballero2_attack' && frame.index === 4) {
-                //         this.attack();
-                //     }
+                this.otherPlayer.on('animationupdate', (animation, frame) => {
+                    if (animation.key === 'caballero2_attack' && frame.index === 4) {
+                        this.attack(2);
+                    }
 
-                //     if (animation.key === 'paladin2_attack' && frame.index === 5) {
-                //         this.attack();
-                //     }
-                // });
+                    if (animation.key === 'paladin2_attack' && frame.index === 5) {
+                        this.attack(2);
+                    }
+                });
             }
         });
     }
