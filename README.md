@@ -266,3 +266,37 @@ Se han solucionado los errores que se detectaron en las fases anteriores y, adem
 Otra mejora importante es que las alertas de error ahora se muestran directamente dentro del juego, evitando las ventanas emergentes del navegador que podían resultar molestas o interrumpir la experiencia de juego. Este cambio hace que los errores se presenten de manera más integrada y acorde al diseño del juego.
 
 En el apartado visual, se han diseñado nuevos fondos para las partidas con el objetivo de ofrecer una experiencia más variada y atractiva. Estos fondos se seleccionan de forma aleatoria al inicio de cada partida, lo que añade un toque de novedad y evita la repetición constante del mismo escenario visual.
+
+### Descripción del protocolo
+- INIT ('i'):
+  - Se envía al cliente al inicio de la conexión para establecer la identificación del jugador y las posiciones iniciales de los jugadores.
+
+- POS ('p'):
+  - Se intercambia periódicamente para actualizar las posiciones de los jugadores.
+
+- HAMMER ('h'):
+  - Indica que un martillo ha aparecido en el escenario.
+
+- BOW ('b'):
+  - Indica que un arco ha aparecido en el escenario.
+
+- COLLECT_HAMMER ('j'):
+  - Notifica que un jugador ha recogido un martillo.
+
+- COLLECT_BOW ('n'):
+  - Notifica que un jugador ha recogido un arco.
+
+- TIME ('t'):
+  - Actualización del tiempo restante del juego.
+
+- OVER ('o'):
+  - Indica el fin del juego.
+
+- CHANGE_FORM ('f'):
+  - Informa sobre un cambio de forma (e.g., transformación de un jugador).
+
+- ATTACK ('a'):
+  - Señala un ataque realizado por un jugador.
+
+### Diagrama de clases
+![Figura 29](/assets/diagrama_api.png)
