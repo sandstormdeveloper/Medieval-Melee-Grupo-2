@@ -767,7 +767,7 @@ class LocalGameScene extends Phaser.Scene {
     knockback(player, direction) {
         var knockbackForce = 750;          // Fuerza de retroceso horizontal
         var knockbackDuration = 100;      // Duración del impulso inicial (en ms)
-        var verticalKnockback = 300;      // Fuerza de retroceso vertical
+        var verticalKnockback = 350;      // Fuerza de retroceso vertical
         var slowDownDuration = 300;       // Duración de la desaceleración
     
         if (player === 1) {
@@ -787,9 +787,9 @@ class LocalGameScene extends Phaser.Scene {
                     // Tween secundario para reducir la velocidad gradualmente
                     this.tweens.add({
                         targets: player1.body.velocity,
-                        x: 0, // La velocidad horizontal se reduce a 0
-                        y: 0, // La velocidad vertical también se reduce a 0
-                        ease: 'Cubic.easeOut', // Curva suave de desaceleración
+                        x: 10, // La velocidad horizontal se reduce a 0
+                        y: 10, // La velocidad vertical también se reduce a 0
+                        ease: 'Quad.easeOut', // Curva suave de desaceleración
                         duration: slowDownDuration
                     });
                 }
@@ -815,9 +815,9 @@ class LocalGameScene extends Phaser.Scene {
                     // Tween secundario para reducir la velocidad gradualmente
                     this.tweens.add({
                         targets: player2.body.velocity,
-                        x: 0, // La velocidad horizontal se reduce a 0
-                        y: 0, // La velocidad vertical también se reduce a 0
-                        ease: 'Cubic.easeOut',
+                        x: 10, // La velocidad horizontal se reduce a 0
+                        y: 10, // La velocidad vertical también se reduce a 0
+                        ease: 'Quad.easeOut',
                         duration: slowDownDuration
                     });
                 }
