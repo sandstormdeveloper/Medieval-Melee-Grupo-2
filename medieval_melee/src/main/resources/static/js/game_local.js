@@ -742,43 +742,66 @@ class LocalGameScene extends Phaser.Scene {
 
     knockback(player, direction) {
         var knockbackForce = 750;          // Fuerza de retroceso horizontal
-        var knockbackDuration = 100;      // Duración del estado de retroceso (en ms)
+        var knockbackDuration = 100;      // Duración del impulso inicial (en ms)
         var verticalKnockback = 300;      // Fuerza de retroceso vertical
-
-        if (player == 1) {
-            player1.setVelocityX(knockbackForce * direction * percent1); // Aplica fuerza hacia la derecha
-            player1.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
-            isKnockedBack1 = true;                          // Marca al jugador 2 como en retroceso
-
-            if(formCheck2==2){
-                dmgMult2=1.5;
-            }
-            else{
-                dmgMult2=1;
-            }
-            percent1 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult2; // Incrementa el daño del jugador 2
-            this.screenPercentage1.setText(Math.round((percent1- 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
-            this.time.addEvent({
-                delay: knockbackDuration,
-                callback: () => { isKnockedBack1 = false; } // Finaliza el estado de retroceso
+        var slowDownDuration = 300;       // Duración de la desaceleración
+    
+        if (player === 1) {
+            isKnockedBack1 = true;
+    
+            // Aplicar knockback inicial con interpolación
+            this.tweens.add({
+                targets: player1.body.velocity,
+                x: knockbackForce * direction * percent1,
+                y: -verticalKnockback,
+                ease: 'Quad.easeOut',
+                duration: knockbackDuration,
+                onComplete: () => {
+                    isKnockedBack1 = false;
+    
+                    // Tween secundario para reducir la velocidad gradualmente
+                    this.tweens.add({
+                        targets: player1.body.velocity,
+                        x: 0, // La velocidad horizontal se reduce a 0
+                        y: 0, // La velocidad vertical también se reduce a 0
+                        ease: 'Cubic.easeOut', // Curva suave de desaceleración
+                        duration: slowDownDuration
+                    });
+                }
             });
-        } 
-        else {
-            player2.setVelocityX(knockbackForce * direction * percent2); // Aplica fuerza hacia la derecha
-            player2.setVelocityY(-verticalKnockback);        // Aplica fuerza hacia arriba
-            isKnockedBack2 = true;      
-            if(formCheck1==2){
-                dmgMult1=1.5;
-            }
-            else{
-                dmgMult1=1;
-            }                    // Marca al jugador 2 como en retroceso
-            percent2 += (Math.random() * (0.2 - 0.1) + 0.1)*dmgMult1; // Incrementa el daño del jugador 2
-            this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%'); // Actualiza el porcentaje del jugador en pantalla
-            this.time.addEvent({
-                delay: knockbackDuration,
-                callback: () => { isKnockedBack2 = false; } // Finaliza el estado de retroceso
+    
+            // Actualización del daño
+            dmgMult2 = (formCheck2 === 2) ? 1.5 : 1;
+            percent1 += (Math.random() * (0.2 - 0.1) + 0.1) * dmgMult2;
+            this.screenPercentage1.setText(Math.round((percent1 - 1) * 100) + '%');
+        } else {
+            isKnockedBack2 = true;
+    
+            // Aplicar knockback inicial con interpolación
+            this.tweens.add({
+                targets: player2.body.velocity,
+                x: knockbackForce * direction * percent2,
+                y: -verticalKnockback,
+                ease: 'Quad.easeOut',
+                duration: knockbackDuration,
+                onComplete: () => {
+                    isKnockedBack2 = false;
+    
+                    // Tween secundario para reducir la velocidad gradualmente
+                    this.tweens.add({
+                        targets: player2.body.velocity,
+                        x: 0, // La velocidad horizontal se reduce a 0
+                        y: 0, // La velocidad vertical también se reduce a 0
+                        ease: 'Cubic.easeOut',
+                        duration: slowDownDuration
+                    });
+                }
             });
+    
+            // Actualización del daño
+            dmgMult1 = (formCheck1 === 2) ? 1.5 : 1;
+            percent2 += (Math.random() * (0.2 - 0.1) + 0.1) * dmgMult1;
+            this.screenPercentage2.setText(Math.round((percent2 - 1) * 100) + '%');
         }
     }
 
