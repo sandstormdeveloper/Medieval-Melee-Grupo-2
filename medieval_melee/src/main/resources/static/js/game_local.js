@@ -55,8 +55,16 @@ class LocalGameScene extends Phaser.Scene {
         this.load.image('hammer', 'assets/hammer.png'); // Ítem coleccionable
         this.load.image('arrow', 'assets/arrow.png'); // Flecha
 
+        //Sonido
         this.load.audio('menu_music', 'assets/menu.mp3');
         this.load.audio('game_music', 'assets/juego.mp3');
+        //SFX
+        this.load.audio('swordSound', 'assets/SFX/swordSound.wav');
+        this.load.audio('hammerSound', 'assets/SFX/hammerSound.wav');
+        this.load.audio('arrowSound', 'assets/SFX/arrowSound.wav');
+        this.load.audio('hitSound', 'assets/SFX/hitSound.wav');
+        this.load.audio('jumpSound', 'assets/SFX/jumpSound.wav');
+
 
         // Interfaz
         this.load.image('interfaz1', 'assets/interfaz_p1.png');
@@ -113,6 +121,12 @@ class LocalGameScene extends Phaser.Scene {
         // Crear sistema de alertas
         this.createAlertSystem();
         
+        //crear SFX
+        this.swordSound = this.sound.add('swordSound');
+        this.hammerSound = this.sound.add('hammerSound');
+        this.arrowSound = this.sound.add('arrowSound');
+        this.hitSound = this.sound.add('hitSound');
+        this.jumpSound = this.sound.add('jumpSound');
         // Handle keydown events
         this.input.keyboard.on('keydown', (event) => {
             const key = event.key.toLowerCase(); // Normalize the key to lowercase
@@ -476,6 +490,7 @@ class LocalGameScene extends Phaser.Scene {
         if (keyStates['w'] && player1.body.touching.down && !isKnockedBack1) {
             keyStates['w'] = false;
             player1.setVelocityY(-jumpHeight); // Impulso hacia arriba
+            this.jumpSound.play();
         }
 
         // Ataque del Jugador 1
@@ -485,12 +500,15 @@ class LocalGameScene extends Phaser.Scene {
                 // Reproduce la animación de ataque y reinicia el temporizador
                 if(formCheck1 == 0) {
                     player1.anims.play('caballero1_attack');
+                    this.swordSound.play();
                 }
                 else if(formCheck1 == 1) {
                     player1.anims.play('arquero1_attack');
+                    this.bowSound.play();
                 }
                 else if(formCheck1 == 2){
                     player1.anims.play('paladin1_attack', true); 
+                    this.hammerSound.play();
                 }
                 attackTimer1 = attackCooldown;
             }
@@ -559,6 +577,9 @@ class LocalGameScene extends Phaser.Scene {
         if (keyStates['arrowup'] && player2.body.touching.down && !isKnockedBack2) {
             keyStates['arrowup'] = false;
             player2.setVelocityY(-jumpHeight); // Impulso hacia arriba
+            this.jumpSound.play({
+                volume: 0.3    // Reducir el volumen al 30%
+            });
         }
 
         // Ataque del Jugador 2
@@ -568,12 +589,15 @@ class LocalGameScene extends Phaser.Scene {
                 // Reproduce la animación de ataque y reinicia el temporizador
                 if(formCheck2 == 0) {
                     player2.anims.play('caballero2_attack');
+                    this.swordSound.play();
                 }
                 else if(formCheck2==1){
                     player2.anims.play('arquero2_attack');
+                    this.arrowSound.play();
                 }
                 else if (formCheck2 == 2){
                     player2.anims.play('paladin2_attack', true); 
+                    this.hammerSound.play();
                 }
                 attackTimer2 = attackCooldown;
             }
@@ -748,6 +772,7 @@ class LocalGameScene extends Phaser.Scene {
     
         if (player === 1) {
             isKnockedBack1 = true;
+            this.hitSound.play();
     
             // Aplicar knockback inicial con interpolación
             this.tweens.add({
@@ -776,7 +801,7 @@ class LocalGameScene extends Phaser.Scene {
             this.screenPercentage1.setText(Math.round((percent1 - 1) * 100) + '%');
         } else {
             isKnockedBack2 = true;
-    
+            this.hitSound.play();
             // Aplicar knockback inicial con interpolación
             this.tweens.add({
                 targets: player2.body.velocity,
