@@ -1,10 +1,11 @@
 var returnToMenu;
 var button;
-// Clase CreditsScene que representa la escena de créditos
+// Clase AjustesScene que representa la escena de ajustes
 class AjustesScene extends Phaser.Scene {
     // Constructor de la escena, define la clave de la escena
     constructor() {
         super({ key: 'AjustesScene' });
+        this.alertGroup = null; // Contenedor para alertas personalizadas
     }
 
     // Método preload: carga los recursos necesarios para esta escena
@@ -20,6 +21,9 @@ class AjustesScene extends Phaser.Scene {
         returnToMenu = false;
         // Efecto de fade-in al entrar en la escena
         this.cameras.main.fadeIn(500, 0, 0, 0);
+
+        // Crear sistema de alertas
+        this.createAlertSystem();
 
         // Agrega la imagen de fondo de los créditos
         this.add.image(640, 360, 'ajustes_menu');  // Imagen de fondo de los créditos
@@ -101,7 +105,6 @@ class AjustesScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-        
     }
 
     updateVolume() {
@@ -123,76 +126,97 @@ class AjustesScene extends Phaser.Scene {
         // Sin implementación adicional en este ejemplo
     }
 
-    async fetchWithTimeout(url, options = {}, timeout = 5000) {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        const fetchPromise = fetch(url, { ...options, signal });
+    // Sistema de alertas personalizadas
+    createAlertSystem() {
+        this.alertGroup = this.add.container(640, 100).setVisible(false).setDepth(100); // Posicionamos la alerta más arriba
     
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        const alertBg = this.add.rectangle(0, 0, 600, 100, 0xff0000, 0.8)
+            .setStrokeStyle(4, 0xffffff)
+            .setOrigin(0.5)
+            .setDepth(101);
     
-        try {
-            const response = await fetchPromise;
-            clearTimeout(timeoutId);
-            return response;
-        } catch (error) {
-            clearTimeout(timeoutId);
-            throw error; 
-        }
+        const alertText = this.add.text(0, -10, '', {
+            fontFamily: 'font',
+            fontSize: '24px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 550 }
+        }).setOrigin(0.5).setDepth(102);
+    
+        const confirmButton = this.add.rectangle(0, 50, 150, 50, 0xffffff, 1)
+            .setStrokeStyle(2, 0xff0000)
+            .setInteractive()
+            .on('pointerdown', this.hideAlert, this)
+            .setDepth(103);
+    
+        const confirmText = this.add.text(0, 50, 'Aceptar', {
+            fontFamily: 'font',
+            fontSize: '20px',
+            color: '#ff0000'
+        }).setOrigin(0.5).setDepth(104);
+    
+        this.alertGroup.add([alertBg, alertText, confirmButton, confirmText]);
+        this.alertGroup.alertText = alertText;
+    
+        // Asegurarnos de que la alerta esté en el frente
+        this.children.bringToTop(this.alertGroup);
     }
 
-    async fetchServerStatus() {
-        try {
-            const response = await this.fetchWithTimeout('/api/status', {}, 5000);
-            if (!response.ok) throw new Error('Server response error');
-    
-            const data = await response.json();
-            if (!isConnected) {
-                this.incrementUsers();
-                isConnected = true;
-            }
-            return {
-                status: data.status,
-                connectedUsers: data.connectedUsers
-            };
-        } catch (error) {
-            console.error('Error fetching server status:', error.message);
-            isConnected = false;
-            return {
-                status: 'Desconectado',
-                connectedUsers: 0
-            };
-        }
-    }
+// Método para mostrar la alerta con el mensaje proporcionado
+showAlert(message, type) {
+    const colors = { error: 0xff0000, success: 0xff0000 };
+    this.alertGroup.getAt(0).setFillStyle(colors[type] || 0xff0000, 0.8);
+    this.alertGroup.alertText.setText(message);
+    this.alertGroup.setVisible(true);
 
-    async updateStatus() {
-        await this.fetchServerStatus();
-        if(!isConnected && !returnToMenu) {
-            alert("No se encuentra el servidor :(")
+    
+    const confirmButton = this.alertGroup.getAt(2); // El botón de confirmar
+    confirmButton.setInteractive(true); // Botón interactivo
+
+    // Llamada al evento de clic
+    confirmButton.on('pointerdown', this.handleConfirmButtonClick, this);
+}
+
+// Función que maneja el clic en el botón "Aceptar"
+handleConfirmButtonClick() {
+    // Ocultar la alerta
+    this.hideAlert();
+
+    // Cambiar la escena a LoginScene después de la alerta
+    this.cameras.main.fadeOut(500, 0, 0, 0);
+    
+    // Esperar el fade-out antes de cambiar la escena
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.game.music.stop(); // Detener música si es necesario
+        this.scene.start('LoginScene'); // Cambiar a la escena de login
+    });
+}
+
+// Método para ocultar la alerta
+hideAlert() {
+    this.alertGroup.setVisible(false);
+
+   
+    const confirmButton = this.alertGroup.getAt(2); // El botón de confirmar
+    confirmButton.removeListener('pointerdown', this.handleConfirmButtonClick, this);
+}
+ // Actualización del estado del servidor
+async updateStatus() {
+    await this.fetchServerStatus();
+    if (!isConnected && !returnToMenu) {
+            this.showAlert('No se encuentra el servidor :(', 'error');
             returnToMenu = true;
             this.cameras.main.fadeOut(500, 0, 0, 0);
 
             // Espera a que el fade-out termine antes de iniciar la nueva escena
-            this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.cameras.main.once('camerafadeoutcomplete', () => {
                 this.scene.start('MainMenuScene'); // Vuelve al menú principal
-            });
-        }
+        });
     }
+}
 
-    async incrementUsers() {
-        try {
-            var response = await fetch('/api/status/increment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) throw new Error('No se ha podido incrementar el número de usuarios');
-        } catch (error) {
-            console.error('Error incrementando el número de usuarios:', error);
-        }
-    }
-
-    deleteUser(username) {
+    // Función de eliminación de usuario
+deleteUser(username) {
         fetch(`/api/users/delete?username=${username}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
@@ -205,23 +229,14 @@ class AjustesScene extends Phaser.Scene {
         })
         .then(success => {
             if (success) {
-                alert(`El usuario "${username}" se ha borrado.`);
-                this.cameras.main.fadeOut(500, 0, 0, 0);
-                button.removeListener('click');
-
-                button.scene.tweens.add({
-                    targets: button, alpha: 0, duration: 500, ease: 'Power3',
-                });
-
-                // Espera a que el fade-out termine antes de iniciar la nueva escena
-                this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.game.music.stop();
-                    this.scene.start('LoginScene'); // Vuelve al menú principal
-                });
+                
+                this.showAlert(`El usuario "${username}" se ha borrado.`, 'success');
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            this.showAlert('Hubo un problema al intentar borrar el usuario.', 'error');
         });
-    }
+}
+    
 }

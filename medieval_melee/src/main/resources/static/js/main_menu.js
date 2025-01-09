@@ -3,6 +3,10 @@ class MainMenuScene extends Phaser.Scene {
     // Constructor de la escena, define la clave de la escena
     constructor() {
         super({ key: 'MainMenuScene' });
+        this.alertGroup = null; // Contenedor para alertas personalizadas
+        this.isAlertActive = false;  // Variable para controlar si la alerta está activa
+        this.isConnected = false;    // Variable para controlar la conexión al servidor
+        this.alertTriggered = false; // Control para evitar repetición de alerta
     }
 
     // Método preload: carga los recursos necesarios para esta escena
@@ -26,6 +30,7 @@ class MainMenuScene extends Phaser.Scene {
     create() {
         // Efecto de fade-in al entrar en la escena
         this.cameras.main.fadeIn(500, 0, 0, 0);
+        this.createAlertSystem();
 
         // Agrega la imagen de fondo y el título en posiciones específicas
         this.add.image(640, 360, 'menu');  // Imagen del fondo
@@ -84,7 +89,7 @@ class MainMenuScene extends Phaser.Scene {
                         this.scene.start('SelectScene'); // Cambia a la escena de selección
                     });
                 } else {
-                    alert('No se encuentra el servidor :(');
+                    this.showAlert('No se encuentra el servidor :(', 'error');
                 }
             });
 
@@ -128,7 +133,7 @@ class MainMenuScene extends Phaser.Scene {
                         this.scene.start('CreditsScene'); // Cambia a la escena de créditos
                     });
                 } else {
-                    alert('No se encuentra el servidor :(');
+                    this.showAlert('No se encuentra el servidor :(', 'error');
                 }
             });
         
@@ -152,7 +157,7 @@ class MainMenuScene extends Phaser.Scene {
                         this.scene.start('AjustesScene'); // Cambia a la escena de créditos
                     });
                 } else {
-                    alert('No se encuentra el servidor :(');
+                    this.showAlert('No se encuentra el servidor :(', 'error');
                 }
             });
         
@@ -173,6 +178,68 @@ class MainMenuScene extends Phaser.Scene {
             loop: true
         });
     }
+
+
+    // Sistema de alertas personalizadas
+    createAlertSystem() {
+        this.alertGroup = this.add.container(640, 100).setVisible(false).setDepth(100); // Posicionamos la alerta más arriba
+    
+        const alertBg = this.add.rectangle(0, 0, 600, 100, 0xff0000, 0.8)
+            .setStrokeStyle(4, 0xffffff)
+            .setOrigin(0.5)
+            .setDepth(101);
+    
+        const alertText = this.add.text(0, -10, '', {
+            fontFamily: 'font',
+            fontSize: '24px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 550 }
+        }).setOrigin(0.5).setDepth(102);
+    
+        const confirmButton = this.add.rectangle(0, 50, 150, 50, 0xffffff, 1)
+            .setStrokeStyle(2, 0xff0000)
+            .setInteractive()
+            .on('pointerdown', this.hideAlert, this)
+            .setDepth(103);
+    
+        const confirmText = this.add.text(0, 50, 'Aceptar', {
+            fontFamily: 'font',
+            fontSize: '20px',
+            color: '#ff0000'
+        }).setOrigin(0.5).setDepth(104);
+    
+        this.alertGroup.add([alertBg, alertText, confirmButton, confirmText]);
+        this.alertGroup.alertText = alertText;
+    
+        // Asegurarnos de que la alerta esté en el frente
+        this.children.bringToTop(this.alertGroup);
+    }
+
+      // Mostrar la alerta personalizada
+      showAlert(message, type) {
+        const colors = { error: 0xff0000, success: 0x00ff00 };
+        this.alertGroup.getAt(0).setFillStyle(colors[type] || 0xff0000, 0.8);
+        this.alertGroup.alertText.setText(message);
+        this.alertGroup.setVisible(true);
+
+        // Bloquear la interacción del usuario
+        this.blocker.setVisible(true);  // El bloqueador evita la interacción
+        this.isAlertActive = true;  // Indicamos que la alerta está activa
+        this.input.keyboard.enabled = false;  // Deshabilitar las teclas
+        this.input.mouse.enabled = false;  // Deshabilitar la interacción con el ratón
+    }
+
+    // Método para hacer desaparecer la alerta y permitir la interacción
+    hideAlert() {
+        this.alertGroup.setVisible(false);  // Ocultamos la alerta
+        this.blocker.setVisible(false);  // Ocultamos el bloqueador
+        this.isAlertActive = false;  // Desactivamos la alerta
+        this.alertTriggered = false; // Reseteamos el flag para que la alerta pueda mostrarse nuevamente
+        this.input.keyboard.enabled = true;  // Rehabilitamos las teclas
+        this.input.mouse.enabled = true;  // Rehabilitamos la interacción con el ratón
+    }
+
 
     async fetchWithTimeout(url, options = {}, timeout = 5000) {
         const controller = new AbortController();
@@ -216,12 +283,18 @@ class MainMenuScene extends Phaser.Scene {
     }
 
     async updateStatus() {
+        // Evitamos que se muestre la alerta si ya está activa
+        if (this.isAlertActive || this.alertTriggered) {
+            return;  // No actualizamos nada si la alerta está activa o ya fue activada
+        }
+
         var { status, connectedUsers } = await this.fetchServerStatus();
         this.statusText.setText(`Estado: ${status}`);
         this.userCountText.setText(`Usuarios: ${connectedUsers}`);
+
         if (isConnected) {
             this.userText.setText('Registrado como ' + userPlaying);
-            if(gamesPlayedByUser != 1) {
+            if (gamesPlayedByUser != 1) {
                 this.gameText.setText('Has jugado ' + gamesPlayedByUser + ' partidas');
             } else {
                 this.gameText.setText('Has jugado ' + gamesPlayedByUser + ' partida');
@@ -229,6 +302,12 @@ class MainMenuScene extends Phaser.Scene {
         } else {
             this.userText.setText('');
             this.gameText.setText('');
+
+            // Si el servidor está desconectado y no hemos mostrado la alerta aún
+            if (!this.isAlertActive && !this.alertTriggered) {
+                this.showAlert('No se encuentra el servidor :(', 'error');
+                this.alertTriggered = true;  // Marcamos que la alerta fue disparada
+            }
         }
     }
 

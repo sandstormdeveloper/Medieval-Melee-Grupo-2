@@ -1,9 +1,12 @@
-var returnToMenu;
+var returnToMenu = false;
+var isConnected = false; // Asegúrate de que esto esté definido
+
 class ChatScene extends Phaser.Scene {
     constructor() {
         super({ key: 'ChatScene' });
         this.latestMessageTimestamp = 0; 
         this.messages = [];
+        this.alertGroup = null; 
     }
 
     preload() {
@@ -22,6 +25,9 @@ class ChatScene extends Phaser.Scene {
             fontSize: '32px',
         });
         this.chat.setFixedSize(1260, 645);
+
+        // Crear sistema de alertas
+        this.createAlertSystem();
 
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.enterKey.on('down', () => this.sendMessage());
@@ -51,6 +57,55 @@ class ChatScene extends Phaser.Scene {
         });
     }
 
+    // Sistema de alertas personalizadas
+    createAlertSystem() {
+        this.alertGroup = this.add.container(640, 100).setVisible(false).setDepth(100); // Posicionamos la alerta más arriba
+    
+        const alertBg = this.add.rectangle(0, 0, 600, 100, 0xff0000, 0.8)
+            .setStrokeStyle(4, 0xffffff)
+            .setOrigin(0.5)
+            .setDepth(101);
+    
+        const alertText = this.add.text(0, -10, '', {
+            fontFamily: 'font',
+            fontSize: '24px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 550 }
+        }).setOrigin(0.5).setDepth(102);
+    
+        const confirmButton = this.add.rectangle(0, 50, 150, 50, 0xffffff, 1)
+            .setStrokeStyle(2, 0xff0000)
+            .setInteractive()
+            .on('pointerdown', this.hideAlert, this)
+            .setDepth(103);
+    
+        const confirmText = this.add.text(0, 50, 'Aceptar', {
+            fontFamily: 'font',
+            fontSize: '20px',
+            color: '#ff0000'
+        }).setOrigin(0.5).setDepth(104);
+    
+        this.alertGroup.add([alertBg, alertText, confirmButton, confirmText]);
+        this.alertGroup.alertText = alertText;
+    
+        this.children.bringToTop(this.alertGroup);
+    }
+
+    showAlert(message, type) {
+        const colors = { error: 0xff0000, success: 0x00ff00 };
+        this.alertGroup.getAt(0).setFillStyle(colors[type] || 0xff0000, 0.8);
+        this.alertGroup.alertText.setText(message);
+        this.alertGroup.setVisible(true);
+
+        this.alertGroup.setDepth(100);
+        this.children.bringToTop(this.alertGroup);
+    }
+
+    hideAlert() {
+        this.alertGroup.setVisible(false);
+    }
+
     async fetchWithTimeout(url, options = {}, timeout = 5000) {
         const controller = new AbortController();
         const signal = controller.signal;
@@ -64,7 +119,12 @@ class ChatScene extends Phaser.Scene {
             return response;
         } catch (error) {
             clearTimeout(timeoutId);
-            throw error; 
+            if (error.name === 'AbortError') {
+                console.error('Request timed out');
+            } else {
+                console.error('Request failed:', error.message);
+            }
+            throw error; // Asegúrate de propagar el error
         }
     }
 
@@ -85,6 +145,18 @@ class ChatScene extends Phaser.Scene {
         } catch (error) {
             console.error('Error fetching server status:', error.message);
             isConnected = false;
+
+            // Mostrar la alerta personalizada en vez de la alerta del navegador
+            this.showAlert('No se encuentra el servidor :(', 'error'); 
+
+            // Asegúrate de que la escena cambie correctamente
+            if (!returnToMenu) {
+                returnToMenu = true;
+                this.cameras.main.fadeOut(500, 0, 0, 0);
+                this.scene.stop();
+                this.scene.resume('MainMenuScene');
+            }
+
             return {
                 status: 'Desconectado',
                 connectedUsers: 0
@@ -103,6 +175,23 @@ class ChatScene extends Phaser.Scene {
         this.chat.setText(this.messages.join("\n"));
     }
     
+    async updateStatus() {
+        await this.fetchServerStatus();
+    }
+
+    async incrementUsers() {
+        try {
+            var response = await fetch('/api/status/increment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) throw new Error('No se ha podido incrementar el número de usuarios');
+        } catch (error) {
+            console.error('Error incrementando el número de usuarios:', error);
+        }
+    }
 
     async sendMessage() {
         if (isConnected) {
@@ -112,7 +201,7 @@ class ChatScene extends Phaser.Scene {
             }
     
             const messageContent = inputField.value.trim();
-            const fullMessage = `[${userPlaying}]: ${messageContent}`;
+            const fullMessage = `[${userPlaying}]: ${messageContent}`; // Asegúrate de definir `userPlaying` antes
     
             try {
                 const response = await fetch('/api/chat', {
@@ -137,7 +226,7 @@ class ChatScene extends Phaser.Scene {
     }
 
     async fetchMessages() {
-        if(isConnected) {
+        if (isConnected) {
             try {
                 const response = await fetch(`/api/chat?since=${this.latestMessageTimestamp}`);
                 if (!response.ok) {
@@ -153,32 +242,6 @@ class ChatScene extends Phaser.Scene {
             } catch (error) {
                 console.error("Error recuperando mensajes:", error);
             }
-        }
-    }
-
-    async updateStatus() {
-        await this.fetchServerStatus();
-        if(!isConnected && !returnToMenu) {
-            alert("No se encuentra el servidor :(")
-            returnToMenu = true;
-            this.cameras.main.fadeOut(500, 0, 0, 0);
-
-            this.scene.stop();
-            this.scene.resume('MainMenuScene');
-        }
-    }
-
-    async incrementUsers() {
-        try {
-            var response = await fetch('/api/status/increment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) throw new Error('No se ha podido incrementar el número de usuarios');
-        } catch (error) {
-            console.error('Error incrementando el número de usuarios:', error);
         }
     }
 }

@@ -37,6 +37,10 @@ class LocalGameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'LocalGameScene' }); // Asigna una clave para identificar la escena
         this.decremented = false;
+        this.alertGroup = null;
+        this.isConnected = false; // Definir la variable isConnected
+        this.returnToMenu = false; // Definir la variable returnToMenu
+        this.blocker = null;  // Añadimos un blocker para bloquear la interacción
     }
 
     // Método para cargar los recursos del juego
@@ -105,6 +109,9 @@ class LocalGameScene extends Phaser.Scene {
         dmgMult1=1; //multiplicador de daño, al transformarse en paladín se pone en 2
         dmgMult2=1;
         gameEnded = false;
+
+        // Crear sistema de alertas
+        this.createAlertSystem();
         
         // Handle keydown events
         this.input.keyboard.on('keydown', (event) => {
@@ -850,14 +857,97 @@ class LocalGameScene extends Phaser.Scene {
         
         formTimer2 = formCooldown;
     }
+    
+     // Sistema de alertas personalizadas
+     // Sistema de alertas personalizadas
+    createAlertSystem() {
+        this.alertGroup = this.add.container(640, 100).setVisible(false).setDepth(100); // Posicionamos la alerta más arriba
+
+        const alertBg = this.add.rectangle(0, 0, 600, 100, 0xff0000, 0.8)
+            .setStrokeStyle(4, 0xffffff)
+            .setOrigin(0.5)
+            .setDepth(101);
+
+        const alertText = this.add.text(0, -10, '', {
+            fontFamily: 'font',
+            fontSize: '24px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 550 }
+        }).setOrigin(0.5).setDepth(102);
+
+        const confirmButton = this.add.rectangle(0, 50, 150, 50, 0xffffff, 1)
+            .setStrokeStyle(2, 0xff0000)
+            .setInteractive()
+            .on('pointerdown', this.hideAlert, this)  // Cuando se hace click, se oculta la alerta y va al menú
+            .setDepth(103);
+
+        const confirmText = this.add.text(0, 50, 'Aceptar', {
+            fontFamily: 'font',
+            fontSize: '20px',
+            color: '#ff0000'
+        }).setOrigin(0.5).setDepth(104);
+
+        this.alertGroup.add([alertBg, alertText, confirmButton, confirmText]);
+        this.alertGroup.alertText = alertText;
+
+        this.children.bringToTop(this.alertGroup);
+
+        // Bloqueador invisible para deshabilitar interacciones
+        this.blocker = this.add.rectangle(0, 0, 1280, 720, 0x000000, 0.5)
+            .setOrigin(0, 0)
+            .setInteractive()
+            .setVisible(false)  // Inicialmente invisible
+            .setDepth(99); // Se coloca debajo de la alerta pero encima de otros elementos
+    }
+
+    showAlert(message, type) {
+        const colors = { error: 0xff0000, success: 0x00ff00 };
+        this.alertGroup.getAt(0).setFillStyle(colors[type] || 0xff0000, 0.8);
+        this.alertGroup.alertText.setText(message);
+        this.alertGroup.setVisible(true);
+
+        // Mostrar el bloqueador que desactiva interacciones en el resto del juego
+        this.blocker.setVisible(true);
+        this.isAlertActive = true;  // Indicamos que la alerta está activa
+
+        // Deshabilitar entrada de teclado mientras la alerta esté activa
+        this.input.keyboard.enabled = false;
+
+        this.alertGroup.setDepth(100);
+        this.children.bringToTop(this.alertGroup);
+    }
+
+    hideAlert() {
+        this.alertGroup.setVisible(false);  // Ocultamos la alerta
+        this.blocker.setVisible(false);  // Ocultamos el bloqueador
+
+        // Ahora que el usuario ha dado "Aceptar", volvemos al menú
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+
+        // Esperamos a que termine el fade-out antes de iniciar la nueva escena
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start('MainMenuScene'); // Vuelve al menú principal
+
+            this.scene.get('MainMenuScene').updateStatus(); // Llamamos a updateStatus en MainMenuScene
+
+            this.sound.stopAll(); // Detener toda la música
+            this.game.music = this.sound.add('menu_music', { loop: true });
+            this.game.music.play();
+        });
+
+        // Rehabilitar la entrada del teclado
+        this.input.keyboard.enabled = true;
+        this.isAlertActive = false;  // Indicamos que la alerta ya no está activa
+    }
 
     async fetchWithTimeout(url, options = {}, timeout = 5000) {
         const controller = new AbortController();
         const signal = controller.signal;
         const fetchPromise = fetch(url, { ...options, signal });
-    
+
         const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
+
         try {
             const response = await fetchPromise;
             clearTimeout(timeoutId);
@@ -872,11 +962,11 @@ class LocalGameScene extends Phaser.Scene {
         try {
             const response = await this.fetchWithTimeout('/api/status', {}, 5000);
             if (!response.ok) throw new Error('Server response error');
-    
+
             const data = await response.json();
-            if (!isConnected) {
+            if (!this.isConnected) {
                 this.incrementUsers();
-                isConnected = true;
+                this.isConnected = true;
             }
             return {
                 status: data.status,
@@ -884,7 +974,7 @@ class LocalGameScene extends Phaser.Scene {
             };
         } catch (error) {
             console.error('Error fetching server status:', error.message);
-            isConnected = false;
+            this.isConnected = false;
             return {
                 status: 'Desconectado',
                 connectedUsers: 0
@@ -893,22 +983,13 @@ class LocalGameScene extends Phaser.Scene {
     }
 
     async updateStatus() {
-        var { status, connectedUsers } = await this.fetchServerStatus();
+        const { status, connectedUsers } = await this.fetchServerStatus();
         this.statusText.setText(`Estado: ${status}`);
         this.userCountText.setText(`Usuarios: ${connectedUsers}`);
 
-        if(!isConnected && !returnToMenu) {
-            alert("No se encuentra el servidor :(")
-            returnToMenu = true;
-            this.cameras.main.fadeOut(500, 0, 0, 0);
-
-            // Espera a que el fade-out termine antes de iniciar la nueva escena
-            this.cameras.main.once('camerafadeoutcomplete', () => {
-                this.scene.start('MainMenuScene'); // Vuelve al menú principal
-                this.game.music.stop();
-                this.game.music = this.sound.add('menu_music', { loop: true });
-                this.game.music.play();
-            });
+        if (!this.isConnected && !this.returnToMenu) {
+            this.showAlert('No se encuentra el servidor :(', 'error'); // Mostrar la alerta personalizada
+            this.returnToMenu = true;
         }
     }
 
@@ -926,4 +1007,3 @@ class LocalGameScene extends Phaser.Scene {
         }
     }
 }
-
