@@ -23,6 +23,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         WebSocketSession session;
         double x;
         double y;
+        double velocity;
         int percent;
         int playerId;
 
@@ -94,6 +95,8 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                 player1.y = 300; 
                 player2.x = 840; 
                 player2.y = 300; 
+                player1.velocity = 0;
+                player2.velocity = 0;
 
                 Game game = new Game(player1, player2);
                 games.put(session1.getId(), game);
@@ -125,7 +128,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         sendToPlayer(game.player1, "t", game.timeLeft);
         sendToPlayer(game.player2, "t", game.timeLeft);
 
-        if (game.timeLeft % 10 == 0) {
+        if (game.timeLeft % 20 == 0) {
             spawnItem(game);
         }
 
@@ -170,39 +173,37 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 
                     currentPlayer.x = pos.get(0);
                     currentPlayer.y = pos.get(1);
+                    currentPlayer.velocity = pos.get(2);
 
                     sendToPlayer(otherPlayer, "p",
-                            Arrays.asList(currentPlayer.playerId, currentPlayer.x, currentPlayer.y));
+                            Arrays.asList(currentPlayer.playerId, currentPlayer.x, currentPlayer.y, currentPlayer.velocity));
                     break;
 
                 case 'j':
                     if (game.hammer != null) {
-                        double dx = currentPlayer.x - game.hammer.x;
-                        double dy = currentPlayer.y - game.hammer.y;
-                        double distance = Math.sqrt(dx * dx + dy * dy);
-
-                        if (distance < 32) {
-                            game.hammer = null;
-                            sendToPlayer(game.player1, "j", 0);
-                            sendToPlayer(game.player2, "j", 0);
-                        }
+                        game.hammer = null;
+                            sendToPlayer(game.player1, "j", Arrays.asList(
+                                currentPlayer.playerId));
+                            sendToPlayer(game.player2, "j", Arrays.asList(
+                                currentPlayer.playerId));
                     }
                     break;
                 
                 case 'n':
                     if (game.bow != null) {
-                        double dx = currentPlayer.x - game.bow.x;
-                        double dy = currentPlayer.y - game.bow.y;
-                        double distance = Math.sqrt(dx * dx + dy * dy);
-
-                        if (distance < 32) {
-                            game.bow = null;
+                        game.bow = null;
                             sendToPlayer(game.player1, "n", Arrays.asList(
                                 currentPlayer.playerId));
                             sendToPlayer(game.player2, "n", Arrays.asList(
                                 currentPlayer.playerId));
-                        }
                     }
+                    break;
+                
+                case 'f':
+                    sendToPlayer(game.player1, "f", Arrays.asList(
+                        currentPlayer.playerId));
+                    sendToPlayer(game.player2, "f", Arrays.asList(
+                        currentPlayer.playerId));
                     break;
             }
         } catch (IOException e) {

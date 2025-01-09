@@ -39,7 +39,8 @@ const MSG_TYPES = {
     COLLECT_HAMMER: 'j',   
     COLLECT_BOW: 'n',  
     TIME: 't',       
-    OVER: 'o'         
+    OVER: 'o',
+    CHANGE_FORM: 'f'         
 };
 
 // Clase principal del juego
@@ -313,11 +314,11 @@ class RedGameScene extends Phaser.Scene {
                 fill: '#fff'
             });
 
-            this.waitingDisplay = this.add.text(640, 360, 'Waiting for another player', { 
+            this.waitingDisplay = this.add.text(640, 380, 'Waiting for another player...', { 
                 fontFamily: 'font',
                 fontSize: '32px',
                 fill: '#fff'
-            });
+            }).setOrigin(0.5);
         });
 
         //Pausa del videojuego
@@ -588,6 +589,7 @@ class RedGameScene extends Phaser.Scene {
         this.sendMessage(MSG_TYPES.POS, [
             Math.round(this.player.x),
             Math.round(this.player.y),
+            Math.round(this.player.body.velocity.x)
         ]); 
     }
 
@@ -609,16 +611,10 @@ class RedGameScene extends Phaser.Scene {
         }
 
         if(formTimer1 <= 0) {
-            formCheck1 = 0;
-        }
-        
-        // Temporizador de transformación para el Jugador 2
-        if (formTimer2 > 0) {
-            formTimer2 -= delta / 1000; // Disminuye según el tiempo transcurrido
-        }
-
-        if(formTimer2 <= 0) {
-            formCheck2 = 0;
+            if (formCheck1 != 0) {
+                this.sendMessage(MSG_TYPES.CHANGE_FORM);
+                formCheck1 = 0;
+            }           
         }
     }
 
@@ -902,6 +898,9 @@ class RedGameScene extends Phaser.Scene {
                 // case MSG_TYPES.OVER:
                 //     this.handleGameOver(data);
                 //     break;
+                case MSG_TYPES.CHANGE_FORM:
+                    this.handleForm(data);
+                    break;
             }
         };
 
@@ -924,6 +923,40 @@ class RedGameScene extends Phaser.Scene {
         if (data[0] !== this.playerId && this.otherPlayer) {
             this.otherPlayer.x = data[1];
             this.otherPlayer.y = data[2];
+
+            if (data[3] < 0) {
+                this.otherPlayer.flipX = true;
+                if (attackTimer2 <= attackCooldown - 0.5) {
+                    if (formCheck2 == 0) {
+                        this.otherPlayer.anims.play('caballero2_run', true);
+                    } else if (formCheck2 == 1) {
+                        this.otherPlayer.anims.play('arquero2_run', true);
+                    } else if (formCheck2 == 2) {
+                        this.otherPlayer.anims.play('paladin2_run', true);
+                    }
+                }
+            } else if (data[3] > 0) {
+                this.otherPlayer.flipX = false;
+                if (attackTimer2 <= attackCooldown - 0.5) {
+                    if (formCheck2 == 0) {
+                        this.otherPlayer.anims.play('caballero2_run', true);
+                    } else if (formCheck2 == 1) {
+                        this.otherPlayer.anims.play('arquero2_run', true);
+                    } else if (formCheck2 == 2) {
+                        this.otherPlayer.anims.play('paladin2_run', true);
+                    }
+                }
+            } else {
+                if (attackTimer2 <= attackCooldown - 0.5) {
+                    if (formCheck2 == 0) {
+                        this.otherPlayer.anims.play('caballero2_idle', true);
+                    } else if (formCheck2 == 1) {
+                        this.otherPlayer.anims.play('arquero2_idle', true);
+                    } else if (formCheck2 == 2) {
+                        this.otherPlayer.anims.play('paladin2_idle', true);
+                    }
+                }
+            }
         }
     }
 
@@ -948,13 +981,31 @@ class RedGameScene extends Phaser.Scene {
     }
 
     handleHammerCollection(data) {
+        if(data[0] == this.playerId) {
+            formTimer1 = formCooldown;
+            formCheck1 = 2;
+        } else {
+            formCheck2 = 2;
+        }
         if (this.hammer) this.hammer.destroy();
         this.hammer = null;
     }
 
     handleBowCollection(data) {
+        if(data[0] == this.playerId) {
+            formTimer1 = formCooldown;
+            formCheck1 = 1;
+        } else {
+            formCheck2 = 1;
+        }
         if (this.bow) this.bow.destroy();
         this.bow = null;
+    }
+
+    handleForm(data) {
+        if(data[0] != this.playerId) {
+            formCheck2 = 0;
+        }
     }
 
     initializePlayers(players) {
