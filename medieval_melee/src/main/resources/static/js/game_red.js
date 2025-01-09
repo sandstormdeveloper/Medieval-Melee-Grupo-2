@@ -40,7 +40,8 @@ const MSG_TYPES = {
     COLLECT_BOW: 'n',  
     TIME: 't',       
     OVER: 'o',
-    CHANGE_FORM: 'f'         
+    CHANGE_FORM: 'f',
+    ATTACK: 'a'
 };
 
 // Clase principal del juego
@@ -314,7 +315,7 @@ class RedGameScene extends Phaser.Scene {
                 fill: '#fff'
             });
 
-            this.waitingDisplay = this.add.text(640, 380, 'Waiting for another player...', { 
+            this.waitingDisplay = this.add.text(640, 400, 'Esperando a otro jugador...', { 
                 fontFamily: 'font',
                 fontSize: '32px',
                 fill: '#fff'
@@ -554,9 +555,10 @@ class RedGameScene extends Phaser.Scene {
                     this.player.anims.play('arquero1_attack');
                 }
                 else if(formCheck1 == 2){
-                    this.player.anims.play('paladin1_attack', true); 
+                    this.player.anims.play('paladin1_attack'); 
                 }
                 attackTimer1 = attackCooldown;
+                this.sendMessage(MSG_TYPES.ATTACK);
             }
         }
     }
@@ -564,14 +566,9 @@ class RedGameScene extends Phaser.Scene {
     handlePositionUpdates() {
         const currentTime = Date.now();
         if (currentTime - this.lastUpdateTime >= this.POSITION_UPDATE_INTERVAL) {
-            const dx = Math.abs(this.player.x - this.lastSentPosition.x);
-            const dy = Math.abs(this.player.y - this.lastSentPosition.y);
-
-            if (dx > this.POSITION_THRESHOLD || dy > this.POSITION_THRESHOLD) {
-                this.sendPosition();
-                this.lastUpdateTime = currentTime;
-                this.lastSentPosition = { x: this.player.x, y: this.player.y };
-            }
+            this.sendPosition();
+            this.lastUpdateTime = currentTime;
+            this.lastSentPosition = { x: this.player.x, y: this.player.y };
         }
     }
 
@@ -586,10 +583,19 @@ class RedGameScene extends Phaser.Scene {
     }
 
     sendPosition() {
+        var temp = 0;
+
+        if (attackTimer1 <= attackCooldown - 0.5) {
+            temp = 0
+        } else {
+            temp = 1
+        }
+
         this.sendMessage(MSG_TYPES.POS, [
             Math.round(this.player.x),
             Math.round(this.player.y),
-            Math.round(this.player.body.velocity.x)
+            Math.round(this.player.body.velocity.x),
+            Math.round(temp)
         ]); 
     }
 
@@ -598,11 +604,6 @@ class RedGameScene extends Phaser.Scene {
         // Reducción del temporizador de ataque para el Jugador 1
         if (attackTimer1 > 0) {
             attackTimer1 -= delta / 1000; // Disminuye según el tiempo transcurrido
-        }
-    
-        // Reducción del temporizador de ataque para el Jugador 2
-        if (attackTimer2 > 0) {
-            attackTimer2 -= delta / 1000; // Disminuye según el tiempo transcurrido
         }
 
         // Temporizador de transformación para el Jugador 1
@@ -901,6 +902,9 @@ class RedGameScene extends Phaser.Scene {
                 case MSG_TYPES.CHANGE_FORM:
                     this.handleForm(data);
                     break;
+                case MSG_TYPES.ATTACK:
+                    this.handleAttack(data);
+                    break;
             }
         };
 
@@ -924,9 +928,11 @@ class RedGameScene extends Phaser.Scene {
             this.otherPlayer.x = data[1];
             this.otherPlayer.y = data[2];
 
+            console.log(data[4]);
+
             if (data[3] < 0) {
                 this.otherPlayer.flipX = true;
-                if (attackTimer2 <= attackCooldown - 0.5) {
+                if (data[4] == 0) {
                     if (formCheck2 == 0) {
                         this.otherPlayer.anims.play('caballero2_run', true);
                     } else if (formCheck2 == 1) {
@@ -937,7 +943,7 @@ class RedGameScene extends Phaser.Scene {
                 }
             } else if (data[3] > 0) {
                 this.otherPlayer.flipX = false;
-                if (attackTimer2 <= attackCooldown - 0.5) {
+                if (data[4] <= attackCooldown - 0.5) {
                     if (formCheck2 == 0) {
                         this.otherPlayer.anims.play('caballero2_run', true);
                     } else if (formCheck2 == 1) {
@@ -947,7 +953,7 @@ class RedGameScene extends Phaser.Scene {
                     }
                 }
             } else {
-                if (attackTimer2 <= attackCooldown - 0.5) {
+                if (data[4] == 0) {
                     if (formCheck2 == 0) {
                         this.otherPlayer.anims.play('caballero2_idle', true);
                     } else if (formCheck2 == 1) {
@@ -1008,6 +1014,20 @@ class RedGameScene extends Phaser.Scene {
         }
     }
 
+    handleAttack(data) {
+        if(data[0] != this.playerId) {
+            if(formCheck2 == 0) {
+                this.otherPlayer.anims.play('caballero2_attack');
+            }
+            else if(formCheck2 == 1) {
+                this.otherPlayer.anims.play('arquero2_attack');
+            }
+            else if(formCheck2 == 2){
+                this.otherPlayer.anims.play('paladin2_attack'); 
+            }
+        }
+    }
+
     initializePlayers(players) {
         players.forEach(p => {
             const spriteKey = p[2] === this.playerId ? 'caballero1_idle' : 'caballero2_idle';
@@ -1018,9 +1038,30 @@ class RedGameScene extends Phaser.Scene {
             
             if (p[2] === this.playerId) {
                 this.player = player; 
+
+                // this.player.on('animationupdate', (animation, frame) => {
+                //     if (animation.key === 'caballero1_attack' && frame.index === 4) {
+                //         this.attack();
+                //     }
+
+                //     if (animation.key === 'paladin1_attack' && frame.index === 5) {
+                //         this.attack();
+                //     }
+                // });
+
                 this.lastSentPosition = { x: p[0], y: p[1] };
             } else {
                 this.otherPlayer = player;
+
+                // this.otherPlayer.on('animationupdate', (animation, frame) => {
+                //     if (animation.key === 'caballero2_attack' && frame.index === 4) {
+                //         this.attack();
+                //     }
+
+                //     if (animation.key === 'paladin2_attack' && frame.index === 5) {
+                //         this.attack();
+                //     }
+                // });
             }
         });
     }

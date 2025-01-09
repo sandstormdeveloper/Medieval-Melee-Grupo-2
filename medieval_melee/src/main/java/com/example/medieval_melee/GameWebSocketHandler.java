@@ -24,6 +24,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         double x;
         double y;
         double velocity;
+        double attackTimer;
         int percent;
         int playerId;
 
@@ -97,6 +98,8 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                 player2.y = 300; 
                 player1.velocity = 0;
                 player2.velocity = 0;
+                player1.attackTimer = 0;
+                player2.attackTimer = 0;
 
                 Game game = new Game(player1, player2);
                 games.put(session1.getId(), game);
@@ -174,9 +177,10 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                     currentPlayer.x = pos.get(0);
                     currentPlayer.y = pos.get(1);
                     currentPlayer.velocity = pos.get(2);
+                    currentPlayer.attackTimer = pos.get(3);
 
                     sendToPlayer(otherPlayer, "p",
-                            Arrays.asList(currentPlayer.playerId, currentPlayer.x, currentPlayer.y, currentPlayer.velocity));
+                            Arrays.asList(currentPlayer.playerId, currentPlayer.x, currentPlayer.y, currentPlayer.velocity, currentPlayer.attackTimer));
                     break;
 
                 case 'j':
@@ -203,6 +207,12 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                     sendToPlayer(game.player1, "f", Arrays.asList(
                         currentPlayer.playerId));
                     sendToPlayer(game.player2, "f", Arrays.asList(
+                        currentPlayer.playerId));
+                    break;
+                case 'a':
+                    sendToPlayer(game.player1, "a", Arrays.asList(
+                        currentPlayer.playerId));
+                    sendToPlayer(game.player2, "a", Arrays.asList(
                         currentPlayer.playerId));
                     break;
             }
