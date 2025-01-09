@@ -251,3 +251,7 @@ Un menú de pausa sencillo. Permite reanudar la partida o volver al menú y aban
 
 - Ejecución de la aplicación:
   - Ejecuta el archivo .jar con el siguiente comando --> java -jar .\target\medieval_melee-0.0.1-SNAPSHOT.jar
+
+    
+## Mejoras Fase 4
+En esta cuarta fase de desarrollo, Medieval Melee da un paso crucial hacia la experiencia multijugador completa al integrar la comunicación en tiempo real mediante WebSockets. Esta mejora permite que los jugadores interactúen de forma dinámica y sincronizada, manteniendo el flujo del juego en partidas en red. Además de la comunicación síncrona, se han definido mensajes clave que se intercambian entre cliente y servidor para garantizar una experiencia fluida y libre de interrupciones.
