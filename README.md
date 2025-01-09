@@ -255,3 +255,7 @@ Un menú de pausa sencillo. Permite reanudar la partida o volver al menú y aban
     
 ## Mejoras Fase 4
 En esta cuarta fase de desarrollo, Medieval Melee da un paso crucial hacia la experiencia multijugador completa al integrar la comunicación en tiempo real mediante WebSockets. Esta mejora permite que los jugadores interactúen de forma dinámica y sincronizada, manteniendo el flujo del juego en partidas en red. Además de la comunicación síncrona, se han definido mensajes clave que se intercambian entre cliente y servidor para garantizar una experiencia fluida y libre de interrupciones.
+
+Entre las principales funcionalidades incorporadas en esta fase se encuentran:
+
+- Sincronización de movimientos y acciones: El servidor gestiona en tiempo real las posiciones y acciones de los jugadores, asegurando que ambos participantes tengan la misma visión del estado del juego.
