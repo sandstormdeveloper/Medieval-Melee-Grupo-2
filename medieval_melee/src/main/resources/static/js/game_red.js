@@ -41,8 +41,7 @@ const MSG_TYPES = {
     TIME: 't',       
     OVER: 'o',
     CHANGE_FORM: 'f',
-    ATTACK: 'a',
-    KNOCKBACK: 'k'
+    ATTACK: 'a'
 };
 
 // Clase principal del juego
@@ -50,6 +49,10 @@ class RedGameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'RedGameScene' }); // Asigna una clave para identificar la escena
         this.decremented = false;
+        this.alertGroup = null;
+        this.isConnected = false; // Definir la variable isConnected
+        this.returnToMenu = false; // Definir la variable returnToMenu
+        this.blocker = null;  // Añadimos un blocker para bloquear la interacción
 
         // Game variables
         /** @type {Phaser.GameObjects.GameObject} Player-controlled circle */
@@ -67,17 +70,8 @@ class RedGameScene extends Phaser.Scene {
         /** @type {WebSocket} WebSocket for server communication */
         this.socket = null;
 
-        /** @type {number} Current player score */
-        this.score = 0;
-
-        /** @type {number} Opponent's score */
-        this.otherScore = 0;
-
         /** @type {number} Remaining time in seconds */
         this.timeLeft = 180;
-
-        /** @type {Phaser.GameObjects.Text} Score display */
-        this.scoreText = null;
 
         /** @type {Phaser.GameObjects.Text} Timer display */
         this.timeText = null;
@@ -102,10 +96,7 @@ class RedGameScene extends Phaser.Scene {
         this.lastUpdateTime = 0;
 
         /** @type {number} Interval for position updates in milliseconds */
-        this.POSITION_UPDATE_INTERVAL = 50;
-
-        /** @type {number} Minimum movement threshold for sending position updates */
-        this.POSITION_THRESHOLD = 2;
+        this.POSITION_UPDATE_INTERVAL = 10;
     }
 
     // Método para cargar los recursos del juego
@@ -150,6 +141,7 @@ class RedGameScene extends Phaser.Scene {
 
     // Método para inicializar los elementos de la escena
     create() {
+        clientWon = true;
         this.socket = new WebSocket("ws://" + location.host + "/ws");
 
         returnToMenu = false;
@@ -232,11 +224,12 @@ class RedGameScene extends Phaser.Scene {
         // this.physics.add.overlap(player2, bow, this.collectBow2, null, this);
         // this.physics.add.overlap(player1, hammer, this.collectHammer1, null, this);
         // this.physics.add.overlap(player2, hammer, this.collectHammer2, null, this);
-        // this.physics.add.overlap(player1, arrow2, this.hit1, null, this);
-        // this.physics.add.overlap(player2, arrow1, this.hit2, null, this);
 
         // Creación de animaciones para ambos jugadores
         this.createAnimations();
+
+        // Crear sistema de alertas
+        this.createAlertSystem();
 
         // Eventos de ataque en animaciones
         // this.player.on('animationupdate', (animation, frame) => {
@@ -321,6 +314,12 @@ class RedGameScene extends Phaser.Scene {
                 fontSize: '32px',
                 fill: '#fff'
             }).setOrigin(0.5);
+
+            this.timeText = this.add.text(1265, 45, 'Tiempo restante: ' + this.timeLeft, { 
+                fontFamily: 'font',
+                fontSize: '32px',
+                fill: '#fff'
+            }).setOrigin(1);
         });
 
         //Pausa del videojuego
@@ -474,7 +473,7 @@ class RedGameScene extends Phaser.Scene {
         this.timers(delta);
         this.inputs();
         this.handlePositionUpdates();
-        //this.checkWin();
+        this.checkWin();
     }    
 
     // Maneja el input de los dos jugadores
@@ -624,9 +623,12 @@ class RedGameScene extends Phaser.Scene {
     checkWin() {
         if (!gameEnded) {
             // Comprueba si el jugador 1 se ha salido de la pantalla
-            if(player1.x > 1280 || player1.x < 0 || player1.y > 720 || player1.y < 0) {
+            if(this.player.x > 1280 || this.player.x < 0 || this.player.y > 720 || this.player.y < 0) {
                 gameEnded = true;
-                this.registry.set('winner', 2);
+                this.gameStarted = false
+                if (this.socket) this.socket.close();
+                clientWon = false;
+                console.log(clientWon);
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
@@ -636,12 +638,15 @@ class RedGameScene extends Phaser.Scene {
                     this.game.music = this.sound.add('menu_music', { loop: true });
                     this.game.music.play();
                 });
+
             }
 
             // Comprueba si el jugador 2 se ha salido de la pantalla
-            if(player2.x > 1280 || player2.x < 0 || player2.y > 720 || player2.y < 0) {
+            if(this.otherPlayer.x > 1280 || this.otherPlayer.x < 0 || this.otherPlayer.y > 720 || this.otherPlayer.y < 0) {
                 gameEnded = true;
-                this.registry.set('winner', 1);
+                this.gameStarted = false
+                if (this.socket) this.socket.close();
+                clientWon = true;
                 this.cameras.main.fadeOut(500, 0, 0, 0);
 
                 // Espera a que el fade-out termine antes de iniciar la nueva escena
@@ -651,6 +656,8 @@ class RedGameScene extends Phaser.Scene {
                     this.game.music = this.sound.add('menu_music', { loop: true });
                     this.game.music.play();
                 });
+
+                if (this.socket) this.socket.close();
             }
         }
     }
@@ -660,7 +667,7 @@ class RedGameScene extends Phaser.Scene {
         var velocity = 1000;
 
         if (player == 1) {
-            var projectile = arrow1.create(player1.x, player1.y - 15, 'arrow');
+            var projectile = arrow1.create(this.player.x, this.player.y - 15, 'arrow');
             projectile.setGravityY(0);
     
             // Programa la destrucción de la flecha después de 5 segundos si no colisiona
@@ -670,7 +677,7 @@ class RedGameScene extends Phaser.Scene {
                 }
             }, 3000);
 
-            if(!player1.flipX) {
+            if(!this.player.flipX) {
                 projectile.setVelocityX(velocity);
             } else {
                 projectile.setVelocityX(-velocity);
@@ -678,7 +685,7 @@ class RedGameScene extends Phaser.Scene {
             }
         }
         else {
-            var projectile = arrow2.create(player2.x, player2.y - 15, 'arrow');
+            var projectile = arrow2.create(this.otherPlayer.x, this.otherPlayer.y - 15, 'arrow');
             projectile.setGravityY(0);
     
             // Programa la destrucción de la flecha después de 5 segundos si no colisiona
@@ -688,7 +695,7 @@ class RedGameScene extends Phaser.Scene {
                 }
             }, 3000);
 
-            if(!player2.flipX) {
+            if(!this.otherPlayer.flipX) {
                 projectile.setVelocityX(velocity);
             } else {
                 projectile.setVelocityX(-velocity);
@@ -698,7 +705,7 @@ class RedGameScene extends Phaser.Scene {
     }
 
     // Colisión entre el jugador 1 y una flecha
-    hit1(player1, arrow2) {
+    hit1(player, arrow2) {
         if(arrow2.flipX) {
             this.knockback(1, -1);
         } else {
@@ -773,6 +780,7 @@ class RedGameScene extends Phaser.Scene {
             });
         } 
         else {   
+            isKnockedBack2 = true;    
             if(formCheck1==2){
                 dmgMult1=1.5;
             }
@@ -835,17 +843,8 @@ class RedGameScene extends Phaser.Scene {
         this.userCountText.setText(`Usuarios: ${connectedUsers}`);
 
         if(!isConnected && !returnToMenu) {
-            alert("No se encuentra el servidor :(")
+            this.showAlert('No se encuentra el servidor :(', 'error'); // Mostrar la alerta personalizada
             returnToMenu = true;
-            this.cameras.main.fadeOut(500, 0, 0, 0);
-
-            // Espera a que el fade-out termine antes de iniciar la nueva escena
-            this.cameras.main.once('camerafadeoutcomplete', () => {
-                this.scene.start('MainMenuScene'); // Vuelve al menú principal
-                this.game.music.stop();
-                this.game.music = this.sound.add('menu_music', { loop: true });
-                this.game.music.play();
-            });
         }
     }
 
@@ -891,20 +890,17 @@ class RedGameScene extends Phaser.Scene {
                 case MSG_TYPES.COLLECT_BOW:
                     this.handleBowCollection(data);
                     break;
-                // case MSG_TYPES.TIME:
-                //     this.handleTimeUpdate(data);
-                //     break;
-                // case MSG_TYPES.OVER:
-                //     this.handleGameOver(data);
-                //     break;
+                case MSG_TYPES.TIME:
+                    this.handleTimeUpdate(data);
+                    break;
+                case MSG_TYPES.OVER:
+                    this.handleGameOver(data);
+                    break;
                 case MSG_TYPES.CHANGE_FORM:
                     this.handleForm(data);
                     break;
                 case MSG_TYPES.ATTACK:
                     this.handleAttack(data);
-                    break;
-                case MSG_TYPES.ATTACK:
-                    this.handleKnockBack(data);
                     break;
             }
         };
@@ -912,6 +908,87 @@ class RedGameScene extends Phaser.Scene {
         this.socket.onclose = () => {
             this.gameStarted = false;
         };
+    }
+
+    createAlertSystem() {
+        this.alertGroup = this.add.container(640, 100).setVisible(false).setDepth(100); // Posicionamos la alerta más arriba
+
+        const alertBg = this.add.rectangle(0, 0, 600, 100, 0xff0000, 0.8)
+            .setStrokeStyle(4, 0xffffff)
+            .setOrigin(0.5)
+            .setDepth(101);
+
+        const alertText = this.add.text(0, -10, '', {
+            fontFamily: 'font',
+            fontSize: '24px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 550 }
+        }).setOrigin(0.5).setDepth(102);
+
+        const confirmButton = this.add.rectangle(0, 50, 150, 50, 0xffffff, 1)
+            .setStrokeStyle(2, 0xff0000)
+            .setInteractive()
+            .on('pointerdown', this.hideAlert, this)  // Cuando se hace click, se oculta la alerta y va al menú
+            .setDepth(103);
+
+        const confirmText = this.add.text(0, 50, 'Aceptar', {
+            fontFamily: 'font',
+            fontSize: '20px',
+            color: '#ff0000'
+        }).setOrigin(0.5).setDepth(104);
+
+        this.alertGroup.add([alertBg, alertText, confirmButton, confirmText]);
+        this.alertGroup.alertText = alertText;
+
+        this.children.bringToTop(this.alertGroup);
+
+        // Bloqueador invisible para deshabilitar interacciones
+        this.blocker = this.add.rectangle(0, 0, 1280, 720, 0x000000, 0.5)
+            .setOrigin(0, 0)
+            .setInteractive()
+            .setVisible(false)  // Inicialmente invisible
+            .setDepth(99); // Se coloca debajo de la alerta pero encima de otros elementos
+    }
+
+    showAlert(message, type) {
+        const colors = { error: 0xff0000, success: 0x00ff00 };
+        this.alertGroup.getAt(0).setFillStyle(colors[type] || 0xff0000, 0.8);
+        this.alertGroup.alertText.setText(message);
+        this.alertGroup.setVisible(true);
+
+        // Mostrar el bloqueador que desactiva interacciones en el resto del juego
+        this.blocker.setVisible(true);
+        this.isAlertActive = true;  // Indicamos que la alerta está activa
+
+        // Deshabilitar entrada de teclado mientras la alerta esté activa
+        this.input.keyboard.enabled = false;
+
+        this.alertGroup.setDepth(100);
+        this.children.bringToTop(this.alertGroup);
+    }
+
+    hideAlert() {
+        this.alertGroup.setVisible(false);  // Ocultamos la alerta
+        this.blocker.setVisible(false);  // Ocultamos el bloqueador
+
+        // Ahora que el usuario ha dado "Aceptar", volvemos al menú
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+
+        // Esperamos a que termine el fade-out antes de iniciar la nueva escena
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start('MainMenuScene'); // Vuelve al menú principal
+
+            this.scene.get('MainMenuScene').updateStatus(); // Llamamos a updateStatus en MainMenuScene
+
+            this.sound.stopAll(); // Detener toda la música
+            this.game.music = this.sound.add('menu_music', { loop: true });
+            this.game.music.play();
+        });
+
+        // Rehabilitar la entrada del teclado
+        this.input.keyboard.enabled = true;
+        this.isAlertActive = false;  // Indicamos que la alerta ya no está activa
     }
 
     handleInit(data) {
@@ -931,7 +1008,7 @@ class RedGameScene extends Phaser.Scene {
 
             console.log(data[4]);
 
-            if (data[3] < 0) {
+            if (data[3] < 0 && !isKnockedBack2) {
                 this.otherPlayer.flipX = true;
                 if (data[4] == 0) {
                     if (formCheck2 == 0) {
@@ -942,7 +1019,7 @@ class RedGameScene extends Phaser.Scene {
                         this.otherPlayer.anims.play('paladin2_run', true);
                     }
                 }
-            } else if (data[3] > 0) {
+            } else if (data[3] > 0 && !isKnockedBack2) {
                 this.otherPlayer.flipX = false;
                 if (data[4] <= attackCooldown - 0.5) {
                     if (formCheck2 == 0) {
@@ -1029,8 +1106,36 @@ class RedGameScene extends Phaser.Scene {
         }
     }
 
-    handleKnockBack(data) {
-        
+    handleTimeUpdate(data) {
+        this.timeLeft = data;
+        this.updateTimer();
+    }
+
+    updateTimer() {
+        this.timeText.setText(`Tiempo restante: ${this.timeLeft}`);
+    }
+
+    handleGameOver(scores) {
+        this.gameStarted = false;
+        if (this.socket) this.socket.close();
+
+        if (percent1 > percent2) {
+            clientWon = false;
+        } else if (percent1 < percent2) {
+            clientWon = true;
+        } else {
+            clientWon = Math.random() < 0.5;
+        }
+
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+
+        // Espera a que el fade-out termine antes de iniciar la nueva escena
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start('EndScene'); // Cambia a la escena del juego
+            this.game.music.stop();
+            this.game.music = this.sound.add('menu_music', { loop: true });
+            this.game.music.play();
+        });
     }
 
     initializePlayers(players) {
@@ -1044,6 +1149,8 @@ class RedGameScene extends Phaser.Scene {
             if (p[2] === this.playerId) {
                 this.player = player; 
 
+                this.physics.add.overlap(this.player, arrow2, this.hit1, null, this);
+
                 this.player.on('animationupdate', (animation, frame) => {
                     if (animation.key === 'caballero1_attack' && frame.index === 4) {
                         this.attack(1);
@@ -1052,11 +1159,17 @@ class RedGameScene extends Phaser.Scene {
                     if (animation.key === 'paladin1_attack' && frame.index === 5) {
                         this.attack(1);
                     }
+
+                    if (animation.key === 'arquero1_attack' && frame.index === 6) {
+                        this.shoot(1);
+                    }
                 });
 
                 this.lastSentPosition = { x: p[0], y: p[1] };
             } else {
                 this.otherPlayer = player;
+
+                this.physics.add.overlap(this.otherPlayer, arrow1, this.hit2, null, this);
 
                 this.otherPlayer.on('animationupdate', (animation, frame) => {
                     if (animation.key === 'caballero2_attack' && frame.index === 4) {
@@ -1065,6 +1178,10 @@ class RedGameScene extends Phaser.Scene {
 
                     if (animation.key === 'paladin2_attack' && frame.index === 5) {
                         this.attack(2);
+                    }
+
+                    if (animation.key === 'arquero2_attack' && frame.index === 6) {
+                        this.shoot(2);
                     }
                 });
             }

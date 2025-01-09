@@ -200,6 +200,48 @@ hideAlert() {
     const confirmButton = this.alertGroup.getAt(2); // El botón de confirmar
     confirmButton.removeListener('pointerdown', this.handleConfirmButtonClick, this);
 }
+
+async fetchWithTimeout(url, options = {}, timeout = 5000) {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const fetchPromise = fetch(url, { ...options, signal });
+
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    try {
+        const response = await fetchPromise;
+        clearTimeout(timeoutId);
+        return response;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+    }
+}
+
+async fetchServerStatus() {
+    try {
+        const response = await this.fetchWithTimeout('/api/status', {}, 5000);
+        if (!response.ok) throw new Error('Server response error');
+
+        const data = await response.json();
+        if (!isConnected) {
+            this.incrementUsers();
+            isConnected = true;
+        }
+        return {
+            status: data.status,
+            connectedUsers: data.connectedUsers
+        };
+    } catch (error) {
+        console.error('Error fetching server status:', error.message);
+        isConnected = false;
+        return {
+            status: 'Desconectado',
+            connectedUsers: 0
+        };
+    }
+}
+
  // Actualización del estado del servidor
 async updateStatus() {
     await this.fetchServerStatus();

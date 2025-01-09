@@ -4,6 +4,11 @@ class EndScene extends Phaser.Scene {
     // Constructor de la escena, define la clave de la escena
     constructor() {
         super({ key: 'EndScene' });
+        this.decremented = false;
+        this.alertGroup = null;
+        this.isConnected = false; // Definir la variable isConnected
+        this.returnToMenu = false; // Definir la variable returnToMenu
+        this.blocker = null;  // Añadimos un blocker para bloquear la interacción
     }
 
     // Método preload: carga los recursos necesarios para esta escena
@@ -15,6 +20,9 @@ class EndScene extends Phaser.Scene {
         this.load.image('play2_hover', 'assets/play2_hover.png');   // Botón de "Jugar" en hover
         this.load.image('exit', 'assets/exit.png');         // Botón de "Salir"
         this.load.image('exit_hover', 'assets/exit_hover.png'); // Botón de "Salir" en hover
+
+        this.load.image('loss', 'assets/loss.png');
+        this.load.image('win', 'assets/win.png');
 
         this.load.audio('menu_music', 'assets/menu.mp3');
         this.load.audio('game_music', 'assets/juego.mp3');
@@ -39,6 +47,13 @@ class EndScene extends Phaser.Scene {
             }
             else {
                 this.add.image(640, 250, 'player2wins');
+            }
+        } else {
+            if (clientWon) {
+                this.add.image(640, 250, 'win');
+            }
+            else {
+                this.add.image(640, 250, 'loss');
             }
         }
 
@@ -111,12 +126,92 @@ class EndScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+        this.createAlertSystem();
     }
 
     // Método update: se ejecuta en cada frame, puede usarse para lógica del juego (vacío aquí)
     update(time, delta) {
         // Sin implementación adicional en este ejemplo
     }
+
+    createAlertSystem() {
+        this.alertGroup = this.add.container(640, 100).setVisible(false).setDepth(100); // Posicionamos la alerta más arriba
+
+        const alertBg = this.add.rectangle(0, 0, 600, 100, 0xff0000, 0.8)
+            .setStrokeStyle(4, 0xffffff)
+            .setOrigin(0.5)
+            .setDepth(101);
+
+        const alertText = this.add.text(0, -10, '', {
+            fontFamily: 'font',
+            fontSize: '24px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 550 }
+        }).setOrigin(0.5).setDepth(102);
+
+        const confirmButton = this.add.rectangle(0, 50, 150, 50, 0xffffff, 1)
+            .setStrokeStyle(2, 0xff0000)
+            .setInteractive()
+            .on('pointerdown', this.hideAlert, this)  // Cuando se hace click, se oculta la alerta y va al menú
+            .setDepth(103);
+
+        const confirmText = this.add.text(0, 50, 'Aceptar', {
+            fontFamily: 'font',
+            fontSize: '20px',
+            color: '#ff0000'
+        }).setOrigin(0.5).setDepth(104);
+
+        this.alertGroup.add([alertBg, alertText, confirmButton, confirmText]);
+        this.alertGroup.alertText = alertText;
+
+        this.children.bringToTop(this.alertGroup);
+
+        // Bloqueador invisible para deshabilitar interacciones
+        this.blocker = this.add.rectangle(0, 0, 1280, 720, 0x000000, 0.5)
+            .setOrigin(0, 0)
+            .setInteractive()
+            .setVisible(false)  // Inicialmente invisible
+            .setDepth(99); // Se coloca debajo de la alerta pero encima de otros elementos
+    }
+
+    showAlert(message, type) {
+        const colors = { error: 0xff0000, success: 0x00ff00 };
+        this.alertGroup.getAt(0).setFillStyle(colors[type] || 0xff0000, 0.8);
+        this.alertGroup.alertText.setText(message);
+        this.alertGroup.setVisible(true);
+
+        // Mostrar el bloqueador que desactiva interacciones en el resto del juego
+        this.blocker.setVisible(true);
+        this.isAlertActive = true;  // Indicamos que la alerta está activa
+
+        // Deshabilitar entrada de teclado mientras la alerta esté activa
+        this.input.keyboard.enabled = false;
+
+        this.alertGroup.setDepth(100);
+        this.children.bringToTop(this.alertGroup);
+    }
+
+    hideAlert() {
+        this.alertGroup.setVisible(false);  // Ocultamos la alerta
+        this.blocker.setVisible(false);  // Ocultamos el bloqueador
+
+        // Ahora que el usuario ha dado "Aceptar", volvemos al menú
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+
+        // Esperamos a que termine el fade-out antes de iniciar la nueva escena
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start('MainMenuScene'); // Vuelve al menú principal
+
+            this.scene.get('MainMenuScene').updateStatus(); // Llamamos a updateStatus en MainMenuScene
+        });
+
+        // Rehabilitar la entrada del teclado
+        this.input.keyboard.enabled = true;
+        this.isAlertActive = false;  // Indicamos que la alerta ya no está activa
+    }
+
 
     async fetchWithTimeout(url, options = {}, timeout = 5000) {
         const controller = new AbortController();
@@ -164,14 +259,8 @@ class EndScene extends Phaser.Scene {
         this.statusText.setText(`Estado: ${status}`);
         this.userCountText.setText(`Usuarios: ${connectedUsers}`);
         if(!isConnected && !returnToMenu) {
-            alert("No se encuentra el servidor :(")
+            this.showAlert('No se encuentra el servidor :(', 'error'); // Mostrar la alerta personalizada
             returnToMenu = true;
-            this.cameras.main.fadeOut(500, 0, 0, 0);
-
-            // Espera a que el fade-out termine antes de iniciar la nueva escena
-            this.cameras.main.once('camerafadeoutcomplete', () => {
-                this.scene.start('MainMenuScene'); // Vuelve al menú principal
-            });
         }
     }
 

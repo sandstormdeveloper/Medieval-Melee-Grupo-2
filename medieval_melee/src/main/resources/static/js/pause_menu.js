@@ -1,107 +1,127 @@
-var returnToMenu;
-// Clase PauseMenuScene que representa el menú de pausa del juego
+var returnToMenu = false;  // Evita que el mensaje se repita
+var alertActive = false;    // Indicador de alerta activa
+
 class PauseMenuScene extends Phaser.Scene {
-    // Constructor de la escena, define la clave de la escena
     constructor() {
         super({ key: 'PauseMenuScene' });
     }
 
-    // Método preload: carga los recursos necesarios para esta escena
     preload() {
-        this.load.image('fondo_pausa', 'assets/pausa.png');               // Fondo del menú
-        this.load.image('play', 'assets/play.png');               // Botón de "Jugar"
-        this.load.image('play_hover', 'assets/play_hover.png');   // Botón de "Jugar" en hover
-        this.load.image('exit', 'assets/exit.png');         // Botón de "Salir"
-        this.load.image('exit_hover', 'assets/exit_hover.png'); // Botón de "Salir" en hover
+        this.load.image('fondo_pausa', 'assets/pausa.png');               
+        this.load.image('play', 'assets/play.png');               
+        this.load.image('play_hover', 'assets/play_hover.png');   
+        this.load.image('exit', 'assets/exit.png');         
+        this.load.image('exit_hover', 'assets/exit_hover.png'); 
 
         this.load.audio('menu_music', 'assets/menu.mp3');
     }
 
-    // Método create: configura la escena y sus elementos
     create() {
-        returnToMenu = false;
-        // Agrega la imagen de fondo y el título en posiciones específicas
         this.add.image(640, 360, 'fondo_pausa');  // Imagen del fondo
 
         // Botón de "Jugar"
         var start_button = this.add.image(640, 390, 'play')
-            .setInteractive() // Hace el botón interactivo
-            .on('pointerover', () => {
-                // Cambia a la textura de hover cuando el mouse pasa sobre el botón
-                start_button.setTexture('play_hover');
-            })
-            .on('pointerout', () => {
-                // Vuelve a la textura normal cuando el mouse sale del botón
-                start_button.setTexture('play');
-            })
+            .setInteractive()
+            .on('pointerover', () => start_button.setTexture('play_hover'))
+            .on('pointerout', () => start_button.setTexture('play'))
             .on('pointerdown', () => {
-                this.scene.stop(); // Detiene la escena de pausa
-                this.scene.resume('LocalGameScene'); // Reanuda la escena principal
+                if (!alertActive) {  // Evita que se pueda interactuar mientras la alerta está activa
+                    this.scene.stop();
+                    this.scene.resume('LocalGameScene'); // Reanuda la escena principal
+                }
             });
 
-        // Botón de "Créditos"
+        // Botón de "Salir"
         var exit_button = this.add.image(640, 450, 'exit')
-            .setInteractive() // Hace el botón interactivo
-            .on('pointerover', () => {
-                // Cambia a la textura de hover cuando el mouse pasa sobre el botón
-                exit_button.setTexture('exit_hover');
-            })
-            .on('pointerout', () => {
-                // Vuelve a la textura normal cuando el mouse sale del botón
-                exit_button.setTexture('exit');
-            })
+            .setInteractive()
+            .on('pointerover', () => exit_button.setTexture('exit_hover'))
+            .on('pointerout', () => exit_button.setTexture('exit'))
             .on('pointerdown', () => {
-                // Al hacer clic, inicia un fade-out y cambia a la escena de créditos
-                this.cameras.main.fadeOut(500, 0, 0, 0);
-
-                // Espera a que el fade-out termine antes de iniciar la nueva escena
-                this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.stop('LocalGameScene');
-                    this.scene.start('MainMenuScene'); // Vuelve al menú principal
-                    this.game.music.stop();
-                    this.game.music = this.sound.add('menu_music', { loop: true });
-                    this.game.music.play();
-                });
+                if (!alertActive) {  // Evita que se pueda interactuar mientras la alerta está activa
+                    this.cameras.main.fadeOut(500, 0, 0, 0);
+                    this.cameras.main.once('camerafadeoutcomplete', () => {
+                        this.scene.stop('LocalGameScene');
+                        this.scene.start('MainMenuScene'); // Regresar al menú principal
+                        this.game.music.stop();
+                        this.game.music = this.sound.add('menu_music', { loop: true });
+                        this.game.music.play();
+                    });
+                }
             });
 
-        this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+        // Crear el sistema de alertas (visible en todo momento)
+        this.createAlertSystem();
 
-        this.escapeKey.on('down', () => {
-            if (this.scene.isActive('PauseMenuScene')) {
-                this.scene.stop(); 
-                this.scene.resume('LocalGameScene'); 
-            }
-        });
-
+        // Actualiza el estado cada segundo
         this.updateStatus();
         this.time.addEvent({
-            delay: 1000, 
+            delay: 1000,
             callback: this.updateStatus,
             callbackScope: this,
             loop: true
         });
     }
 
-    // Método update: se ejecuta en cada frame, puede usarse para lógica del juego (vacío aquí)
-    update(time, delta) {
-        
+    createAlertSystem() {
+        // Crear contenedor de la alerta
+        this.alertGroup = this.add.container(640, 100).setVisible(false).setDepth(100);
+
+        // Fondo de la alerta
+        const alertBg = this.add.rectangle(0, 0, 600, 100, 0xff0000, 0.8)
+            .setStrokeStyle(4, 0xffffff)
+            .setOrigin(0.5)
+            .setDepth(101);
+
+        // Texto de la alerta
+        const alertText = this.add.text(0, -10, '', {
+            fontFamily: 'font',
+            fontSize: '24px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 550 }
+        }).setOrigin(0.5).setDepth(102);
+
+        // Botón de Aceptar
+        const acceptButton = this.add.rectangle(0, 50, 150, 50, 0xffffff, 1)
+            .setStrokeStyle(2, 0xff0000)
+            .setInteractive()
+            .on('pointerdown', this.hideAlert, this)
+            .setDepth(103);
+
+        // Texto del botón Aceptar
+        const acceptText = this.add.text(0, 50, 'Aceptar', {
+            fontFamily: 'font',
+            fontSize: '20px',
+            color: '#ff0000'
+        }).setOrigin(0.5).setDepth(104);
+
+        this.alertGroup.add([alertBg, alertText, acceptButton, acceptText]);
+        this.alertGroup.alertText = alertText;
+        this.children.bringToTop(this.alertGroup);
     }
 
-    async fetchWithTimeout(url, options = {}, timeout = 5000) {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        const fetchPromise = fetch(url, { ...options, signal });
-    
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
-        try {
-            const response = await fetchPromise;
-            clearTimeout(timeoutId);
-            return response;
-        } catch (error) {
-            clearTimeout(timeoutId);
-            throw error; 
-        }
+    showAlert(message) {
+        // Mostrar la alerta con el mensaje dado
+        this.alertGroup.getAt(0).setFillStyle(0xff0000, 0.8); // Fondo rojo para error
+        this.alertGroup.alertText.setText(message);
+        this.alertGroup.setVisible(true);
+        alertActive = true; // La alerta está activa
+    }
+
+    hideAlert() {
+        // Ocultar la alerta y permitir interacciones nuevamente
+        this.alertGroup.setVisible(false);
+        alertActive = false; // La alerta ya no está activa
+
+        // Volver al menú principal
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.stop('LocalGameScene');
+            this.scene.start('MainMenuScene'); // Regresar al menú principal
+            this.game.music.stop();
+            this.game.music = this.sound.add('menu_music', { loop: true });
+            this.game.music.play();
+        });
     }
 
     async fetchServerStatus() {
@@ -129,20 +149,11 @@ class PauseMenuScene extends Phaser.Scene {
     }
 
     async updateStatus() {
-        await this.fetchServerStatus();
-        if(!isConnected && !returnToMenu) {
-            alert("No se encuentra el servidor :(")
-            returnToMenu = true;
-            this.cameras.main.fadeOut(500, 0, 0, 0);
-
-            // Espera a que el fade-out termine antes de iniciar la nueva escena
-            this.cameras.main.once('camerafadeoutcomplete', () => {
-                this.scene.stop('LocalGameScene');
-                this.scene.start('MainMenuScene'); // Vuelve al menú principal
-                this.game.music.stop();
-                this.game.music = this.sound.add('menu_music', { loop: true });
-                this.game.music.play();
-            });
+        // Actualiza el estado del servidor
+        const { status, connectedUsers } = await this.fetchServerStatus();
+        if (!isConnected && !returnToMenu && !alertActive) { // Evitar que se muestre la alerta repetidamente
+            this.showAlert('No se encuentra el servidor :(');  // Muestra la alerta de error
+            returnToMenu = true; // Bloquea la posibilidad de mostrar otra alerta
         }
     }
 
@@ -157,6 +168,23 @@ class PauseMenuScene extends Phaser.Scene {
             if (!response.ok) throw new Error('No se ha podido incrementar el número de usuarios');
         } catch (error) {
             console.error('Error incrementando el número de usuarios:', error);
+        }
+    }
+
+    async fetchWithTimeout(url, options = {}, timeout = 5000) {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const fetchPromise = fetch(url, { ...options, signal });
+    
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+        try {
+            const response = await fetchPromise;
+            clearTimeout(timeoutId);
+            return response;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            throw error;
         }
     }
 }
