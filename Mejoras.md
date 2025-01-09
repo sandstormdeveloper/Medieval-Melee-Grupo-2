@@ -11,7 +11,7 @@
 ## Publicación del juego
 
 - El juego se ha publicado en Itch.io:
-    - 
+    - https://itch.io
 
 ## Información del grupo
 
