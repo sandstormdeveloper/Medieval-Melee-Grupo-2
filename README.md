@@ -299,4 +299,4 @@ En el apartado visual, se han diseñado nuevos fondos para las partidas con el o
   - Señala un ataque realizado por un jugador.
 
 ### Diagrama de clases
-![Figura 29](/assets/diagrama_api.png)
+![Figura 29](/assets/diagrama_final.png)
