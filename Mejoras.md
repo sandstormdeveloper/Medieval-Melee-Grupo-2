@@ -8,6 +8,10 @@
 
 - En el apartado visual, se han diseñado nuevos fondos para las partidas con el objetivo de ofrecer una experiencia más variada y atractiva. Estos fondos se seleccionan de forma aleatoria al inicio de cada partida, lo que añade un toque de novedad y evita la repetición constante del mismo escenario visual.
 
+- Se ha enriquecido la experiencia del juego mediante la implementación de efectos de sonido.
+
+- Ya que es una parte importante del juego, también se ha mejorado la mecánica del "knockback" que tienen los jugadores al recibir un golpe.
+
 ## Publicación del juego
 
 - El juego se ha publicado en Itch.io:
