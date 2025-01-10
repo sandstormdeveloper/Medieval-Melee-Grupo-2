@@ -15,7 +15,7 @@
 ## Publicación del juego
 
 - El juego se ha publicado en Itch.io:
-    - https://itch.io
+    - https://medievalmelee.itch.io/game
 
 ## Información del grupo
 
