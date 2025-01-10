@@ -16,6 +16,8 @@ class CreditsScene extends Phaser.Scene {
         returnToMenu = false;
         this.isAlertVisible = false;
 
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         this.add.image(640, 360, 'creditos');
 
         var exit_button = this.add.image(104, 64, 'exit')
